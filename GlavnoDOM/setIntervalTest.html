@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      button {
+        display: block;
+        margin: 20px 0;
+      }
+
+      .prviBotun {
+        background-color: red;
+        color: black;
+      }
+
+      .drugiBotun {
+        background-color: blue;
+        color: white;
+      }
+    </style>
+  </head>
+
+  <body>
+    <button class="prviBotun">Pokreni PRVI interval</button>
+    <button class="drugiBotun">Pokreni DRUGI interval</button>
+    <button class="zaustaviPrviInterval">Zaustavi PRVI Interval</button>
+    <button class="zaustaviDrugiInterval">Zaustavi DRUGI Interval</button>
+  </body>
+  <script>
+    let prviBotun = document.querySelector(".prviBotun");
+    let drugiBotun = document.querySelector(".drugiBotun");
+    let zaustaviPrviInterval = document.querySelector(".zaustaviPrviInterval");
+    let zaustaviDrugiInterval = document.querySelector(".zaustaviDrugiInterval");
+    let cancelObj = { prviCancel: null, drugiCancel: null };
+
+    //VAŽNO: meni je iz nekog razloga ostalo u glavni da neki return od setIntervala može biti ne važeći tj. da istekne.
+    //To jednostavno nije točno, može se pokrenuti jedan, pa drugi interval bez da se otkaže prvi, može ih se zvati više od odjenom sa različitma sadržažje callback fn.
+    //ili ih se može zvati ovako u jednoj fn. kao što ja ovdje radimo. Uglavlom kada se pokrende neki setInteval treba ga ponišitit i ako se pozove drugi
+    //u međuvremenu još će taj stari, prvi interaval će biti aktivan uz neki drugi kojeg samo stavili.
+    //VAŽNO: kada je riječ o setTimeout, ne setInterval onda se obično dogodit da neki setIterval završi svoj jedan callback i onda se eventalno zove neki
+    //drugi setTimoute ili isti opet u tom slučaju naravno da će "isteći" stari clearIneraval ali cjela stvar je u tome da se radi o različitim interval pozivima
+    //od kojih svaki ima svoj broj. To je kao da se pokušava otakazti ovdje u code drugi setInterval sa brojem od prvoga. To neće raditi, ali to ne znači da ne treba eventalno
+    //otakazti prvi i da je pravi broj zastario.
+
+    function unutarKojeJeInterval(time, strArg, cancelName) {
+      return (cancelObj[cancelName] = setInterval(
+        (strArg) => {
+          console.log(strArg);
+        },
+        time,
+        strArg
+      ));
+    }
+
+    prviBotun.addEventListener("click", () => {
+      cancelObj.prviCancel = unutarKojeJeInterval(5000, "Ovo je PRVI pokrenuti interval callback", "prviCancel");
+    });
+
+    zaustaviPrviInterval.addEventListener("click", () => {
+      clearInterval(cancelObj.prviCancel);
+    });
+
+    drugiBotun.addEventListener("click", () => {
+      cancelObj.drugiCancel = unutarKojeJeInterval(12000, "Ovo je DRUGI pokrenuti interval callback", "drugiCancel");
+    });
+
+    zaustaviDrugiInterval.addEventListener("click", () => {
+      clearInterval(cancelObj.drugiCancel);
+    });
+  </script>
+</html>

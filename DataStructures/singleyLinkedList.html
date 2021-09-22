@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+ 
+ class SinglyLinkedList{
+   constructor(value) {
+     this.head={
+         value: value,
+         next: null
+     }
+     this.tail=this.head
+    //Kad kreiramo incijalno linked list sa new automatski imamo jedan item i zato je vrijednost this.lenth broj 1 incijalno
+    this.length=1;
+  }
+
+  append (value){
+   let newNode={
+    value: value,
+    next: null
+   }
+   //Ovdje mijenjamo na dozvoljeni način property unutar objekta this.head jer smo gore u konsktruktoru stavili da je this.tail=this.head(by reference).
+   //Vidi screenshot 409 u by value i by reference folderu.
+   this.tail.next=newNode
+   //Ovdje ne mijenjamo na dozvoljeni načini objekt tj. ovdje samo overwirtiamo cijeli objekt i postvljmo neki drugi objekt
+   this.tail=newNode
+   this.length++
+   return this
+  }
+
+  prepend(value){
+    let newNode={
+    value: value,
+    next: null
+   }
+  //Znači ovdje prije stavimo da newNode next bude stari head i onda liniju doli overrwitamo this.head i stavimo cijeli taj newNode.
+  newNode.next=this.head
+  this.head=newNode
+  this.length++
+  return this
+
+}
+
+insert(index,value){
+  if(index>=this.length){
+    return this.append(value)
+  }
+
+  let newNode={
+    value: value,
+    next: null
+   }
+
+let prev=this.transverseToIndex(index-1)
+let temp=prev.next
+newNode.next=temp 
+prev.next=newNode   
+this.length++   
+this.printList()
+
+}
+
+remove(index){
+  if(index<0 || index>=this.length || typeof index !=='number'){
+    console.log('Please use valid index')
+    return
+  }
+
+  let prev=this.transverseToIndex(index-1)
+  let removed=prev.next 
+  prev.next=removed.next 
+  this.length--
+  this.printList()
+
+}
+
+printList(){
+  let arr=[]
+  let currentNode=this.head
+  while(currentNode!==null){
+    arr.push(currentNode.value)
+    currentNode=currentNode.next
+  }
+  console.log(arr)
+}
+
+
+transverseToIndex(index){
+  let currentNode=this.head
+  let counter=0;
+  while(counter!==index){
+    currentNode=currentNode.next
+    counter++
+  }
+  return currentNode
+}
+
+reverse() {
+        //stanje prije reverse:  ante--> ivana --> mate --> keanu--> null
+      if (!this.head.next) {
+        return this.head;
+      }
+      let first = this.head;
+      this.tail = this.head;
+      let second = first.next;
+
+      while(second) {
+        //Spremi originali pointer i onda to doli iskrosti da loopaš kroz list skroz normalno u orignalom rasporedu.
+        const temp = second.next;
+        //Moficiraj originali pointer tj. promjeni mu smjer. U prvoj iteraciji loopa pointer od objekta gdje je value 'ivana' postane 'ante'.
+        //ante <--ivana <--mate <-- keanu
+        second.next = first;
+        first = second;
+        second = temp;
+        
+      }
+      //modificirali smo u loopu sve pointer osim ovoga pa sad ovdje nakon mofikcije ukupno imamo: null <--ante <--ivana <--mate <-- keanu
+      //Treba paziti u konzoli kada se ide c.logati 'this.head' prije modfikacije. Dogodi se onaj slučaj 'that value is evaluted just now' i pointer ne bude 'ivana' kao što treba biti
+      //prije modfikacije nego bude null nakon što ga modficiramo ovdje doli.
+      this.head.next = null;
+      //First bude zadnji element tj. u našem slučaju 'keanu' i pošto smo obrnli pointere uspjeli smo reversati cijelu singleLinkedList
+      this.head = first;
+      return this.printList();
+    }
+
+  }
+
+
+let a=new SinglyLinkedList('Ante')
+a.append('Mate')
+a.insert(1,'Ivana')
+a.printList()
+a.append('Keanu')
+a.reverse()
+
+</script>
+</html>

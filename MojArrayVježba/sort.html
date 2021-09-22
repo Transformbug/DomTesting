@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+     
+    </style>
+</head>
+<body>
+    vidi konzolu
+   
+ <script>
+     //Kada zovemo .sort() bez callblack fn. na nekoj array gdje su strings onda će nam returanti novi array gdje su string poredane po abecendom redu.
+      const brojevi=[5,15,10,30,40,20]
+
+      //VAŽNO: iz nekog razloga dobro soritira ove string brojeve po veličini. Izgleda da ih automatski konvertira.
+// let arr=['5', '-5', '10']
+// let a=arr.sort((a,b)=> a-b)
+
+      const sorted=brojevi.sort(function(a,b){
+          //Sort je poseban jer neće se zvati ovaj callback onoliko puta koliko ima array itema nego će se zvati sort onoliko puta koliko interni algoritam odredi.
+          //Incijalno će parametar a biti prvu item array(index 0) dok će parametar b biti drugi item u array.
+          //Sort returna novi array,ne modficira stari.
+          //Ako returnmo neki negativni broj to znači da želimo da 'a' bude ispred 'b' unutar sortirane array.
+          //Ako returnmo neki pozivni broj onda to znači da želimo da 'b' bude ispred 'a' unutar sortirane array.
+          //Ako returnom broj nula to znači da redoslijed nije važan tj. array će ostati onakav kakav je u orignalu.
+
+          //Kad vidmo ovo djeluje dosta zbunjujuće, ali treba se koncetirati na prva dva incijala a i b, iz te usporedbe možemo skužiti totali output kad uzmemo u obzir što returnamo
+          //u svakom ovom callbacku tj. pzitivni ili negativni broj.
+           
+          console.log('a i b su ovo:',a,b);
+          
+        //   return a-b
+        //   return b-a
+         // return 0
+          
+      }) 
+
+      console.log(sorted);   
+     
+   
+
+
+ 
+
+ </script>    
+</body>
+</html>

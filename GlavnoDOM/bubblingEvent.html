@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    #diva {
+      width: 500px;
+      height: 500px;
+      background-color: lightcoral;
+      display: flex;
+      justify-content: end;
+      /* border: 1px solid rgb(0, 255, 128); */
+    }
+
+    #para {
+      width: 100px;
+      height: 100px;
+      background-color: rgb(128, 130, 240);
+      /* margin: 0 auto; */
+    }
+
+    .vuci {
+      margin: 30px auto;
+      background-color: magenta;
+      width: 65px;
+      height: 65px;
+    }
+  </style>
+  <body>
+    <div id="diva">
+      <p id="para">ante</p>
+    </div>
+    <div draggable="true" class="vuci">draggable</div>
+  </body>
+  <script>
+    //note: kao što vidimo bubbling se događa i kada nemamo izravno event listner na nestet target elementu.
+    diva.addEventListener("dragenter", function (e) {
+      console.log("ovo je target,nije currentTarget", e.target);
+      e.currentTarget.style.backgroundColor = "lightseagreen";
+    });
+  </script>
+</html>

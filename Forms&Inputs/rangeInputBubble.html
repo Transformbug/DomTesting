@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      #container {
+        position: relative;
+        box-sizing: border-box;
+        margin: 0 auto;
+        width: 90%;
+        margin-top: 80px;
+      }
+
+      /*Ovo iskomeniratno je samo služilo da vidim što se događa kada promjenim veličinu thumba i samo da promjenim default izgleda backgrounda.*/
+      #myRange {
+        width: 100%;
+        margin: 0;
+        /* appearance: none;
+        background-color: rgb(153, 51, 136); */
+      }
+
+      /* #myRange::-webkit-slider-thumb {
+        outline: none;
+        -webkit-appearance: none;
+        background-color: chartreuse;
+        width: 50px;
+        height: 20px;
+        border-radius: 3px;
+      }
+
+      #myRange::-moz-range-thumb {
+        outline: none;
+        -webkit-appearance: none;
+        background-color: chartreuse;
+        width: 50px;
+        height: 20px;
+        border-radius: 3px;
+      } */
+
+      #myValue {
+        background: black;
+      }
+      #myValue #myValueInner {
+        width: 50%;
+        background: gold;
+      }
+
+      /*Da se uvjerim da je default širina thumba stvarno 15px*/
+      .ante {
+        background-color: chartreuse;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        margin-left: 53px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <output style="position: absolute; min-width: 100px; text-align: center" id="myValue"
+        ><div id="myValueInner"></div
+      ></output>
+      <input type="range" id="myRange" min="0" max="200" step="5" value="0" />
+    </div>
+    <div class="ante"></div>
+    <div class="mate"></div>
+  </body>
+  <script>
+    window.addEventListener("load", mainRangeFn);
+    const myRange = document.querySelector("#myRange");
+    myRange.addEventListener("input", mainRangeFn);
+
+    function mainRangeFn() {
+      //PAZI: pazi load slušaš na window objektu pa ne možeš ovdje koristiti e.target.value jer range input neće uvijek biti e.target.
+      //Ako ne radi na incijalnom loadu onda je to obično radi toga.
+      const rangeValue = parseInt(myRange.value);
+      const min = parseInt(myRange.min);
+      const max = parseInt(myRange.max);
+
+      //Ovaj myValue je element koji pokazuje koji je trenutno range i postavljen je da prati range thumb.
+      const myValue = document.querySelector("#myValue");
+      const myValueInner = document.querySelector("#myValueInner");
+
+      //Ovdje je broj 15 jer je to default širina thumba čini se.
+      const thumbWidth = 15;
+      const total = max - min;
+
+      const centerThumbOffset = ((rangeValue - min) / total - 0.5) * thumbWidth;
+      //Ova off varijable je ratio odnos,vidi video.
+      const off = myRange.clientWidth / total;
+
+      //Prvi dio kalkulacije
+      // const px = (rangeValue - min) * off;
+      //Kalkulacija bez centerThumbOffset
+      // const px = (rangeValue - min) * off - myValue.clientWidth / 2;
+
+      //Originalna,potpuna tj. ispravna px kalkulacija:
+      const px = (rangeValue - min) * off - myValue.clientWidth / 2 - centerThumbOffset;
+      myValue.style.left = px + "px";
+
+      myValue.style.top = -myRange.offsetHeight - 5 + "px";
+      myValueInner.innerHTML = myRange.value;
+
+      //note: u video ako slučajno kažem da kada bude prvi input event to bude početna vrijednost to je krivo. Početna vrjiednost
+      //koje je stvarna i koju logiramo ovdje je od load eventa.
+      //note:zovem ovaj file range input bubble jer ovaj elemnet koji slijedi range thumb tako nazivaju.
+      console.log("total:", total);
+      console.log("centerThumbOffset:", centerThumbOffset);
+      console.log("myRange.clientWidth", myRange.clientWidth);
+      console.log("off", off);
+      console.log("prvi dio px kalkulacije", (rangeValue - min) * off);
+      console.log("Kalkuacija bez centerThumbOffset", (rangeValue - min) * off - myValue.clientWidth / 2);
+      console.log("px", px);
+      console.log("myValue.style.left", myValue.style.left);
+    }
+  </script>
+</html>

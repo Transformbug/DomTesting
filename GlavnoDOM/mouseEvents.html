@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    html{ 
+box-sizing:border-box;
+}
+
+*,::before,::after{
+box-sizing: inherit;
+margin:0;
+padding:0;
+} 
+
+.cont{
+ border: 1px solid red;
+ padding-top:100px; 
+ margin: 0 auto;
+ width: 600px;
+ height: 400px;
+}
+
+.klikniMe1{
+ border: 10px solid blue;
+ width: 200px;
+ height: 100px;
+ display: inline-block;
+}
+
+.klikniMe2{
+    border: 10px solid green;
+ width: 200px;
+ height: 100px;
+ margin-left: 100px;
+ display: inline-block;
+
+}
+
+ </style>
+</head>
+<body>
+ <div class="cont">
+     <div class="klikniMe1"></div>
+     <div class="klikniMe2"></div>
+ </div>
+
+</body>
+<script>
+ document.querySelector('.cont').addEventListener('mouseover',function(e){
+     console.dir(e)
+    console.count()  
+
+ })
+
+</script>
+
+</html>

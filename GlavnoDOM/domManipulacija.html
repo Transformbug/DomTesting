@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--    <title>My Coding Journal</title>  ovo će biti kao ime taga u browseru i stvlja se u head  -->
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="tablica">
+      <table border="1">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <!-- th je header ekvivalent td tj. table cell or table data, tr je table row znači gleda se horizontalno, column ili stupc je vertikalno  -->
+            <th>Surname</th>
+            <th>Job</th>
+            <th>auto</th>
+            <!-- i kada dodamo ovdje opet se širi-->
+          </tr>
+        </thead>
+        <tbody>
+          <!-- mogli smo imati istu ovu tablicu i bez thead,tbody i th unutar thead, ali to je html5 da se bolje označi što je što  -->
+          <tr>
+            <td>Ante</td>
+            <td>matić</td>
+            <td>mesar</td>
+            <td>bmw</td>
+            <!--zanimljivo kad se ovjde dodao td viška onda se ne prilagode unutra nego se tablica raširir jedno mjesto-->
+          </tr>
+          <tr>
+            <td>Ante</td>
+            <td>katić</td>
+            <td>matador</td>
+            <td>seat</td>
+            <!-- kad stavimo ovdje na td koji je zadnji skorz desno colspan potpuno se ignorira jer očito se colspan miče samo prema desno 
+                         i to onoliko mjesta tek toliko da stane i samo tad se tablica progodi, osim ako nije ako u ovo primjeru na zadnjem mjestu desno pa se ignorira 
+                         -->
+          </tr>
+          <tr>
+            <td>Ante</td>
+            <td>lučac</td>
+            <td>prodvač</td>
+            <td>golf2</td>
+          </tr>
+        </tbody>
+      </table>
+      <br />
+
+      <table border="1">
+        <tr>
+          <th></th>
+          <th scope="col">Saturday</th>
+          <!--treba saznati što je scope atribut-->
+          <th scope="col">Sunday</th>
+        </tr>
+        <tr>
+          <th scope="row">Temperature</th>
+          <td>73</td>
+          <td>81</td>
+        </tr>
+      </table>
+      <br />
+
+      <table border="1">
+        <tr>
+          <th>Monday</th>
+          <th>Tuesday</th>
+          <th>Wednesday</th>
+        </tr>
+        <tr>
+          <td colspan="2">Out of Town</td>
+          <!-- znači da će ovaj table cell zausti jedno mjesto desno više nego inače u ovom row,stavi na tri pa vidi što se dogodi-->
+          <td>Back in Town</td>
+          <!-- to znači da treba planirati i staviti jedan td manje nego inače-->
+        </tr>
+      </table>
+      <br />
+
+      <table border="1">
+        <tr>
+          <!-- Row 1 -->
+
+          <th>Sunday</th>
+          <!--dodovanje ovdje rowspan značajno utječe na oblik talbice-->
+        </tr>
+        <tr>
+          <!-- Row 2 -->
+          <th>Morning</th>
+          <td rowspan="2">Work</td>
+          <!--ovo znači da će table row zauzesti jedno mjesto ispod doli u row 2-->
+          <td rowspan="3">Relax</td>
+          <!--čudno se ponaša kad stviš recimo neku ogromnu vrijejdnos za rowspan ili colspan. postoji grancii di pomakne oblik
+                    tablice de se prilgodi da sve stane i kasnije ignorira sve ogormne brojke-->
+        </tr>
+        <tr>
+          <!-- Row 3 -->
+          <th>Afternoon</th>
+          <th>Saturday</th>
+          <!--bez obzira kaoliko mi th ili td dodali oni će se nekau uvalitit u taj row 3. također i kad osobodimo prostor u row1 za rowspan
+                      opet se rowspan kreća samo prema doli,zašto se ovdje prilagode a na prijašnjim primjerima rašire tablicu tko zna-->
+          <th>nešto</th>
+          <td rowspan="2">td ante</td>
+          <!-- samo rowspan 2 radi, i opet se pomaken prema doli-->
+          <td>još jedan td</td>
+          <td>još jedan td2</td>
+        </tr>
+        <tr>
+          <!-- Row 4 -->
+          <th>Evening</th>
+          <td>Dinner</td>
+          <!--ovdje se potpuno ignorirao rowspan na td koji je skorz doli, i nema više mjesta prema doli-->
+        </tr>
+      </table>
+      <br />
+
+      <div class="div-za-form">
+        <input type="text" />
+        <!--input je inline element i slef closing tag, ima ih jako puno skoro tridesetak vrsta, vidi mdn-->
+        <input type="color" />
+        <input type="radio" />
+        <!-- tehnički inputi mogu biti sami, ali se koriste unutar form taga obično, VAŽNO primjeti da je radio buttun samo jedan, moramo imati više inp. tag-->
+        <input type="password" /> <br />
+
+        <br />
+        <form>
+          <!-- form tagovi imaju međuostalim i attribut action gdje će biti neki link i method čiji value će btit neki tip http requesta-->
+          <label>
+            Username: <input type="text" placeholder="username" required />
+            <!-- ovi required je attribut na koje se ne treba postviti value, kao što mu ima goviri sad je obavezno upisao nešt-->
+          </label>
+          <!-- label služi za visual impared, acessibility-->
+          <label for="passAnte">Passworrd;</label>
+          <!-- input možemo staviti unutar label ili na ovaj način povezati tako da for attrebit value stavimo na id od željenog inputa  -->
+          <input id="passAnte" type="password" placeholder="password" />
+          <input type="reset" />
+          <!-- reset input type-->
+          <input type="submit" value="Ovo će biti umjesto Submit" />
+          <!-- kada ovom tipu inputa dodamo value onnda može primjeti koji je text unutar botuna -->
+        </form>
+        <br />
+        <br />
+
+        <form>
+          <input name="Isto" id="ivan" type="radio" />
+          <label for="ivan">Dogs:</label>
+          <input name="Isto" type="radio" id="marinko" />
+          <!-- name attribut služi da se povežu ova dva 'radio' inputa i da se može birati samo jedan -->
+          <label for="markinko">Cats:</label>
+          <br />
+          <p>Biraj boju</p>
+
+          <select name="color">
+            <option value="nekaVal">red</option>
+            <!-- mdn: što predstavlja value u option tagu
+The content of this attribute represents the value to be submitted with the form, should this option be selected. If this attribute is omitted, the value is taken from the text content of the option element.
+              -->
+            <option>yellow</option>
+            <option>oranga</option>
+          </select>
+
+          <textarea name="nešto" id="" cols="20" rows="10">Ovo je neki default text u text area</textarea>
+
+          <button>Ovo je bottun</button>
+          <!--ako je botun na kraju form taga onda će on napravii subimt kad se klinke, ali ako hoćemo mođemo stviti input sa type=submit-->
+        </form>
+      </div>
+    </div>
+    <div class="glavni-div">
+      <div class="sub-div clName-Zatest">
+        <strong> neki sub-div text content </strong>
+        <!--strong bolda, <em></em> tag izazove italic efect, attributes definijcija HTML attributes are special
+         words used inside the opening tag to control the element's behaviour.
+         HTML attributes are a modifier of an HTML element type , <span></span> je generički container ala div, samo je inline> , html se sastoji od html elmenta,<br> služi 
+         kao line break i tekst nakon njega ide u novi red kad je rječ o displayingu unutar element u browseru, <img src="#" alt="A field of yellow sunflowers" /> 
+        images su selfclosing, <video src="myVideo.mp4" width="320" height="240" controls> Video not supported </video>
+      <a href="https://www.wikipedia.org/">This Is A Link To Wikipedia</a>
+      <a href="https://en.wikipedia.org/wiki/Brown_bear" target="_blank">The Brown Bear</a>  target="_blank" otvara u novom tabu u modernim browserima u starim u novom window.
+      <a href="./contact.html">Contact</a>   ovo je relative path, traži file u istom folderu gdje file na kojemu je ovaj anchor tag
+      <a href="https://en.wikipedia.org/wiki/Opuntia" target="_blank"> <img src="#" alt="A red prickly pear fruit"/></a>  ovako se dodaje link slici
+      <li><a href="#media">Media</a></li>  //ovako se linka na neki drugi elment na stranici. traži se element sa id-om media može biti bilo što div,span samo da ima id media
+
+    -->
+
+        <p class="paragraf">ovo je paragraf unutar sub diva</p>
+        <a href="https://javascript.info/" class="link"
+          >Ovo je link na javascript info i dodan ja kasnije i možda ima efekt na ranije primjere</a
+        >
+        <ul class="ulE">
+          <li class="liE" id="id1"></li>
+
+          <li class="liE" id="id2"></li>
+
+          <li class="liE" id="id3" style="color: blue">'jesam li plav '</li>
+        </ul>
+      </div>
+    </div>
+  </body>
+  <script>
+    // document.getElementById('id1').innerHTML='<p> ovo je pargaraf sa innerHtml</p>'
+    // document.getElementById('id1').innerText='<p> ovo je pargaraf sa innerText</p>'
+    // document.getElementById('id1').textContent='<p> ovo je pargaraf sa textContent</p>';
+
+    // let v=document.getElementsByClassName('ulE')  //html colletion
+    //  console.dir(v)
+    // let v=document.getElementsByTagName('li')     //html colletion
+    // console.dir(v)
+    // let v=document.querySelectorAll('.uLE')          //nodelist(ima forEach loop, neki stariji browseri ne podržavaju)
+    // console.dir(v)
+
+    // let v=document.querySelectorAll('.ulE')[0].getElementsByClassName('liE')  //bira samo elemente koji imau klasu liE unutar ovog html elmemnt kojeg smo bila sa qSel
+    // console.dir(v)                                                              // za ovaj test je bio dodan vanjski li koji je izbrisan
+
+    // let a1=document.querySelector('.sub-div').textContent        //ovo nam vrati textContent i nasljednika (znači child,granchild itd.)  diva sa klasom .sub-div.
+    //  console.log(a1)
+
+    //  let a2=document.querySelector('.sub-div').innerText      //također vrati nasljednike,primjeti razliku kako je textConent neuredan jer vrati spacing
+    //  console.log(a2)
+
+    // let a3=document.querySelector('.sub-div').innerHTML       //ovi isto vrati nasljednike, pogledaj što se dogodit kad iskomentiramo na liniji 25,26 textConet i innerTExt
+    //     console.log(a3)
+
+    // let b1=document.getElementsByClassName('liE')
+    // console.log(b1)
+
+    // let b2=document.getElementsByClassName('liE') //korsitili smo getElementsByClassname pa nam vrati htmlColletion iako ima smo jedan property unutar tog arr.like objekta
+    //  console.log(b2)                              //VAŽNO !!! sva tri grupna selektora nam vrate u onom objektu samo node Elements.
+    //  console.dir(b2)                              // ako hoćemo vidjeti text Nodes tak posoji li linebreak u nekom li elementu treba pogledati childNodes. trentuno nema
+    //  console.dir(b2[0].childNodes)        //zato nije radio pristup .childNodes dok nismo [0] dodali.
+
+    // let b3=document.querySelector('.ulE')  //kad biramo isti element sa single selctor tj. querySelectorom
+    //   console.log(b3)
+    //    console.dir(b3)
+    //  console.dir(b3.childNodes)                 // ne brkati stvar. birimao 'ul' elmenent i 'li' elmenti su njegova djeca i text nodes tj.razmak između 'li' elementa.
+    //  console.dir(b3.childNodes[0].nodeName)     //kad bi ranije gore birali childNodes prvog 'li' elmenta nismo ništa našli jer unutar tog li nije bilo linebreaka
+    //  console.dir(b3.childNodes[0].nodeType)
+
+    //  console.log(b3.children)                //pristup ovaj property nam vrati htmlcolletion sa samo node Elementima
+    //  console.log(b3.children[0].nodeName)
+    //  console.log(b3.children[0].nodeType)
+
+    // let kreiraniLi=document.createElement('li')
+    //  kreiraniLi.id='k-li'
+    //  kreiraniLi.textContent='ovo je kreiraniLI gdje će ovaj text tj. cijeli li element kojeg smo kreirala u javscriptu završit'
+    // // console.log(kreiraniLi)
+
+    // let sR1= document.querySelector('.ulE').append(kreiraniLi)  //dok ga nismo ubacili u DOM sa apend ovaj elemet 'kreiraniLi' je postajao samo u konzoli.
+    //   console.dir(sR1)                                                 //ovaj prvi dio koda prije .appedn bira ul element koji će biti parent našem ''kreiranomLi'
+    //ubacuje ga kao zadnji element parent elementa
+
+    // let sR2=document.querySelector('.ulE').appendChild(kreiraniLi)    //razlika .appendChild i append je što appendChild metoda returna node objekt kojeg smo dodali u dom
+    //  console.dir(sR2)                                //dok append vraća undefined. Append prihvaća i Dom Strings objekt uz Node objekt, dok appenChild prihvaća samo node.
+    //također moguće je odjednom dodati više elementa unutar parent elementa, dok appednChild jednog po jednog dodaje.
+
+    // document.querySelector('.ulE').append('neki string')  //očito se misli da se sa appendom može ubaciti ovaj obični string
+    // document.querySelector('.ulE').appendChild('neki string')  //ovo ne radi ovo je error VAŽNO !!!
+
+    // let aS=document.createElement('li')
+    //  aS.textContent='ovo je aS'
+
+    //  let aS2=document.createElement('li')
+    //  aS2.textContent='ovo je aS 2'
+    // document.querySelector('.ulE').append(aS,aS2)                       //ovo normalno radi
+
+    // let aS=document.createElement('li')
+    //  aS.textContent='ovo je aS'
+
+    //  let aS2=document.createElement('li')
+    //  aS2.textContent='ovo je aS 2'
+    // document.querySelector('.ulE').appendChild(aS,aS2)     //VAŽNO, samo se pojavi prvi, ne izbaci error, ali drugog skroz zanemari
+
+    // id1.appendChild(kreiraniLi) // VAŽNO !!! kad neki elemet ima css id postvljen onda se stvori globalna varijabla, naravno ako ne overwritamo tu varijablu možemo je ovako kor.
+    // console.log(id1)
+    // console.dir(id1)
+
+    // let b4=document.createTextNode('Ovo je createTextNode kreirano i biti će ispred kreiraniLi') //parentNode.insertBefore(newNode, referenceNode)
+    // let sR3=document.querySelector('.ulE').insertBefore(b4,kreiraniLi)                         //da bi ovo radili narvno treba odkomentirat kreiraniLi kreaciju i append.
+    //   console.log(sR3)                                                    //returna taj newNode taj element koji smo ubacili prije referenceNode
+
+    //   let n1=document.createElement('p')
+    //    n1.textContent='ovo je prepend'                                      //ubacujemo dvije stvari samo da pokažemo da možemo ubaciti i elements nodes i strings tj. domstrings
+    //    document.querySelector('.ulE').prepend(n1,'neki string u prepend')   //ova metoda ubacuje u parent element  nodes i strings prije svih već postojećih children elementa
+
+    //   let n2=document.createElement('p')
+    //    n2.textContent='ovo je before'           //ovo je još eskperimental tehnologija, safari ne podražava, edge mobile
+    //   document.querySelector('.paragraf').before(n2,'neki string u before prije paragrafa')  //ovo metoda ubacuje te argumente prije ovog elementa koji je prije .before
+
+    //   let n3=document.createElement('p')
+    //    n3.textContent='ovo je after'
+    //   document.querySelector('#id2').after(n3,"neki string u after koji će biti iza drugog 'li' i prije trećeg 'li'")
+
+    //   let n3=document.createElement('p')
+    //    n3.textContent='ovo je replaceWith'                                       //mijenjamo drugi 'li' sa ovim što samo ubacili u argument
+    //   document.querySelector('#id2').replaceWith(n3,"ovo je repacleWith metoda") //ovo je još eskperimental tehnologija, safari ne podražava, edge mobile
+
+    // let r1=document.createElement('span')
+    // r1.textContent='ovo je span'
+    // let p1=document.querySelector('.paragraf')
+    //  document.querySelector('.sub-div').replaceChild(r1,p1)  //parentElem.replaceChild(node, oldChild)
+
+    //   document.querySelector('#id2').remove()   //remove() jednostvno izabremo element koji želimo izbrisati bez da išta ubacujemo
+
+    // let c1=document.querySelector('#id2')
+    //PAZI:
+    // document.querySelector('.ulE').removeChild(c1)  // prije .removeChild je parent element i metoda kao argumet traži node objekt(ne smiješ string ubaciti poput "span").
+    //kompliciranje, jednostvnije je puno remove
+
+    // let t1=document.createTextNode('ovo je textNode')
+    // console.dir(t1)
+
+    // document.querySelector('.sub-div').insertAdjacentText('beforebegin',t1.nodeValue) //nodeValue je property gdje je ovaj text koji samo napisali kad smo stvorili text Node obj.
+
+    // document.querySelector('.sub-div').insertAdjacentText('beforebegin','obični string')  //ovo isto radi
+
+    // let e=document.createElement('p')
+    //  e.textContent='ovo je paragraf'
+    // console.dir(e)
+    // document.querySelector('.sub-div').insertAdjacentElement('beforebegin',e)  //kad pokušamo korisiti instertAdjacentText sa Element node ne dobijemo normalno paragraf i
+    //                                                                             //textconent, ali ne bude error
+
+    // document.querySelector('.sub-div').insertAdjacentHTML('beforebegin',"<div class='da-me-se-vidi-sa-chrome-ins'> ja sam insert adject html</div>")
+
+    // let clone=document.querySelector('.sub-div').cloneNode(false) //odabermo node koji želimo kopirati i onda ako hoćemo kopirati i njegove nasljednike stavimo true
+    // console.log(clone)                                            //samo smo kopirali node i pogledali u konzoli, nismo insertali u html kasnije
+    // console.dir(clone)
+
+    // let a=document.querySelector('.sub-div').className // ovo vrati cijli string onoga što je postvljeno kao vrijendnost class atributa u htmlu.Vrati:  'sub-div clName-Zatest'
+    //   console.dir(a)                                     // bolje je koristiti .classList.contains('imeNekaKlase')-vidi Event delegation travesty kod nego className.
+    //     a=document.querySelector('.sub-div').classList       //dobijemo dom token list, pristupamo kao array tj.arraylike objekt je to
+    //     console.log(a);
+    //     let z48=document.querySelector('.sub-div').classList.contains('clName-Zatest'); //vrati boolean, upišemo ima klase kakva je u domtoken list tj. bez točke.
+    //      console.log(z48);
+
+    // let u99=document.querySelector('.sub-div').classList.toggle('klasa-Mate'); // The toggle() method of the DOMTokenList interface removes a given token from the list
+    //  console.log('ovo će biti boolean',u99)                                    //  and returns false. If token doesn't exist it's added and the function returns true.
+    //  let vidiC=document.querySelector('.sub-div').classList
+    // console.log(vidiC);
+
+    //     // document.querySelector('.sub-div').classList.add('novaKlasa')  // pažnja  metoda add returan undefiend iako postavi novu klasu.Primjeti da je dodajemo bez točke
+    //     // document.querySelector('.novaKlasa').classList.remove('novaKlasa')  //pažnja mogli smo i izabrati .sub-div kao klasu prije classList, samo biramo element sa time, sa
+    // console.dir(a)                                  //classlist pristuapmo toj dom tokne list i onda zovemo metodu te dom token list i ubacimo bez točke klasu koju želimo izbrisati
+
+    // let b=document.querySelector('.link').getAttribute('href')  //ovo nam vrati string vrijednost href atribbuta u našem slučaju link na javascript info
+    // document.querySelector('.link').setAttribute('href', 'https://www.index.hr/')  //setAtrribute vraća undefined. pažnja iako je promjenio link na indexhr tamo u html filu
+    //  console.dir(typeof b)                              //fizički još piše da je link na javascrip info i kad pogledamo što je b sa getAtrribute još uvijek dobijmo javascript info
+    //  b=document.querySelector('.link').getAttribute('href') //VAŽNO: događalo se da getAttribute vrati stari link prije nego što sam ga promjenio sa setAtrribute jer
+    //jer smo c.logali vrijednost "b" varijable dok nismo uportijebli setAtrribute. Zato sad kad getAttribue ispod radi.
+    // console.log(b)
+    //također treba ubaciti kao string za drugi argumet strnicu na koju će ići taj novi link
+    //  let v=document.querySelector('.link')       //kad ovako pogledamo taj anchor tag onda vidimo promjenu u konzoli
+    //     console.log(v.hasAttribute('href'))     //vraća boolean ovisno jel postoji neki attribut na elementu
+    //      v.removeAttribute('href')          //možemo sa removeAttrubute amknitit attribut koji ne želimo
+    //  console.log(v)
+    //   document.querySelector('.link').setAttribute('href', 'https://www.index.hr/')  //pažnja sa setAttribute možemo i dodati bez neki attribut bez da prije postoji attribut
+    //                                                                                   //izbrisao sam u htmlu filu herf i provjerio
+    // let vi=document.querySelector('.link').attributes   //sa ovim možemo vidjei sve attribute nekog elementea, dobijemo neki objek koji se zove NameNodeMap
+    // console.log(vi)
+  </script>
+</html>

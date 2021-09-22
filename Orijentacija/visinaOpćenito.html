@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+      
+
+        html{ 
+        box-sizing:border-box;
+      }
+
+      *,::before,::after{
+      box-sizing: inherit;
+      margin:0;
+      padding:0;
+      } 
+
+
+
+      
+     .prvi{
+        overflow-y: scroll; 
+        overflow-x: scroll;
+        width: 200px;
+        border: solid red 1px;
+        padding: 20px 0;
+    /* Za pojavu vertikalnog scroll bar je ova visina */
+      height: 100px;
+      /* display: inline; */
+      /* display: none; */
+      display: inline-block;
+      margin: 10px;
+      vertical-align: middle;
+        
+      
+     }
+
+     .prvi::after{
+        content: 'ovo je after content,ovo je after content,ovo je after content,ovo je after content,ovo je after content'; 
+        border: 1px solid blue;
+        
+     }   
+
+     .referenca{
+       height: 142px;
+       width: 5px;
+       background-color: blueviolet;
+       display: inline-block;
+       margin: 10px;
+       vertical-align: middle;
+       
+     }
+
+     /* VAŽNO: vidi screenshot u odgovoru:  https://stackoverflow.com/questions/22675126/what-is-offsetheight-clientheight-scrollheight */
+     /* https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetHeight */
+        
+      /*VAŽNO: offsetHeight je visina gornje granice,paddinga gori,contenta, paddinga doli,horizonalnog scrollbar doli i donje granice. Naravno, ne moramo imati
+      deklariranu granicu, ne moramo imait padding, ne moramo imati horizontalog scrollbar, ali ako bilo što od toga imamo onda će se to računati u offsetHegiht. */  
+      
+      /*offsetHeight može se razlikovati u odnosu na height koju dobijemo sa getComputedStyle kada:
+      1.Kada je element na kojemu provjeramo ima dispaly:inline(samo inline, ne inline-block)
+      Zapmati da se ne može na inline element postaviti visina pa i ako stavio height neće se primjeniti. Ipak getComputedStyle bude taj height kojeg smo stavili
+      dok će offsetHeght dati neku random visinu. Vidi video.
+      2.Kada je element na kojemo zovome ima box-sizeing content box.U ovome slučaju ako element ima postvljenu border ili padding onda će offsetHegith
+      biti veći od getComputedStyle height koji će odgovarati veličini content boxa. 
+      VAŽNO: kada je uključen property overflow: scroll i overflow elementa onda će se dogoditi fenomen da se content box smanji za onoliko koliko je velik  scroll bar
+      i onda će getComptedStyle visina i visina content boxa u chrome dev toolsu pokazati tu novu smanjenu visinu content boxa. To je kada imamo uključen box-sizeing: content-box slučaj.
+      Može ti se učiniti da tehnički defincija offsetHeight koja je gori zapisan nije točna međutim dogodit sam samo u slučaju kada je box-sizng: conetent-box i overflow: scroll  da se
+      content box smanji i kada se pojavi scroll bar to se ubroji.
+      note-VAŽNO: pazi kada gledaš što je padding, chrome highlight ubroji i visinu horiznalnog scroll bara što je zbunjuće.
+      note: visina horizntalnog scroll bara je 17px, client height ne računa scroll bar ALI i granice.
+      3.Kada je element ne kojem provjeravmo ima display: none
+      U ovome slučaju offsetHeight će biti 0 dok će getComputedStyle biti ono što samo postavili kao height ili ako nismo postavili height onda će biti auto  */
+     
+      /*offsetHeight nema veze sa offsetParent tj. offsetLeft i offsetTop*/
+      /*VAŽNO: Zbunjuje me ovo da pseudo element ne utječu na vrijednost offsetHeight. Bude dio contenta pa kako content raste raste i vrijednost offsetHeight. Znači regostrora
+      psuedo element u tom smislu. Možda misle da se visina pseudo elementa ne zbroji na totalnu content+padding+border visinu.
+      Također ovo mi nije jasno:  For the document body object, the measurement includes total linear content height instead of the element's CSS height.
+      Floated elements extending below other linear content are ignored.*/
+     
+      /*PAZI-VAŽNO: Kada se iz nekog razloga offsetHeight ne može očitatit sa console.log na nekom elementu (img elmentu obično) provjeri da nije slučaj da se element/slika nije 
+      učitala u trentuku kada je code izvršen*/
+   
+
+     /*VAŽNO:Znači content box height i padding top,bottom je ukupna visina clientHeight minus visina horizontalog scroll bara. 
+      clientHeight ne uključuje visinua granica i (visinu horizontalog scroll bara aka postoji). 
+      Ovaj "minus" je zbunjujući, vidi video zašto.
+     /*clientHeight can be calculated as: CSS height(misle content hegith) + CSS padding -(ovo je minus) height of horizontal scrollbar (if present).
+     VAŽNO: ako je element inline onda će ovo returnati null 
+     VAŽNO: specijalni slučaj, kad gledamo clientHeihgt na body ili html element returna će nam viewport hegiht minus eventualno horizontali scrollbar.
+     When clientHeight is used on the root element (the <html> element), (or on <body> if the document is in quirks mode), the viewport's height (excluding any scrollbar) is returned.  
+     This is a special case of clientHeight.*/
+    /* https://developer.mozilla.org/en-US/docs/Web/API/Element/clientHeight */
+
+     
+     /*VAŽNO: The scrollHeight value is equal to the minimum height the element would require in order to fit all the content in the viewport without using a vertical scrollbar.
+       The height is measured in the same way as clientHeight: it includes the element's padding, but not its border, margin or horizontal scrollbar (if present).
+       Znači trebamo imati vertikali scroll bar da vidimo efekte ovog property tj. da vriejdnost bude veća od clientHeight, ali treba paziti jel ako imamo horizontali scroll bar
+       kao u našem slučaju to se neće računati u visinu, također neće se računati i granice. */
+       /* https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollHeight */
+
+       /*--------------------------------------------------------------------------------------------------------------------------*/
+      
+   
+      /*JAKO VAŽNO: PRVI SLUČAJ: da bi se vidjeli razlika između scrollHeight i offsetHeight(ili mora postojati horizontali scrollbar) mora biti uključena visina na parent elementu 
+      ili recimo mora postojati ogromni flotani element koji je veći od parenta(elemnenta za i na kojem gledamo offsetHeight i scrollHeight) tj. bitna stvar je da se dogodi 
+      vertikalni overflow parent elmenta sa time da(PAZI: ovo je važno) overflow css proprety ne mora biti nužno uključen da bi vidjeli razliku.
+      (naravno, ako želimo scrollbars onda moramo uključiti overflow scroll ili auto, a ako ne želimo to onda obično se radi o stiuacija gdje overflow rješpavamo sa hidden). 
+      Pošto obično ne postavljamo visinua na containere i float rješavamo sa clearfixom onda treba očekivatit da će obično
+      scrollHeight i offsetHeight biti isti. 
+      DRUGI SLUČAJ: je kad se nije dogodio veritaklni overflow parenta nego se dogodi isključivo horizontalni overflow i onda se pojavi horizontalni scroll bar 
+      ako smo uključili overflow property. 
+      U tom slučaju će biti različiti offsetHeight i scrollHeight tj. scrollHefiht će u tom slučaju biti istovjetan clientHeight jer je scrollHeight isto ne računa
+      visnu horizontalnog scrollbara.
+      TRECI SLUČAJ: Također, ako postavimo granicu na element čak i ako ne uključimo overflow property sa kojim ćemo dobiti horiznalni scroll bar onda će opet
+      scrollHeight biti istovijetan clientheight(ako nema vertiklnog overflowa, ne mislim na overflow poprety nego na fenomen tj. overflow)
+      VAŽNO:Da bi vidjeli razliku između offsetHeight i clientHeight mora postjati horizontalni scroll bar ili granica na parent elementu(jer border i veličinu horizontalnog
+      scroll bara client height ne uzima u obzir).
+      JAKO VAŽNO: također da bi se vidjela razlika između clientHeight i scrollHeight treba imati eksplictno definirano visinu ili float koji nije rijšen tj. treba se 
+      dogoditi vertiklani overflow(PAZI:ali ne treba css property overflow biti uključen)
+      VAŽNO: jedina iznimkao toj razlici izmežu clientHeight i scrollHeight je html element. Kada govorimo o glavnome windows scroll baru, taj scroll bar je možemo reći
+      scroll bar html elementa. Ali opet kad pogledamo nema overflowa, druga je stvar što element ne stane u vewport. Nije mi jasno kako to funkconoran html elementu.
+      Uglgavnom clientHeight u tom slučjau sa html odgovora window.innerHeight visini tj. viewport visini.
+      Sa mdn:When clientHeight is used on the root element (the <html> element), (or on <body> if the document is in quirks mode), the viewport's
+       height (excluding any scrollbar(mislim da ovdje misle na horizonalni scrollbar, to nije bilo u mom testu)) is returned.VAŽNO: This is a special case of clientHeight.
+  
+       /*-----------------------------------------------------------------------------------------------------------------------------------------------------------*/
+        
+       /*Javascript info savjetuje da korismo window.clientHeight umjesto window.innerHeight za visinu viewporta jer window.innerHeight računa i eventualni
+       horizontali scrollbar u visinu, a ako nam treba baš dostupna viewport visina, onda je window.clientHeight bolje rješenje.*/
+       /*VAŽNO: ako na nekom elemnetu primjenimo transfrom, recimo zarotiramo element 90deg na z-axsis i trebamo tu efektivnu visinu koja je prakitčki širina prije
+       rotacije onda treba korisiti boundRect.height.*/
+       /*VAŽNO: nekiDomElment.height(i width) imaju samo <img/> elementi.*/ 
+     
+      /*VAŽNO: treba se podsjeitit da kad se jednom generirajuju unutar dom-a ove propreties, da će ostati takve kakve jesu osiam ako ne promjenimo css ili js tj. reloadaom
+      drugačiji code. Eventi poput scrolla ne utječu na iznos ovih propertiesa ovdje.*/
+
+     /*VAŽNO:Prakitčki sve stvari ovdje vrijede i za offsetWidth,clientWidth,scrollWidth itd.*/
+
+
+       /*------------------------------------------------------------------------------------------------------------------------------*/
+/*     
+    .stani{
+      border: red 1px solid;
+    }
+
+    .unutarStani{
+       border: 1px solid blue;
+       height: 1000px;
+       width: 200px;     
+    } */
+
+/*----------------------------IMAM OVU SINTEZU ZAPISANU ISTO U CSS-TESTING FOLDERU U PADDINGMARGIN FILE ALI NEKA STOJI I OVDJE-----------------------*/  
+ 
+/*Kada imamo postavljeni box-sizing: border-box i imamo uključeni height/width na nekom elementu, onda kada dodamo padding ili border smanjititi će se content-box*/
+/*Kada imamo postavljeni box-sizing: border-box onda će height/width biti uvijek maksimalna visina/širina nekog elmenta unutar containera OSIM u slučaju kada
+su padding+border veći od te postavljne height/width. Onda će se zanemarit taj height/widht kojeg samo postavili, content-box će biti 0 dok će efektivna visina/širina
+u container biti padding+border.*/
+/*Kada imamo postavljeni box-sizing: border-box i nemamo uključeno ŠIRINU
+te ako ako dodajemo margin onda će utjecati na prostor u container sa time da će se content box smanjtiti koliko se text može wrapati da element
+zauzme što manje širine nakon što mu dodamo margin. Uvijek samo ograničeni sa širinom radi display:block na containeru gdje je default širina viewport width
+dok kada je riječ o visini kada dodamo veliki gornji i donji margin onda se uvijek element može spuštati koliko god treba, govorim o slučaju
+kada nismo postavili height na neki element koji ima box-sizing:border box i onda dodamo gornji i donji margin pa content-box nema razloga za smanjivanje.
+Kada dodamo gornji i donji padding također se element raste u visini u conteineru kada nismo uključili height i imamo border-box. 
+Kada dodamo desni i lijevi padding onda će se element širiti u containeru kada imamo border-box i nemamo uključenu širinu.
+Praktički kada nismo uključili niti width niti height na box-sizing: border box elementu onda će se element ponašati kao daj je box-sizing: content-box*/
+
+/*Kada imamo postavljeni box-sizing: content-box čak i ako samo postavili height/width onda kada dodamo padding ili border će se element širiti
+efeketivno u containeru.*/
+/*Kada imamo postavljeni box-sizing: content-box i nemamo uključeni overflow: scroll (možemo imati overflow kao owerflow, govorim o poropertyu) onda će
+content-box biti height/width ako je postavljena ili će content-box elementa biti visok/širok koliko je visok/širok sadržaj */
+/*Kada imamo box-sizing: content-box i imamo uključeni property overflow: scroll kada se pojavi scroll bar onda će se dogoditi
+da će se smanjiti content box za 17px kolika je debljina scroll bar na windowsu. To je poseban slučaj.*/
+    
+    
+    </style>
+</head>
+<body>
+       <!-- Namjerno samo spojio ovo(inače bi se text-wrap-o i div bi rastao samo u visni) i ograničio širnu diva tako da nam se pojavi horizontalni scroll bar -->
+
+       <div class="prvi">
+          Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi
+         Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi 
+        Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi 
+         Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi 
+        Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi 
+
+        <!-- /novi prvi/ -->
+        <!-- Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi
+        Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi
+       Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi 
+        Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi 
+       Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi 
+       
+       Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi
+       Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi
+      Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi 
+       Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi 
+      Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi,Prvi,prvi,prvi,prvi  -->
+
+
+  </div>   
+
+  <div class="referenca"></div>
+
+  <!-- ------------------------------------------------------------------------------------------------ -->
+
+ 
+
+  <div class="stani">stani
+    <div class="unutarStani">unutar stani</div>
+  </div>  
+
+  
+   
+<script>
+
+    let prvi=document.querySelector('.prvi')
+      let prviStil=window.getComputedStyle(prvi)
+      console.log('prvi, computed css height',prviStil.height);
+      console.log('prvi, offsetHeight', prvi.offsetHeight);
+      console.log('prvi, clientHeight', prvi.clientHeight);
+      //VAŽNO: treba uključiti height: 100px da se vidi ovaj property tj. treba nam vertikalni scroll bar. 
+      console.log('prvi, scrollHeight',prvi.scrollHeight);
+
+      // console.log("prvi,computed css WIDTH", prviStil.width)
+      // console.log("prvi,offsetWidth WIDTH", prvi.offsetWidth)
+      // console.log("prvi,scrollWidth WIDTH", prvi.scrollWidth)
+      
+
+    //------------------------------------------------------------------------------------------------------------------
+     
+
+    
+
+    
+     
+    
+
+    function stani(e){
+      let staniQuary=document.querySelector('html')
+    let stani=window.getComputedStyle(staniQuary)
+      
+      //NOTE: ostavi ovu funkciju upaljenu i ono ispod nje, samo iskometiraj ovo doli unutar ove funkcije kada je gore "prvi" uključen i uključi
+      //u css height na .prvi
+      //NOTE: ne postoji .height na nekom dom objektu(jedino na img elementima), ovo je getComputedStyle return .height
+      // console.log(' computed css height',stani.height);
+      // console.log(' offSetHeight', staniQuary.offsetHeight);
+      // console.log(' clientHeight', staniQuary.clientHeight);
+      // console.log(' scrollHeight',staniQuary.scrollHeight);
+      // console.log('ovo je window.innerHeight tj. viewport height', window.innerHeight);
+    }
+
+    document.addEventListener('DOMContentLoaded',stani)
+    document.addEventListener('scroll',stani)
+    
+   
+      
+    
+
+ </script>
+</body>
+</html>

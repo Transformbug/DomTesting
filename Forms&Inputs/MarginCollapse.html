@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      html {
+        box-sizing: border-box;
+      }
+
+      *,
+      ::before,
+      ::after {
+        box-sizing: inherit;
+        margin: 0;
+        padding: 0;
+      }
+
+      .elementIznad {
+        /* margin-top: 300px; */
+        border: indigo 2px solid;
+        /* margin-bottom: 15px; */
+      }
+
+      .main {
+        margin-top: 30px;
+        /* margin-top: -15px; */
+        /* margin-top: -30px; */
+        /* margin-bottom: 50px; */
+        /* margin-left: 50px; */
+        width: 200px;
+        /* height: 30px; */
+        background-color: red;
+        /* border: 0.01px transparent solid; */
+        /* padding: 1px; */
+        /* display: flex; */
+        /* overflow: hidden; */
+      }
+
+      .unutarnji {
+        /* border: 0.01px transparent solid; */
+        background-color: blue;
+        height: 100px;
+        width: 30px;
+        margin-top: 350px;
+      }
+
+      .vanjskiDiv {
+        border: hotpink 2px solid;
+        /* margin-top: 500px; */
+      }
+
+      /*
+      -Znači u slučaju parnet-descendant radi se o margin-top parent i margin-top descendat i margin-bottom parent i margin-bottom descendant dok
+      u slučaju adjecent siblinga radi se o margin-top jedna sibling i margin bottom drugi sibling.
+      
+      Kada postavimo margin-TOP na neki od descendent elementa nekog parenta onda ukoliko je taj margin-top veći od margin-TOP parenta(ako margin parenta nije postavljen i bude
+      broj nula isto se računa) onda će se dogoditi margin collapse u smislu da će se samo jedna od tih margina primjeniti tj. primjeniti će se margin descentda(ako
+      se oba dvoje pozitivni margini onda najveći pozitivni, ako se negativni onda najviše negativan tj. najmanji). Jedina iznimka kada neće biti margin collapse u smislu
+      da se se primjeni samo taj jedna margin od descendent elemnta će biti slučaj da je jedan margin negativan,drugi pozivitan gdje će 
+      finalni margin biti pozBroj+(-negBroj). Uz taj margin collapse kada imamo taj slučaj parent i neki od descenteda će se dogoditi da taj margin od descnenta(ili
+      u slučaju negBroj i pozBroj rezltat onog zbroja) postane margin parneta pa parent utječe na svoje sibling umjesto da descendate utječe na prostor unutar parent containera
+      pa vidimo eventalno i pomak cijelog parent elementa sa descentom gdje samo postavili margin.
+    
+      -To možemo spriječit na način da dodamo granicu na parent elementa(parent,ne descneta ako je descedent izravni child),padding na parent,neki tekst koji je fizički 
+      između margina oba dvoje, neki  elementi da granicom koji je fizički između elementa sa marginom, stavimo display grid ili flex na parent 
+      ako je descendent izravni child, stavimo overflow:hidden il auto na parent.
+      stavimo display inline:block na parent ili učinmo neki od elementa bilo parent ili descendant absolute ili float. Ima još opcija, to su najpoznatije.
+      -Ako je slučaj da je riječ o margin-bottom parenta i margin-bottom descentnda onda uz te gore stvari kako se može spriječiti možemo spriječiti ako postavimo height property
+      ili min-height.
+      -Ako bude slučaj da je margin top parenta veći od margin top descenda onda će parent container imati taj svoj margin dok će se ignorirati margin top
+      koji je postvljan na descendent. Ista stvar se dogodi sa bottom margin slučajem.
+   
+
+      Kad je riječ o margin collapse je među adjecent sibling elementaima stvar bude jednostvna. Ako su oba pozivani margin onda će se primjeniti samo jedan 
+      tj. najveći, ako se oba negativni onda će se primjeniti samo jedan i to onaj najnegativnij tj. najmanji. Ako je jedan pozitivna i jedan negativan onda će krajnji
+      margin biti izračunat po formuli pozBroj+(-negBroj).
+
+      -treći glavni slučaj je kada imamo prazni element bez granice,padding,contenta,postavljeni height ili min height. Onda će bottom margin toga elementa
+      i top margin efektivno postanu jedan margin po onoj forumuli već ranije spominjanoj ovisno radi li se o oba pozitivna,negativna ili jedan pozitivni, jedan negativni. 
+
+      
+
+
+
+      */
+    </style>
+  </head>
+  <body>
+    <div class="elementIznad">element iznad</div>
+    <div class="main">
+      <div class="unutarnji"></div>
+    </div>
+    <div class="vanjskiDiv">vanjski div</div>
+    <!-- <div>drugi vanka</div> -->
+  </body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div>vidi konzlu</div>
+</body>
+<script>
+
+//Prva Verzija: 
+ 
+ var a = [33, 103, 3, 726, 200, 984, 198, 764, 9];
+
+function bubbleSort(a) {
+    var swapped;
+    do {
+        swapped = false;
+        for (var i=0; i < a.length-1; i++) {
+            if (a[i] > a[i+1]) {
+                var temp = a[i];
+                a[i] = a[i+1];
+                a[i+1] = temp;
+                swapped = true;
+            }
+        }
+    } while (swapped);
+}
+
+bubbleSort(a);
+console.log(a);
+
+//----------------------------------------------------------------------------------------------------------------------------------
+
+//Druga Verzija:
+// function BubbleSort(arr) {
+//       const sortedArray = Array.from(arr);
+//       let swap;
+//       do {
+//         swap = false;
+//         for (let i = 1; i < sortedArray.length; ++i) {
+//           if (sortedArray[i - 1] > sortedArray[i]) {
+//                //VAŽNO:Ovo je onaj jako čudan re-assigment...
+//             [sortedArray[i], sortedArray[i - 1]] = [sortedArray[i - 1], sortedArray[i]];
+//             swap = true;
+//           }
+//         }
+//       } while (swap)
+//       return sortedArray;
+//     }
+// console.log(BubbleSort([3, 12, 9, 5]));
+
+</script>
+</html>

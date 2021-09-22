@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+     
+      .cont{
+          width: 500px;
+          height: 500px;
+          border: solid red 3px;
+      }
+
+      .nestedDiv{
+        width: 250px;
+        height: 250px;
+        border: solid blue 3px;
+      }
+    
+     </style>
+</head>
+<body>
+    <main class="cont">  Cont
+
+        <div class="nestedDiv">Nested Div</div>
+    </main>
+</body>
+<script>
+
+//VAŽNO: property currentTrager ne može vidjet sa c.logom tj. biti će null. Samo u debuggeru možemo vijdeti stvarno vrijednost....    
+
+/*Znači event.target će uvijek biti onaj doista kliknuti element, dok će currentTarge property kao vrijednost će imait onaj element čija se callback funkcija pokrenula.Znači
+kada se radi bubblinga pokrene klike event na .cont jer smo kliknu na .nstedDiv onda će e.currentTarget event objekta koji je u toj anonomnoj cllbakc funkcija do .cont biti
+.cont. 
+VAŽNO: taj currentTarger proeprty možemo iskorititi da zaustavimo da se izvrši neki code u ancestor elementu radi bublinga bez da isključiimo bubling sa stopEventPropagation.
+Znači pokreni neki code samo ako su e.target===e.currentTaget jednaki. */
+ document.querySelector('.cont').addEventListener('click', function(e){
+     console.log('ovo je target property na event objektu',e.target);
+     console.log ('ovo je currentTarget property na event objektu, ovaj event listener je na .cont', e.currentTarget);
+ })
+
+ document.querySelector('.nestedDiv').addEventListener('click', function(e){
+     console.log('ovo je target property na event objektu', e.target);
+     console.log ('ovo je currentTarget property na event objektu, ovaj event lister je na .nestedDiv',e.currentTarget);
+ })
+
+window.addEventListener('resize', function(){
+    console.log('dogodio se resize')
+})
+</script>
+</html>

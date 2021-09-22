@@ -1,0 +1,38 @@
+/* * {box-sizing: border-box}          vidi u chrome inspecturu što se promjeniti kad ovo stavimo         */
+
+
+thead {
+ color:red
+
+}
+
+thead {
+    color: blue   /* kad je 'name conflict' uzima zadnji selektor, praktički smo overwritali ovdje sa blue */
+} 
+/* 
+body {
+    height: 700 px;
+    width: 700 px;
+    background-image: url(./bullTestZaCss.jpg)} div je 700x700 (tj.container slike ili element) , dok je slika 620x413. */
+
+.boxModel {
+    width: 400px;
+    padding: 150px; /*  padding px predstvlja udaljenost border i content i kad je riječ o širini, sa sve četri strane je ovaj sytax.
+     kad je riječ o širini, udaljenost od lijeve grance do contenta i udaljenost desne grance do contenta se broji širini                    
+     sa sa slikom ilustriamo: margin(40)_borderWidth_paddingWidth(150)_(400px širine kad nema border box unašem slučaju)_paddingWidth(150)_borderWidth(20)_margin(40) 
+                            //zamisli da prolazi linija širine u gornjoj liniji, zbroji brojeve i dobiješ prvu širinu kad nema borderboxa
+                            (što možemo nazvati širinu elmennta(contenet,padding,border)+koliko je taj element uzeo dostupne širne za ostale elemente jer margin nije dio elementa) 
+                            //iako margin nije dio elementa koji se manipulira nekim css selktrom broji su u širini jer moramo znati ukupnu širinu, ako Ukupnu širnue elemanta na nekoj 
+                            liniji zamisliomo neki određeni broj pixela tj. maximalnu dostpunu širinu.
+                            testriat sutra tri kutije u nekom divu, koji ima točno određenu širinu, što se dogodi kad imamo border box i dodamo margin toliko da sve tri 
+                            kutije ne stanu u jednu liniju. Teakođer testirati što se događa kad imamo border box- neka slika overflowa padding,ali nije veća od elementa
+                             tj.širene i visne određene border-boxom
+
+     */
+    
+    border-color: blue;
+    border-width:20px ;
+    border-style:solid ;
+    margin: 60px 40px;
+    background-color: yellow;                       /* primjeti kako ovo property utječe na padding isto nije samo unutar content area koje je odreženo širnom      */
+}    

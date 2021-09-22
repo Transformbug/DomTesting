@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+html{ 
+    box-sizing:border-box;
+    }
+    
+    *,::before,::after{
+    box-sizing: inherit;
+    margin:0;
+    padding:0;
+    } 
+    
+    .cont{
+        border: 1px solid red;
+        padding-top:100px; 
+        width: 600px;
+        height: 400px;
+        display: inline-block;
+    }
+    
+    .klikniMe{
+        border: 5px solid blue;
+        width: 200px;
+        height: 100px;
+        transform: rotateZ(90deg);
+    }
+    
+    h1{
+        display: inline-block;
+        margin-left: 20px;
+    }
+    
+    .desno{
+        width: 300px;
+        height: 200px;
+        border: 5px solid blueviolet;
+        margin-left: 2500px;
+    }
+    
+    .doli{
+        width: 500px;
+        height: 200px;
+        border: 5px solid seagreen;
+        margin: 0 auto ;
+        margin-top: 1000px;
+        
+    }
+
+    
+        </style>
+    </head>
+    <body>
+        <div class="cont">
+            <div class="klikniMe"></div>
+        </div>
+        <h1>Ima jedan element desno i dva doli,boudingClientRect</h1>
+        <div class="desno"></div>
+        <div class="doli"></div>
+    
+    </body>
+    <script>
+        //VAŽNO: vidi slike u ovom folderu(ili bolje desktpu gdje ih možeš i rotirat), dobro ilustrraju koncept dokumenta,viewporta i window.scrollY.
+        //getBoundingClinetRect vraća udaljenost lijeve strane nekog elementa i lijeve strane viewporta, udaljenost gornje strane elementa i 
+        //vrha viewporta, udaljenost desna strane elementa i lijeve(da lijeve)strane veiwporta, udaljenost donje strane elementa i gornje(da gornje) strane
+        //viewporta.Vraća još i x,y propertes, ali oni su uvijek isti kao left,top. Javascript info ima teoretski primjer kada mogu biti različiti.Ne razumijem to.
+        //https://javascript.info/coordinates
+        //VAŽNO: vraća još i width, height. Nakon što primjemo transfrom i zarotiramo element 90deg tj. okrenmo širinu i visinu onda će te vrijednosti
+        //biti jedini način da imamo tu novu efektivnu visinu i širinu elementa.(vidi skorz doli u script tagu)
+        //note: getBoudingClentRect() vraća DOMRect objekt koji sadrži sve te properties(left,right,top,bottom,x,y,width,height)
+        //VAŽNO: znači kako se mijenja pozicijea viewporta  tako će se mijenjati i te getBoundingRect udaljenosti(ili eventalno se element može pomaknuti).
+        //VAŽNO: kada nas zanima pozicija nekog elmeenta unutar dokumenta tj. želimo uzest u obzir da se viewport eventualno pomakao odnoso želimo pageX/Y
+        //ekvivlanet za neki element onda treba samo dodatni boundRect.top+ window.scrollY i boundRect.left window.scrollX
+        //PAZI: često mi se dogodi da zaboravim i da je ova window.scrollX/Y vrijednost varijablina tj. ovisi o tome gdje je scroll bar tj. gdje je viewport
+        //Znači uvijek nam ta kombinacija da ispravnu udaljenost do rubova samo dokumenta, ako jedna rasta, druga će se smanjivati. 
+        //VAŽNO: te vrijednosti mogu biti negativne, ako je vrh nekog elementa iznad vrha viewporta onda će vrijednost boundRect.top biti negativna, ako
+        //je lijeva strana nekog elementa, lijevo u odnosu na lijevu stranu viewporta onda će boundRect.left biti negativna.
+        //Naravno, ista stvar vrijedi i za boundRect.bottom i boundRect.right
+        //VAŽNO: getBoundingClientRect jedini returano brojeve koji nisu cijeli tj. returna recimo 178.65. Ako nam to treba,dobro, ali ako nam treba zakoriženi
+        //broj i korismo negdje boudnRectReturn===nekiZakorženiBroj onda treba paziti.
+
+        //GENERALNA NAPOMENA: kad nas zanima trenutna točka gdje je dno viewporta u odnosu na vrh dokumenta možemo koristiti window.scrollY(ili window.pageYOffset) + window.innerHeight
+        //, ali ako imamo horizonali scrollbar onda je bolje koristiti document.body.clientHeight(ako nismo modficirali body height)
+        //Da nas zanima gdje je vrh viewporta u odnosu na vrh dokumeta onda je to samo window.scrollY
+        //Gdje je sredina viewporata u odnosu na vrh dokumenta je window.scrollY + (window.innerHegight/2)
+    
+    
+        document.querySelector('.desno').addEventListener('click',function(e){
+            console.log('boundRect .kliniMe',document.querySelector('.klikniMe').getBoundingClientRect())  
+            console.log('boundRect .desno',this.getBoundingClientRect())          
+            console.log('boundRect .doli',document.querySelector('.doli').getBoundingClientRect())    
+    
+        })
+    
+    
+    
+        document.querySelector('.doli').addEventListener('click',function(e){
+            console.log('boundRect .kliniMe',document.querySelector('.klikniMe').getBoundingClientRect())  
+            console.log('boundRect .desno',document.querySelector('.desno').getBoundingClientRect())      
+            console.log('boundRect .doli',this.getBoundingClientRect())  
+         
+         
+         
+         
+         //Ovdje sam se malo igrao, transferiamo element .desno na neku koridantu unutar elementa .doli kada kliknemo miš.
+         //Bilo je ključno postavi stvari kako smo postavil unutar let newX jer tako fukcionira traslate, za pomak lijev trebamo imati minus vrijednost.
+         //PAZI: ovo radi samo jedan put tj. klik, kasnije se opet translte refeirana na orignalu pozciju u html i onda dobijemo krive vrijednosti.
+         //Podsjenitk da nas translate miče od te trenute pozcije u html toliko i toliko, ali pod tom trenutm pozcijom se mislie originalna pozcija u html ne
+         //pozcija nakon što se već izvršio ranije translate.
+            let doliBoundRect=this.getBoundingClientRect()
+            let desnoBoundRect=document.querySelector('.desno').getBoundingClientRect()
+    
+            let stariXDesno=desnoBoundRect.left+window.scrollX
+    
+            let newX=e.pageX-stariXDesno 
+            let stariYDesno=desnoBoundRect.top+window.scrollY
+            let newY=e.pageY-stariYDesno
+            // console.log(`translate(${newX}px,${newY}px)`);
+            document.querySelector('.desno').style.transform=`translate(${newX}px,${newY}px)`
+        })
+        
+     
+        document.querySelector('.klikniMe').addEventListener('click',function(e){
+            
+            console.log('boundRect .kliniMe',this.getBoundingClientRect())  
+            console.log('boundRect .desno',document.querySelector('.desno').getBoundingClientRect())    
+            console.log('boundRect .doli',document.querySelector('.doli').getBoundingClientRect())  
+           
+            //VAŽNO: ovo je onaj primjer rotacije i da nam jedino boundRect može dati efekeitne vrijednosti nakon transforma.
+            console.log('boundRect width',this.getBoundingClientRect().width);
+            console.log('boundRect height',this.getBoundingClientRect().height);
+            console.log('offsetWidth', this.offsetWidth);
+            console.log('offsetHegiht', this.offsetHeight);                
+       
+        })
+</script>    
+</html>

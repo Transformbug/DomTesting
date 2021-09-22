@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      html {
+        box-sizing: border-box;
+        font-family: "Nunito", sans-serif;
+      }
+
+      *,
+      ::before,
+      ::after {
+        box-sizing: inherit;
+        margin: 0;
+        padding: 0;
+      }
+
+      .glavniCont {
+        display: flex;
+        justify-content: space-between;
+        margin: 25px 50px;
+      }
+      .prviDiv {
+        border: 5px dotted red;
+        width: 400px;
+        height: 200px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .drugiDiv {
+        border: 5px dotted blue;
+        width: 400px;
+        height: 200px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .elKojiNijeDropZone {
+        border: 3px rgb(71, 255, 111) solid;
+        width: 200px;
+      }
+
+      #prviDraggable {
+        display: block;
+        width: 80px;
+        height: 80px;
+        background-color: rgb(45, 72, 160);
+        color: white;
+        margin-left: 5px;
+      }
+
+      #drugiDraggable {
+        display: block;
+        width: 80px;
+        height: 80px;
+        margin-left: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="glavniCont">
+      <div class="prviDiv drop-zone">
+        ante mate ante
+        <div id="prviDraggable" draggable="true"></div>
+        <img src="./slikaBik.jpg" id="drugiDraggable" draggable="true" />
+      </div>
+      <div class="drugiDiv drop-zone"></div>
+    </div>
+    <div class="elKojiNijeDropZone">
+      Ovaj elment sadrži dragable element, ali nije drop zone.
+      <a id="treciDraggable" draggable="true" href="https:/www.google.com">ovo je neki link</a>
+    </div>
+  </body>
+  <script>
+    const prviDraggable = document.querySelector("#prviDraggable");
+    const drugiDraggable = document.querySelector("#drugiDraggable");
+    const treciDraggable = document.querySelector("#treciDraggable");
+    const itemsDraggable = [prviDraggable, drugiDraggable, treciDraggable];
+    //VAŽNO: primjeti gori atribut draggable="true" na draggable itemima.
+    //note: doli je tekst obješnjenje eventa i glavog popertiy na event objekut kada je rijč o drag&drop
+
+    //VAŽNO: pogledati ova dva videa:
+    // Build a drag and drop list that works on Firefox(yt David Connelly)
+    //How To Build Sortable Drag & Drop With Vanilla Javascript(yt web dev simplified)
+    //VAŽNO: što je najvažnije napravi sortable drag i drop, ali bez korištnja ovih eventva jer
+    //su slabo podražni na mobilim OS.
+
+    const img = new Image();
+    img.src = "./login-button.png";
+
+    //dragstart listner se uvijek dodaje na draggable item
+    itemsDraggable.forEach((curDragItem) => {
+      curDragItem.addEventListener("dragstart", function (e) {
+        console.log("dragstart event");
+        console.log(e.dataTransfer);
+        e.dataTransfer.setData("nekiKey", curDragItem.id);
+        //Uključi i ovo kada budeš vukao sliku da skužiš što ovo radi.
+        //Uglavnom možeš promjeniti izgled slike dok se vuče.
+        // e.dataTransfer.setDragImage(img, 0, 0);
+      });
+    });
+
+    //note:sutra napišit što je setDragImage obavezno
+
+    let dropZonesNodeList = document.querySelectorAll(".drop-zone");
+
+    dropZonesNodeList.forEach((curDropZone) => {
+      curDropZone.addEventListener("dragover", function (e) {
+        console.log("dragover event");
+        e.preventDefault();
+      });
+    });
+
+    dropZonesNodeList.forEach((curDropZone) => {
+      curDropZone.addEventListener("dragleave", function (e) {
+        console.log("dragleave event");
+      });
+    });
+
+    dropZonesNodeList.forEach((curDropZone) => {
+      curDropZone.addEventListener("drop", function (e) {
+        //Bitan za firefox.
+        e.preventDefault();
+        const fileList = e.dataTransfer.files;
+        const idDraggedEl = e.dataTransfer.getData("nekiKey");
+        const droppedElement = document.getElementById(idDraggedEl);
+
+        const draggingFromOs = fileList.length !== 0;
+        if (draggingFromOs) {
+          console.log("alo alo unutar ifa");
+          Array.from(fileList).forEach((curFile) => {
+            curDropZone.append(curFile.name);
+          });
+          return "";
+        }
+
+        //može se dogoditi da je dio teksta highlighte od prije i još stoji i onda počmemo vući draggable item.
+        //Uglavnom želimo da ovaj if statemnt prođe samo ako vučemo isključivo dio highlighted texta iz nekog html elemeta.
+        const highlightTekst = window.getSelection().toString();
+
+        if (droppedElement === null && highlightTekst) {
+          curDropZone.append(window.getSelection().toString());
+          return "";
+        }
+        //Ako se vuče link postavi vrijednost hrefa u dropzone
+        if (droppedElement.nodeName.toLowerCase() === "a") {
+          curDropZone.append(droppedElement.href);
+          return "";
+        }
+        //Ako se vuče slika, dodaj još jedan span koji kaže ovo je slika
+        if (droppedElement.nodeName.toLowerCase() === "img") {
+          const span = document.createElement("span");
+          span.textContent = "Ovo je slika";
+          curDropZone.append(span, droppedElement);
+          return "";
+        }
+        //Ako se vuče obični draggable html elmenet tj. dio DOM-a.
+        curDropZone.appendChild(droppedElement);
+      });
+    });
+
+    //VAŽNO: ova tri eventa doli obično neću korisiti.
+    //Drag event postavljen na draggable item verzija:
+    treciDraggable.addEventListener("drag", function (e) {
+      console.log("drag event");
+    });
+
+    dropZonesNodeList.forEach((curDropZone) => {
+      curDropZone.addEventListener("dragenter", function (e) {
+        //nije nužan e.prventDefault(), ali neka stoji.
+        e.preventDefault();
+        console.log("dragenter event");
+      });
+    });
+
+    dropZonesNodeList.forEach((curDropZone) => {
+      curDropZone.addEventListener("dragend", function (e) {
+        e.preventDefault();
+        console.log("dragend event");
+        console.log("e.dataTransfer.dropEffect", e.dataTransfer.dropEffect);
+        console.log("e.dataTrasfer.types:", e.dataTransfer.types);
+        console.log("dragend e.target", e.target);
+      });
+    });
+
+    //note: korisiti ću termin dropzone(tako se zove css klasa koju sam trgetirao u ovom primjera) za svaki element na kojeg je
+    //postavljen event listner "dropover" gdje unutar njegova callback postoji e.preventDefualt() pa se na taj element može "dropati".
+    //note: tehnnički ne moramo korisiti e.dataTransfer metode da označimo koji DOM element vučemo, ali mislim da je dobra praksa ga korisiti.
+    //note: ne zaboraviti da se mora staviti atribut draggable sa vrijednostću true na neki element da bi se mogao vući.
+    //VAŽNO: slabo su podržani ovi eventi na mobilinm browserima.
+
+    //VAŽNO:Svaki drag event ima dataTransfer property na event objekut.
+    //Od korisnik poperties su samo e.dataTrasfer.files gdje dobijemo fileList svih elementa koje vučemo iz OS.
+    //Na tome objektu su najvažnije metode e.dataTrasfer.setData(nekiString,običnoKlasaIliIdDraggableItema) i e.dataTransfer.getData(nekiString)
+    //Vidjeti će cijelu priču na mdn kako se treba nazvati string koji su ubacuje u prvi argument e.dataTransfer.setData(), ali slobodno možeš
+    //staviti radnom string kao ja. Nije da moraš slati nešto na server pa mora biti ispravan MIME type.
+    //Također spominjali su proprerties e.dataTransfer.effectAllowed što kao izgleda da moeš birati je copy drag&drop ili move itd.
+    //ali je beskoristan jer sam neće ništa odrediti i DataTransfer.dropEffect koji isto ima veze sa njim, ali možeš sve to zanemariti
+    //i korisiti normalno bez da se baviš specifičnim funkconalstoma za koje je lako postaviti vlastiti code.
+
+    //Da bi imali minimalnu drag&drop fukcionalnost ako vučemo neki DOM element treba
+    // -na neki dom element staviti atribut draggable="true"
+    //-na tome elementu gdje je atributa draggable treba slušati "dragstart" event
+    //-zatim u callback dragstart eventa fn. sa e.dataTransfer.setData("stringKeyName","idILiKlasaDraggableElKaoValue")
+    //poslati informaciju koji od draggable elementa trenutno vučemo
+    //-postaviti "dropover" event listener na neki element za koji želimo da bude "dropzone" i tamo u callbacku staviti e.preventDefault()
+    //ili postaviti uvjetni e.preventDefault() ako želimo da samo neki tipovi elementa mogu biti dropani.
+    //-postaviti "drop" event listener na neki element koji je označen kao tzv. dropzone i tamo staviti e.prventDefault() da firefox
+    //ne load automski sliku kao to dropamo ili link
+    //-Nakon toga u toj callback fn. drop eventa sa e.dataTransfer.getData("stringKeyName") saznamo id ill klasu aktivnog draggable itema
+    //i nakon toga ga  biramo sa nekim od dom selektora i nakon toga postaviti code koji će promjeniti DOM i postaviti u "dropzone"
+    //element draggable item.
+
+    //Kada je riječ o drag&dropu highlighted dijela teksta onda nam ne treba dragstart event i samo unutar dropover(ako ne želimo dopustiti da bude ubačen
+    //u dom) ili drop callback fn. provjerimo postoji li draggable item ili je null.
+    //Također, kada vučemo iz operativnog sustava element onda nam isto ne treba "dragstart".
+
+    //-------------------------------------------------------Drag eventi--------------------------------------------------------------------
+
+    //-"dragstart" listener se postavlja na neki element koji imat atribut draggable postavljen na "true". Aktivirati
+    //će se taj callback kada počmemo vući taj item na koji smo postavili "dragstart" event. U tome callbacku ćemo
+    //postaviti id ili klasu sa e.dataTransfer.setData("stringKeyName","idILiKlasaDraggableElKaoValue") tako
+    //da kasnije možemo to izvući
+
+    //"dragleave" event će biti aktiviran u slučajevima kada nismo IZRAVNO više na nekim dropzonom i postvlja se naravno nad dropzone elmentima.
+    //To znači kada počememo vući neki draggable item koji se nalazi unutar dropzone parenta i ako budemo iznad sibiling draggable
+    //itema(čak ako su i sami draggable) onda će se aktivirati dragleave callback.
+    //Ako draggable item nema siblinga onda će se jednostavno akvirati svaki put kada sa dragged itemom izađemo iz nekog dropzone elementa.
+    //Obično ćemo ga korisiti za dodavnje css klasa i treba pazitit na tu sibling situaciju i bilo bi dobro da ako imamo više draggable itema blizu
+    //da svaki ima svoj dropzone parent.
+
+    //-"drag" event se može postaviti na draggable item ili na tzv dropzone elemente. Ako ga postavimo nad dropzone elmemnetima
+    //onda će se aktivirati svakih 5ms čak i ako nismo izravno nad njima sve dok vučemo neki element.
+    //Ako je postavljen kao event listner dropzone elementa onda kada imamo neki draggeble item u elementu koji nije sam dropzone
+    //onda se neće aktivirati kada počememo vući taj draggable item čak i kada dođemo nad samu dropzone.
+    //Ako je postljvna kao event listner nad draggable item onda će se aktivirati svakih 5ms sve dok ne "dropamo" negdje item.
+    //VAŽNO: ne vidim puno korisiti od ovog eventa listenra.
+
+    //-"dragenter" event se aktivira u istom trenutku kada dragable item ili dio teksta koji vučemo bude nad element koji ima
+    //taj dragenter event listener.
+    //Sam dragenter nije dostatan da označi neki element da će biti tzv. dropzone sa svojim e.prventDefault() jer
+    //bi morali točnu u milisekundi pustiti tj. dropati nešto kada se dragenter aktivira.Trabamo koristiti dragover event
+    //koji se aktivara svakih 5ms kada je dragable element ili dio teksta nad nekim elementom koji ima dragover event listener.
+    //Iako mdn kaže da treba na njemu biti također uključen e.preventDeufalt() uz e.prventDefault() na dropover eventu da bi neki
+    //element bio označen kao "dropzone" moji testovi na chrome i firefoxu su pokazli suporton, ali ako se stavi mislim da neće škoditi.
+    //VAŽNO: ne bih prepručio korištenje ovog eventa jer u kombinaciji sa dragleavom(dragleave funkcionlost nije moguće zamijetit ako nam treba)
+    //koji se računa i kad draggable item bude na sibling parenta često stvori probleme i komplikacije pa je dosta na dragoveru postaviti
+    //neki css stil, pa da i kasni 5ms. Također, pošto se "dropover" event aktivra svakih 5ms riješi se automski problme koje "dragleave"
+    //uzrokuje kada nije IZRAVNO na elementu koji ima "dragleave" event listener.Lako ga je zamjeniti.
+    //Koristmo ga obično za dodavanje css klase u trenutku kada je dragged item ili dio tekst nad "dropzone" elementom.
+
+    //-"dragover" event služi da označimo neki element kao dropzone tako da tamo postavimo e.preventDefault() jer default ponašnje je
+    //da neki element ne može biti "dropzone". Akvirati se svakih 5ms dok je draggable item ili dio označenog tekst nad elementom koji
+    //ima dragover event listener. Uz tu metodu e.preventDefault() postoji mogućnost da postavimo ondragover="return false" u html-u
+    //na neki element ako ga želimo označi kao target.
+
+    //-"drop" event služi za stvarne DOM promjene tj dodavanje dragged elemeta ili dijele texta kao childa aktivnog dropzone
+    //elementa tj. efket spušanja elementau u dropzone.
+    //Samo drop event služi za to. Kada pokušamo u dropover callback fn. raditi te DOM promjene vidjeitit ćemo da e.dataTrasfer.getData()
+    //neće raditi iz nekog razloga. Pa iako tehnički možemo forsirati promjenu kada točno znamo koji se element dragga nikad
+    //unutar dragover callbakc fn. ne bi trebali raditi te promjenu unutar DOM-a.
+    //Drop se aktivira kada pustimo miš nad nekim dropzone elementom. Bitno je staviti e.preventDefault() u callbacku jer firefox
+    //automatski loada sliku i link ako je to dragged item inače.
+    //Unutar njega ćemo sa e.dataTransfer.getData("nekiStringKey") izvći id ili klasu elementa koji je dragged.
+
+    //-"dragend" se aktivira najzadnji od svih drag&drop eventa ako je postavljen & samo ako se draggable item ili tekst počeo vući iz element koji
+    //je također "dropzone". Stoga kada vučemo neke fajlove koji nisu draggable item automatski jer su iz windowsa, "dragend" se neće akviriati
+    //U callbacku dragend eventa  e.target  bude draggable item ili dio highlighte teksta čak i kada postavimo sami event listenr
+    //da sluša neki dropzone element odnosno event se akviran nad istim elementom koji sluša "dragstart" Iz toga razloga ne može biti zamjena za drop event.
+    //Aktivira se kada pusitmo miš, ne moramo nužno biti iznad validnog dropzone elemeta.
+    //VAŽNO: ne bih propručio korštenje ovog eventa radi toga što ako vučemo neke vanjske elemente koji nisu draggalbe item i pustimo nad nekim
+    //elementom koji nije dropzone onda nemamo koristit od ovog eventa jer se on aktivira ako se draggelbe item počemo vući iz dropzone elemetna.
+    //U tom slučaju ti widnows elementi će se otvoriti u posebno tabu u browseri. U slučaju da pustimo neki draggable item iznad nečega što nije
+    //dropzone onda se ništa neće dogoditi samo će drag&drop prestati. Znači nema puno koristi od ovog eventa i ako se koristi za micanje css
+    //stila nekog dropzone elementa samo ti može stvoriti problem ako ne raditi jer nisu svi uvjeti zadovljene, a zamjena mu se lako nađe
+    //tj. maknemo css stil koji smo htjeli imati dok imao draggable item nad dropzone dok nismo pustili miš unutar "drop" eventa tj. u trenutku kada pustimo.
+  </script>
+</html>

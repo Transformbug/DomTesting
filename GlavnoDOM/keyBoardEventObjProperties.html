@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+    <input type="text">
+    <p class="prvi"></p>
+    <p class="drugi"></p>
+    <p class="treci"></p>
+    <p class="cetvrti"></p>
+    <p class="peti"></p>
+</body>
+<script>
+ document.querySelector('input').addEventListener('keydown', function(e){
+    
+    // Ovdje je dobar popis:
+    // https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent
+   console.log( e.char) 
+   console.log( e.charCode)
+   console.log(e.keyCode)
+   console.log(e)
+   /*Zastario, niko živ ne korisit, nema više ni svoju mdn stranicu,nema ga uopće kao property na event objekut*/
+   document.querySelector('.prvi').textContent=`Ovo je e.char ${e.char}`
+   /*charCode je zastario, deprecated,koristo se u kombinaijci sa keypress eventom i vraćao je unicode karakter*/
+   document.querySelector('.drugi').textContent=`Ovo je e.charCode ${e.charCode}`
+   /*Ovo vrati string koji predstvlja fizičku tipku. Sad na kojoj tipkovnici i na kojem jeziku, kojem rasporedu točno(jer ima raličitih raspored na istom jeziku) ne
+   znam, ali recimo slovo "č" ne prepozna kao "č".*/
+   document.querySelector('.treci').textContent=`Ovo je e.code ${e.code}`
+   /*Ovo je također depracted. Ovo je jako često koristilo i ovo vrati neki broj, a taj broj korespondira sa nekim karakterom.
+   Tome sličan je bio i keyboardEvent.which tj. e.which koji je također deprecated*/
+   document.querySelector('.cetvrti').textContent=`Ovo je e.keyCode ${e.keyCode}`
+   // Ovo je taj moderni property na koji ćemo se oslanjati i on vraća string. Dobro ga je korisiti u kombinacija sa keycode znači let nekiKey=e.key||e.keyCode radi
+   // starijh browsera. Naravno jedan returan  string drugi broj pa se treba prilgodii i ostatak code tome ovisono jel postoji e.key
+   document.querySelector('.peti').textContent=`Ovo je e.key ${e.key}`
+
+   //Još možemo spomenuti i property e.shiftKey koji vraća bollean ovisno o tome jel se držala tipka shift dok kada se pokrenuo event. Također postoji i
+   // e.repeat koji vraća boolean ovisno o tome jel se event dogodio kada se držala skorz pritisnuta tipka pa se automatski su se upisivala slova
+ })
+
+</script>
+</html>

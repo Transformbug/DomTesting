@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+          .drugi{
+              border: red 5px solid;
+              width: 500px;
+              height: 700px;
+              overflow-y: scroll;
+              margin: 10px 0;
+              position: relative;
+              display: block;
+              margin: 0 auto;
+            }
+
+            .unutarDrugog{
+              border: 1px solid blue;
+              width: 60%;
+              height: 1500px;
+              position: relative;
+            }
+
+            .unutarDrugog li{
+              margin: 13.5px 0;
+              border: chartreuse 1px solid;
+            }
+
+            .mjera{
+              width: 20px;
+              background-color: blueviolet;
+           
+              /* height: 828px;
+              position: absolute;
+              top:0; 
+              left: 0; */
+              
+              position: sticky;
+              height:100px;
+              bottom: 0px;
+              left: 0; 
+            }
+
+            .premjestiAbsoluteNaDnu{
+              transform: translateX(200px);
+            }
+
+         .absoluteNaDnu{
+           background-color: cadetblue ;
+           width: 200px;
+           height: 30px;
+           position: absolute;
+           bottom: 100px;
+           left: 0;
+         }
+
+      
+    </style>
+</head>
+<body>
+    <h1>Ostatak orijentacije</h1>
+    <div class="drugi">Ovo je drugi tekst content,ovo je drugi teks content, 
+
+        <div class="unutarDrugog">
+          <li>1</li>
+          <li>2</li>
+          <li>3</li>
+          <li>4</li>
+          <li>5</li>
+          <li>6</li>
+          <li>7</li>
+          <li>8</li>
+          <li>9</li>
+          <li>10</li>
+          <li>11</li>
+          <li>12</li>
+          <li>13</li>
+          <li>14</li>
+          <li>15</li>
+          <li>16</li>
+          <li>17</li>
+          <li>18</li>
+          <li>19</li>
+          <li>20</li>
+          <div class="absoluteNaDnu">Unutar plavog absolute na dnu</div>
+        </div>
+       
+         <div class="mjera"></div>
+       </div>
+      
+      
+      
+      
+       
+      
+</body>
+<script>
+ 
+ 
+ 
+    
+    
+    document.querySelector('.mjera').addEventListener('click',function(e){
+     
+     
+      console.dir(e) 
+//VAŽNO: da bi vidio ovdje bilo koju vrijednost osim 0 ovdje trebaš smanjiti cijeli browser, ne viewport nego cijeli browser. 
+//The Window.screenY read-only property returns the vertical distance, in CSS pixels, of the top border of the user's browser viewport to the top edge of the screen.
+      console.log(window.screenY)
+//Postoji još i window.screenTop koji je praktički ekvivalnet window.screenY.      
+//VAŽNO: postoji još mouseEvent.screenY, predstljva udaljenost miša u trentuka kad je neki event aktiviran i samoga vrha fizičkog ekrana.
+
+//Naravno postoji još window.screenX, window.screenLeft i mouseEvent.screenX, koji su ista stvar samo za širinu.
+   
+//  VAŽNO: ovaj property clientTop će uvijek biti ekvivalent computed css property border-top-width. Odredi border-top: 10px solid red, pa ćeš vidjeti da si postavio
+//  zapravo 'širinu' granice tj. property border-top-width: 10px;
+//  VAŽNO: znači clientTop je 'visina' tj. širina gornje granice. 
+
+//VAŽNO: clientLeft je slična stvar kao i clientTop smo na lijevoj strani. Radi se o širini granice na lijevog strani nekog elementa. 
+//Ako je css directio right to left(arapski ili hebrejski) onda će clientLeft uključivai i vertiklani scroll bar koji će se tada tamo pojeviti kad bude overflow scroll
+//ili auto. 
+//https://javascript.info/size-and-scroll
+
+
+
+//VAŽNO: ova elementFromPoint() metoda returna onaj element koji je html most nested tj. koji je bi na z-axsisi trebao biti na vrhu i prikazan na nekoj koridnatnoj točki u 
+//odnosu na viewport. Podsjenitk je da je ovaj documentElment praktički html.
+// let centerX = document.documentElement.clientWidth / 2;
+// let centerY = document.documentElement.clientHeight / 2;
+// let elem = document.elementFromPoint(centerX, centerY);
+// console.log(elem);
+// VAŽNO:The method document.elementFromPoint(x,y) only works if (x,y) are inside the visible area.
+
+//VAŽNO:Ovo je ekspermintalna metoda koja returna array od svih nested elementata na nekoj točki sa time da ona na z-axsis vrhu bude pravu u array , korisna ako postoje 
+//overlappani elementi(recimo pomoću translate ili margin).
+//Metoda je ekspremintalna, a u DOM bookmarksima sam sačuvao post gdje je navedeno kako saznati tu infromaicju bez ove metoda.
+//Ovdje ne vraća li, zato jer postoji razmka među tim elementima i očito sami centar viewporta nije tamo gdje je li.
+// const elem = document.elementsFromPoint(centerX, centerY);
+// console.dir(elem)
+         
+    
+
+     })
+
+</script>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div>vidi konzolu</div>
+  </body>
+  <script>
+    //Math.random returna neki broj između 0 i jedan(uključujući nula)
+    // let mRandom=Math.random()
+    // console.log(mRandom)
+
+    //Ovo će uvijek vratiti nula jer 0.05neštoitd. ili 0.9neštoitd *1 nikad neće biti 1 ili veće i onda Math.Floor to samo spusti.
+    //Znači Math floor uvijek zaokriši na 'integer' tako da spusti neki decimali broj.
+    // console.log(Math.floor(Math.random()*1))
+    // Naravno, ovo biti 1 ako ovaj Math random returna 0.5 minimalno(0.5*2=1).
+    // console.log(Math.floor(Math.random()*2))
+
+    //Ovo znači da će 1 biti minimlana random vrijednost, dok će 10 biti maksimalna. Kad Math.random returna recimo 0.05nešto rezutirati da monožnje sa 10 vrati 0.5nešto naravno
+    //i onda se to zbroji sa 1 i onda sve to Math.floor spusti na 1.
+    // console.log(Math.floor(Math.random() * 10)+ 1)
+
+    //------------------------------------------------------------------------------------------
+
+    //Math.round()
+    // console.log(Math.round(5.95), Math.round(5.5), Math.round(5.05));
+    // expected output: 6 6 5
+
+    //------------------------------------------------------------------------------------------
+
+    //Math.max()
+    // console.log(Math.max(1, 3, 2));
+    // expected output: 3
+
+    // console.log(Math.max(-1, -3, -2));
+    // expected output: -1
+
+    // var array1 = [1, 3, 2];
+
+    // console.log(Math.max(...array1));
+    // expected output: 3
+
+    //------------------------------------------------------------------------------------------
+    // Math.min()
+    // console.log(Math.min(2, 3, 1));
+    // // expected output: 1
+
+    // console.log(Math.min(-2, -3, -1));
+    // // expected output: -3
+
+    // var array1 = [2, 3, 1];
+
+    // console.log(Math.min(...array1));
+    // // expected output: 1
+
+    //------------------------------------------------------------------------------------------
+    //Math.abs()
+    // function difference(a, b) {
+    //   return Math.abs(a - b);
+    // }
+
+    // console.log(difference(3, 5));
+    // // expected output: 2
+
+    // console.log(difference(5, 3));
+    // // expected output: 2
+
+    // console.log(difference(1.23456, 7.89012));
+
+    //-----------------------------------------------------------------------------------------------------
+    //Math.pow()
+    //Znači ova metoda služi za m^n gdje je prvi argumnet 'm' dok je drugi argumnet 'n'
+    // Math.pow(5,3)//125 jer je 5*5*5=125
+    // Math.pow(5,2)//25  jer je 5*5=25
+    //-----------------------------------------------------------------------------------------------------
+    //Masovno pretvaranja array string brojava u brojave(nema točno veze sa Math objektom,ali...)
+    // let brojevi3='5 18 -30 40 20'.split(' ').map(Number)
+    //------------------------------------------------------------------------------------------------------
+    //Funckija kada želimo dobiti random cijeli broj u rasponu kojeg mi definiramo:
+
+    // function getRandomInt(min, max) {
+    //     min = Math.ceil(min);
+    //     max = Math.floor(max);
+    //     return Math.floor(Math.random() * (max - min + 1)) + min;
+    // }
+
+    //--------------------------------------------------------------------------------------------
+    //Funkaicja kada želimo izraziti korisinku veličnu nekog fila, što bude veći to će se birati jača vrijednost
+
+    //Slabost funckije je ako se unese recimo 0.1 return će biti undefine nešto, treba hedlat još taj case(manji od 1,a nije točno nula)
+    //i slučaj ako bytes nije broj.
+    //VAŽNO: službeno bi 1KB treba biti veći tisuću puta ne 1024 od jednog bayta po međunardnom ižinjeskom standardnu
+    //, ali u praksi gotovo svi koriste ovih 1024, pa je tako gigabyt nije 1000mb nego 1024mb.
+    // function formatBytes(bytes, decimals = 2) {
+    //     if (bytes === 0) return "0 Bytes";
+
+    //     const k = 1024;
+    //     const dm = decimals < 0 ? 0 : decimals;
+    //     const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+
+    //     const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+    //     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
+    //   }
+  </script>
+</html>

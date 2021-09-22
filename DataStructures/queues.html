@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+
+//  class Node {
+//   constructor(value) {
+//     this.value = value;
+//     this.next = null;
+//   }
+// }
+
+// class Queue {
+//   constructor(){
+//     this.first = null;
+//     this.last = null;
+//     this.length = 0;
+//   }
+//   peek() {
+//     return this.first;
+//   }
+//   enqueue(value){
+//     const newNode = new Node(value);
+//     if (this.length === 0) {
+//       this.first = newNode;
+//       this.last = newNode;
+//     } else {
+//       //ovdje ova linija mijenja ujedno i objekt koji je by reference unutar this.first(u svakoj iteraticje se mijenje refrenca jer se overwirata u liniji ispod)
+//       this.last.next = newNode;
+//       this.last = newNode;
+//       console.log(this.first.next)
+//       console.log(this.last)
+//     }
+//     this.length++;
+//     return this;
+//   }
+//   dequeue(){
+//     if (!this.first) {
+//       return null;
+//     }
+//     //ovo je za slučja da je samo jedan item unutar queue
+//     if (this.first === this.last) {
+//       this.last = null;
+//     }
+
+//     this.first = this.first.next;
+//     this.length--;
+//     return this;
+//   }
+//   //isEmpty;
+// }
+
+// const myQueue = new Queue();
+// myQueue.peek();
+// myQueue.enqueue('Joy');
+// myQueue.enqueue('Matt');
+// myQueue.enqueue('Pavel');
+
+
+//implement queue using stack solution:
+
+class CrazyQueue {
+  constructor() {
+    this.first = [];
+    this.last = [];
+  }
+
+  enqueue(value) {
+    const length = this.first.length;
+    //Ovaj loop se pokrene jedino ako se metoda dequee bila pokrenila ranije, jedan korak ispred ovoga enqueue. Jer deque ubacije elemente unutar this.first, a ovaj
+    //loop će ih izbaciti i staviti unutar this.last u nešto drugačijim rasporedu. Zovi jedan po jedan poziv i u chrome debugguer vidid što se događa.
+    for (let i = 0; i < length; i++) {
+      this.last.push(this.first.pop());
+    }
+    this.last.push(value);
+    return this;
+  }
+
+  dequeue() {
+    const length = this.last.length;
+    for (let i = 0; i < length; i++) {
+      this.first.push(this.last.pop());
+    }
+    this.first.pop();
+    return this;
+  }
+  peek() {
+    if (this.last.length > 0) {
+      return this.last[0];
+    }
+    return this.first[this.first.length - 1];
+  }
+}
+
+const myQueue = new CrazyQueue();
+myQueue.peek();
+myQueue.enqueue('Joy');
+myQueue.enqueue('Matt');
+myQueue.enqueue('Pavel');
+myQueue.peek();
+myQueue.dequeue();
+myQueue.enqueue('Andrija');
+
+
+
+</script>
+</html>

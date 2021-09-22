@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    vidi kontolu
+</body>
+<script>
+// let arrayPresidents=[{name:'Clinton', presidentialNumber: 42, party: 'Democrat', economicData: [{unemploymentRate: '6.5%',gdpGrowth: '2.8%' ,inflation:'2.7%', year:1993},{unemploymentRate: '5.5%',gdpGrowth: '4.0%' ,inflation:'2.7%', year:1994},
+// {unemploymentRate: '5.6%',gdpGrowth: '2.7%' ,inflation:'2.5%', year:1995},
+// {unemploymentRate: '5.4%',gdpGrowth: '3.8%' ,inflation:'3.3%', year:1996},{unemploymentRate: '4.7%',gdpGrowth: '4.4%' ,inflation:'1.7%', year:1997},
+// {unemploymentRate: '4.4%',gdpGrowth: '4.5%' ,inflation:'1.6%', year:1998},{unemploymentRate: '4.0%',gdpGrowth: '4.8%' ,inflation:'2.7%', year:1999},
+// {unemploymentRate: '3.9%',gdpGrowth: '4.1%' ,inflation:'3.4%', year:2000}] },
+// {name:'Trump', presidentialNumber: 45, party:'Republican',economicData:[{unemploymentRate: '4.1%',gdpGrowth: '2.2%' ,inflation:'2.1%', year:2017},{unemploymentRate: '3.9%',gdpGrowth: '2.9%' ,inflation:'1.9%', year:2018},
+// {unemploymentRate: '0.0%',gdpGrowth: '0.0%' ,inflation:'0.0%', year:2019},{unemploymentRate: '0.0%',gdpGrowth: '0.0%' ,inflation:'0.0%', year:2020}]},
+// {name:'Regan', presidentialNumber: 40, party:'Republican',economicData: [{unemploymentRate: '8.5%',gdpGrowth: '2.5%' ,inflation:'8.9%', year:1981},{unemploymentRate: '10.8%',gdpGrowth: '-1.8%' ,inflation:'3.8%', year:1982},
+// {unemploymentRate: '8.3%',gdpGrowth: '4.6%' ,inflation:'3.8%', year:1983},{unemploymentRate: '7.3%',gdpGrowth: '7.2%' ,inflation:'3.9%', year:1984},
+// {unemploymentRate: '7.0%',gdpGrowth: '4.2%' ,inflation:'3.8%', year:1985},{unemploymentRate: '6.6%',gdpGrowth: '3.5%' ,inflation:'1.1%', year:1986},
+// {unemploymentRate: '5.7%',gdpGrowth: '3.5%' ,inflation:'4.4%', year:1987},{unemploymentRate: '5.3%',gdpGrowth: '4.2%' ,inflation:'4.4%', year:1988}]},
+// {name:'Bush Jr', presidentialNumber: 43, party:'Republican', economicData: [{unemploymentRate: '5.7%',gdpGrowth: '1.0%' ,inflation:'1.6%', year:2001},
+// {unemploymentRate: '6.0%',gdpGrowth: '1.7%' ,inflation:'2.4%', year:2002},
+// {unemploymentRate: '5.7%',gdpGrowth: '2.9%' ,inflation:'1.9%', year:2003},{unemploymentRate: '5.4%',gdpGrowth: '3.8%' ,inflation:'3.3%', year:2004},
+// {unemploymentRate: '4.9%',gdpGrowth: '3.5%' ,inflation:'3.4%', year:2005}, {unemploymentRate: '4.4%',gdpGrowth: '2.9%' ,inflation:'2.5%', year:2006},
+// {unemploymentRate: '5.0%',gdpGrowth: '1.9%' ,inflation:'4.1%', year:2007},
+// {unemploymentRate: '7.3%',gdpGrowth: '-0.1%' ,inflation:'0.1%', year:2008}]},
+// {name:'Bush Sr', presidentialNumber: 41, party:'Republican', economicData: [{unemploymentRate: '5.4%',gdpGrowth: '3.7%' ,inflation:'4.6%', year:1989},{unemploymentRate: '6.3%',gdpGrowth: '1.9%' ,inflation:'6.1%', year:1990},
+// {unemploymentRate: '7.3%',gdpGrowth: '-0.1%' ,inflation:'3.1%', year:1991},{unemploymentRate: '7.4%',gdpGrowth: '3.5%' ,inflation:'2.9%', year:1992}]},
+// {name:'Carter', presidentialNumber: 39, party: 'Democrat', economicData: [{unemploymentRate: '6.4%',gdpGrowth: '4.6%' ,inflation:'6.7%', year:1977},{unemploymentRate: '6.0%',gdpGrowth: '5.5%' ,inflation:'9%', year:1978},
+// {unemploymentRate: '6.0%',gdpGrowth: '3.2%' ,inflation:'13.3%', year:1979},{unemploymentRate: '7.2%',gdpGrowth: '-0.3%' ,inflation:'12.5%', year:1980}
+// ]},{name:'Obama', presidentialNumber: 44, party: 'Democrat', economicData: [{unemploymentRate: '6.4%',gdpGrowth: '4.6%' ,inflation:'6.7%', year:1977},{unemploymentRate: '6.0%',gdpGrowth: '5.5%' ,inflation:'9%', year:1978},
+// {unemploymentRate: '6.0%',gdpGrowth: '3.2%' ,inflation:'13.3%', year:1979},{unemploymentRate: '7.2%',gdpGrowth: '-0.3%' ,inflation:'12.5%', year:1980}
+// ]}]
+
+// let highestAvgGdpGrowthPresSorted=arrayPresidents.map(function(presidentObj){
+//      let sum=presidentObj.economicData.map(obj=> obj.gdpGrowth).join(' ').replace(/%/g,'').split(' ').map(Number).reduce((acc,cur)=>acc+cur)
+//      let curPresAverageGdpG=sum/presidentObj.economicData.length 
+//      return {
+//          name: presidentObj.name,
+//          avgGdpG: curPresAverageGdpG
+//      }
+//     }).sort((a,b)=>b.avgGdpG-a.avgGdpG)
+
+//     console.log(highestAvgGdpGrowthPresSorted)
+
+//---------------------------------------------------------------------------------------
+//moje rješenje, utter mess. 
+
+// function validParentheses(parens){
+//   if(parens.length===0){return true}
+//    let trimed=parens.trim()
+//    let left=trimed.match(/\(/g)
+//    let right=trimed.match(/\)/g)
+//    if(left===null || right===null) return false
+//    if(left.length!==right.length)return false
+//    let first=trimed.charAt(0)
+//    if(first !==left[0]) return false;
+
+//    let firstCount=0;
+//    let secondCount=0
+
+//    let sequenceEnd=false
+//    let sequences=[]
+//    const finalSequencesArrays = [];
+//    let finalOuput=true;
+  
+//   let j = 0
+//     while (j < sequences.length) {
+//     chunks.push(arr.slice(i, i += 4));
+//   }
+
+   
+   
+//    trimed.split('').forEach(function(cur,index,arr){
+//        if(firstCount<secondCount){
+//          finalOuput=false
+//        }
+        
+//         if (cur===first){
+        
+//         if(sequenceEnd){
+//           firstCount!==secondCount ? sequences.push(firstCount,secondCount): ''
+            
+//             sequenceEnd=false
+//          }
+//       firstCount++  
+//     }else if(cur!==first){
+//          secondCount++
+//         sequenceEnd=true 
+//           }  
+      
+      
+//       if((index===arr.length-1) && sequenceEnd){
+//         sequences.push(firstCount,secondCount)
+//         }
+//       })
+    
+    
+    
+  
+    
+//     if(finalOuput){
+//       return  (finalSequencesArrays.every(function(curArr){
+//         return curArr[0]===curArr[3] && curArr[1]===curArr[2]
+//     }))
+//     }else{
+//       return false
+//     }
+   
+// }
+
+// validParentheses('(()())')
+// validParentheses('())(')
+// validParentheses('(()()))(')
+// validParentheses('())(()')
+
+
+//Nije ovo službeno najbolje rješenje ostalih korisnka,ali meni je najbolje. Primjenjivo je i na ostale zagrade,ako promjenimo onaj hardcode string te je ujedno primjeni na bilo
+//koji niz gdje imamo jedan sequence aNečega=2 ,bNečega=1, gdje u idućem sequence treba aNečega=1 te bNečega=2 tj. svaka dva sequence aNečega i bNečega mora biti jednako.
+//Također automatski rješava tj. returan false ako unutar nečega(našem slučaju stringa) nema jednako aNečega i bNečega, te rješava slučaj gdje bNečega ne smije biti ispred aNečega
+//na samom početku [zagrada ')' ne smije biti na samom početku stringa]
+//imaon video o ovom snimljen
+
+
+// function validParentheses(parens){
+//   var n = 0;
+//   for (var i = 0; i < parens.length; i++) {
+//     if (parens[i] === '(') n++;
+//     if (parens[i] === ')') n--;
+//     if (n < 0) return false;
+//   }
+  
+//   return n === 0;
+// }
+
+//-----------------------------------------------------------------------------------------------------------------------
+//U ovom zadatku je bio cilj provjerit može li se od karaktera u string1 evenutalno kreirati str2. Znači nije trebalo ništa ponovno rasporedti u str1 nego
+//ja samo trebalo utvrditi da u string1 postoje sve slova koja postoje unutar str2 te je trebalo provjerti jel ima dovoljno tih slova koja postoje unutar str1 te koja postoje u str2
+//da se može eventaulo re-klreirati str2. Mislim na slučaj poput ovoga doli gdje untuar str1 postoje sva slova kao i unutar str2, ali ne postoji dva puta slova 'a' kao u str2 pa
+//će biti false.
+
+// function scramble(str1, str2) {
+
+// let str1Splited=str1.split('')
+// let str2Splited=str2.split('')
+
+// //Ova tu funkcija filtrira sve duple karaktere u str2. Trebamo sve karakter iz str2 i onda treba provjerti jel u str1 ima dovoljno karaktera da re-kreira str2.
+// let chars=str2Splited.filter(function (cur,index,arr){
+//    if(index===0) return true;
+//     return  cur !==arr[index-1] && cur !==arr[0]
+// }) 
+
+// return chars.every(function(curChar){
+//     //Kad treba izbrojit koliko ima nečega unutar array onda možemo na ovaj način.
+//     let charCountStr1Splited=0
+//     for(let i=0; i<str1Splited.length; i++){
+//         curChar===str1Splited[i] ? charCountStr1Splited++: ''
+//       } 
+//    let charCountStr2Splited=0
+//    for(let i=0; i<str2Splited.length; i++){
+//         curChar===str2Splited[i] ? charCountStr2Splited++: ''
+//       } 
+//       //Veće ili jedanako jer u str1 može biti karaktera viška koji ujedno postoje u str2. Ali to nam ne smeta.
+//     return   charCountStr1Splited >= charCountStr2Splited     
+
+// })
+
+// }
+
+// scramble('scriptjavxxx','javascript')
+
+//--------------------------------------------------------------------------------------------------------------------------------
+//VAŽNO: zašto ovo ne radi iako je duri case točan, ovo napsiano kao if steamtnet radi.
+// function formatDuration (seconds) {
+// let only={seconds:0,minutes:0, hour:0}
+//    switch(seconds){
+//        case seconds <60:
+//      only.seconds=seconds;
+//      break;
+//        case (seconds < 3600) && (seconds >=60) :
+//       only.minutes=seconds;
+//      break;
+//      default: 
+//       only.hour=seconds  
+//   }
+//   console.log(only)  
+// }
+// formatDuration(60)
+
+//----------------------------------------------------------------------------------
+//ovdje je bio cilj izbaciti iz stringa duplicate slova. Autro je htio da se 'a' i 'A' računaju kao duplo slovo.Zato služi onaj doli to lowerCase().
+//Inače bi brojli koliko array ima slova 'a', te koliko ima slova 'b'.
+// function duplicateCount(text){
+//    if(text==='') return 0;
+//    let regEx=/[a-z0-9]/gi
+//    let arrMatch=text.match(regEx)
+//    let counts={}
+//    //VAŽNO: ovo je odličan način brojenja duplikata unutar array, ali se oslanje da su unutar array strings tj. valid objekt key names. Eventualo za slučajeve koji nisu
+// //string bi mogli postaviti logku gdje pretvaramo u string.
+//    arrMatch.forEach(cur=>counts[cur.toLowerCase()]=(counts[cur.toLowerCase()]||0)+1)
+//    let total=0;
+//    for (cur in counts){
+//        counts[cur]>1? total++: ''
+//    }
+//    return total
+// }
+//-----------------------------------------------------------------------------------------------------------------------------------
+//Ovaj zadatak nism uspio riješit kako je autor zamislio, ali ovo odlično radi kada želimo spijit arrays na naičin da ide prvi element u prvoj array,prvi elment u drugog array onda
+//drugi element u prvoj array, drugi elemnt u drugoj array. Podsjetnik da je splice durgi argument deleteCount, pa ovdje nitša ne brišemo.
+// let arr1=[1, 2, 3]
+// let arr2=["c", "d", "e"]
+
+// let where=1
+// arr2.forEach(function(cur,index){ 
+//  arr1.splice(where,0,cur)
+//  where+=2
+// })
+
+// console.log(arr1)
+
+//--------------------------------------------------------------
+//Ovdje je bio cilj podjli string na paraove od dva slova i ako ukupni string nije paran broj ond dodati '_'.
+//Ovdje je zanimljivo korištenje loopa koji ne ide standardno i++, nego i+=2.Znači u prvoj iteraciji loopa i=0, zatim, i=2, zatim i=4 itd.
+// function solution(str){
+//    let arrPairs=[]
+//    for(let i=0; i<str.length; i+=2){
+//       arrPairs.push(str.substring(i,i+2))
+//   }
+//   let finalOutput=arrPairs.map(function(cur){
+//     if(cur.length===1){
+//        return `${cur}_`
+//   }else{
+//      return cur
+//  }
+//  })
+//  return finalOutput
+// }
+
+//-------------------------------------------------------------
+//Ja sam krivo razumio zadatak očito. Mislo sam da treba poredati riječi kako su bile u originalnom inputu, nakon što im stavimo  veliko solovo i odvoijimo ih.
+//Ali bilo je korisno ovo sve napisati. Svaki exec() retrun onaj array gdje je match i gdje imao početni index gdje je našao match. Znači kada exec() nađe 'pizza' kreirat će se novi
+//onaj 'match objekt' gdje će svaka nova 'pizza' ima svoj index naravno. Naravno treba više puta zvati exec() ako hoćemo dobiti match na novom indexu(te reeg mora imati g flag) i zato
+//mi služi while loop unutar for loopa. PAZI: kada imamo fn.call kao uvjet unutar while condtiona i isti fn. call unutar whille loop {} onda će se dogodi infinte loop.
+// function getOrder(input) {
+//  let words=[]
+//  let regExArray=[/burger/g,/fries/g,/chicken/g,/pizza/g,/sandwich/g,/onionrings/g,/milkshake/g,/coke/g]
+//  let execRet=true 
+
+//   for(let i=0; i<regExArray.length; i++){
+//        while(execRet!==null){
+//           execRet=regExArray[i].exec(input)
+//           words.push(execRet)
+//          }
+//       execRet=true  
+//         }
+//   let finalOuput=words.filter(cur=> cur!==null).sort((a,b)=> a.index-b.index).map(cur=>cur[0].charAt(0).toUpperCase()+ cur[0].slice(1)).join(' ')
+//    return finalOuput
+
+// }
+
+// let a=getOrder("milkshakepizzachickenfriescokeburgerpizzasandwichmilkshakepizza")
+
+
+//...................
+//ovo je sad pravo rješenje. Kad sam pogledao rjšenja ostalih krosinka sjetio sam se da sam mogao ovaj regEx napisao kao /burger|fries|chicken itd./g
+//Onda bi ne bi trebao ovaj for loop. 
+// function getOrder(input) {
+//  let words=[]
+//  let regExArray=[/burger/g,/fries/g,/chicken/g,/pizza/g,/sandwich/g,/onionrings/g,/milkshake/g,/coke/g]
+//  let order={burger:0,fries:1,chicken:2,pizza:3,sandwich:4,onionrings:5,milkshake:6,coke:7}
+//  let execRet=true 
+
+//   for(let i=0; i<regExArray.length; i++){
+//        while(execRet!==null){
+//           execRet=regExArray[i].exec(input)
+//           words.push(execRet)
+//          }
+//       execRet=true  
+//         }
+//   let finalOuput=words.filter(cur=> cur!==null).map(function (cur){
+//           return{
+//              nameString: cur[0], 
+//              forSort:  order[cur[0]]
+//           }  
+//   }).sort((a,b)=>a.forSort-b.forSort).map(cur=>cur.nameString.charAt(0).toUpperCase()+ cur.nameString.slice(1)).join(' ')
+//   return finalOuput 
+
+// }
+
+// let a=getOrder("milkshakepizzachickenfriescokeburgerpizzasandwichmilkshakepizza")
+
+//--------------------------------------------------------------------------------------------------------------------------------------------
+//Ovo mi je prošlo sve testove, ali radi nekog čudno razloga nije radilo na actual attempt. Ovdje je bio cilj returan array gdje je prvi item u array slovo koje se najviše
+//uzastopce ponavljalo i broj ponvljanja kao drugi item u array. Također ako se dva slove jednako uzastopce ponvaljaju onda treba retruna prvo slovo što ova logika napravi.
+//VAŽNO: ovo doli logiku gdje je temp možemo kositit bilo kad kad nas zanima saznati koliko se nešto najviše ponavljalo u nekom nizu.
+// function longestRepetition(s) {
+//     if(s==='') return["", 0];
+//    let charsSet= new Set(s.split(''))
+//    let chars=[...charsSet].reduce(function(acc,cur,index,arr){
+//         acc[cur]=0
+//         return acc
+// },{})
+
+// let temp=0
+//  for(let i=0; i<s.length; i++){
+//       let curLetter=s[i]
+//       let lastLetter=s[i-1]
+//       if(curLetter!==lastLetter) temp=0;
+//          temp++
+//         temp>chars[curLetter]? chars[curLetter]=temp: ''
+//       }
+//  return Object.entries(chars).sort((a,b)=>b[1]-a[1])[0]
+// }
+
+
+// let a=longestRepetition('aaaaabcccbcccbcccbcccbacccddddd')
+
+//--------------------------------------------------------------------------------------
+//Ovdje je bio zadatak faltten array bez obzira koliko dobijemo argumenta i koliko je duboko. Ovdje imam dva puta reduce untuar funkcije jer je ovaj argument i kad ga pretvrimo
+// u array samo array koji ima lenght koliko su veliki njehovi argumenti. Pa kad pozove recursion flatten(a) sa samo 'a' onda će argumetns legnht biti samo broj 1. Ovako
+//reduciramo odmah taj arrArguments koji je incilajno kad Array.from() returna bude [['sve ono što je u ''a','sve ono što je u a']] u ['sve ono što je u ''a','sve ono što je u a']
+//pa onda opet to reduciramo u cilju da maknemo evenutalno nested arrays.
+//PAZI: bitno je imati return tamo gdje je recursion fn. call inače da svi ostali returni returnaju prave vrijednost radi  toga što bi zadnja fn. u callstacku returnala undefined
+//cijeli ukupni rezultat bi bio undefined.
+// function flatten (){
+
+//     let arrArguments=Array.from(arguments).reduce(function (acc,cur){
+//           return acc.concat(cur)  
+//     },[]) 
+    
+//     let a=arrArguments.reduce(function (acc,cur){
+//           return acc.concat(cur)  
+//     },[])
+ 
+//  let bool=a.every(cur=> !Array.isArray(cur))
+//     if(bool) return a; 
+//     else{
+//      return flatten(a)
+//  }
+// }
+
+// let a=flatten('ante',['ante', 'andrija'],'matko',{n: 'nebojaša'}, ['nested',['unutarNested',['još jedan array unutar nested']],['Nested']])
+// console.log(a)
+
+//-----------------------------------------------------------------------------------------------------------------
+//Riješio sam ja ovaj zadatak samo moje rješenje je bilo užasno komplcirano. Opet se podsjećamo koliko je korisna ova uspredba sa indexOf i lastIndexOf kada
+//tražimo samo jedan krakter unutar nečega. Dodao je ovaj toLowerCase jer autor kate defnirao da su velika i mala slova jednaka. 
+// function firstNonRepeatingLetter(s) {
+//   var t=s.toLowerCase();
+//   for (var x=0;x<t.length;x++)
+//     if(t.indexOf(t[x]) === t.lastIndexOf(t[x]))
+//       return s[x];
+//   return "";
+// }
+
+// firstNonRepeatingLetter('atbbbaccd')//'t' će biti rezultat.
+// firstNonRepeatingLetter('abba') //empty string će biti rezultat jer ne postoji nonRepatingLetter
+//--------------------------------------------------------------------------------------------------------------------
+// konvertira ovo PascalCase u snake_case
+// function toUnderscore(string) {
+//   if(typeof string==='number') return string.toString()
+//   let regEx=/[A-Z][a-z\d]+/g
+//   return string.match(regEx).join('_').toLowerCase()
+//   }
+//-------------------------------------------------------------------
+//Ovo je još jedan slučaj gdje mi ovo skroz normalno radi u konzoli kad testiram, ali tamo kad pokušam tvrdi da imamo drugačiji return nego što ovdje returnam.
+//Ovdje je bio cilj 'Mexican wave'. Znači trebamo dobiti za ovaj doli izraz u fn. callu array koji sadrži [Gap,gAp,gaP]
+//Kroištnje charAt() gdje ubacijemo varijblu 'i' može biti korisno u budućnosti.
+//   function wave(str){
+//    let strVersions=[]
+//    for(let i=0; i<str.length; i++){
+//          let curLetUpp=str[i].toUpperCase()
+//          let a=str.replace(str.charAt(i),curLetUpp)
+//         strVersions.push(a)
+//  }
+// console.log('ovo je str',str)
+//  console.log(strVersions)
+//   return strVersions
+// }
+
+// wave('gap')
+
+//-----------------------------------------------------------------------------------------------------------
+//Ovo je moje ultimativno rješenje za letterCount.
+// Znači ako neki key ne postoji, postavimo ga (moramo mu staviti početnu vriejdnsopt da bi bio validan objekt key).
+//I onda u toj istoj iteraciji incramentamo(ako ne incramentamo jer je nula falsy value u idućoj iterciji bi opet prošao if steatment.
+//Ako se slovo ponovno pojavi unutar string tj. bude 'cur' onda if steatment neće proći i samo će se incramentati. 
+// function letterCount(s){
+//   let chars=s.split('').reduce(function(acc,cur){
+//       if(!acc[cur]) acc[cur]=0;
+//        acc[cur]++             
+//        return acc
+// },{})
+//   return chars
+// }
+
+//--------------------------------------------------------------------------------------------------------------
+//Znači redoslijed slova je trebao ostati isti, samo je trebalo maknut višak slova. Znači ovo nije micanje duplih,vidi doli dva 'a' i 'b'
+// var uniqueInOrder=function(iterable){
+//   let arr=[]
+//   for(let i=0; i<iterable.length; i++){
+//       let cur=iterable[i]
+//       let last=iterable[i-1]
+//     if(i===0) arr.push(cur)
+//     else if(cur!==last) arr.push(cur)
+//    }
+//    console.log(arr)
+//  return arr
+// }
+
+// let a=uniqueInOrder('AAAABBBCCDAABBB') //trebamo dobiti ['A','B','C','D','A','B']
+//--------------------------------------------------------------------------------------------------------------
+// function factorialize(num) {
+// //5! = 1 * 2 * 3 * 4 * 5 = 120
+// //Znači kad je input broj 5 moramo returnat 12. Ja sam postvio logiku na način da varijbal fact predstvlja 5 *4 * 3* 2* 1, sa time da će počtna vrijednost te varijble biti upravo
+// //broj pet. Nakon prve iteracije loopa vriejdnsot fact variajble će biti 20, nakon druge iteracije će biti 30.
+// //VAŽNO: zašto je ovo i>1. Zato jel u loop želimo stalno imati varijablu oneDown koja će biti u našem slučaju 4,3,2,1. Ne želimo da oneDown bude 0, a upravo bi oneDown ima tu vrijednost
+// //kao zadnju vriejdnost da se pokrne loop gdje je i=1. 
+// //btw. treba se returnat broj jedna kad je inout broj nula.
+// if(num===0) return 1;   
+// let fact=num
+
+// for(let i=num; i>1; i--){
+//    let oneDown=i-1
+//     fact*=oneDown
+// }
+//  console.log(fact)
+//   return fact
+// }
+
+// factorialize(5);
+//----------------------------------------------------------------------------------------------------------------
+// function findFactorialRecursive(number){
+//   if(number===1){
+//     return 1
+//   }
+//   return number * findFactorialRecursive(number-1)
+// }
+//-----------------------------------------------------------------------------------------------------------
+//Znači fibonacci niz se bazira na tome da 'current' broj (koji nije incijali 0 i 1) će uvijek biti zbroj prethoda dva broja.
+//Mislio sam da je cilj kad se ubaci neki broj da se dobije dva broja čiji je zbroj current broj tj. onaj koji je ovdje n.
+//Znači kad ubaicmo 13 kao n dobijemo brojeve 5 i 8.
+//I ova funkcija to sve obavi samo to nije cilj. Vidi doli ispod što se trebalo.
+// function fibonacciNesporazum (n){
+//  let first=0
+//  let second=1
+//  let twoSum=0
+
+//   while(twoSum!==n){
+//      twoSum=first+second 
+//      if(twoSum!==n){
+//       first=second
+//      second=twoSum
+//      }
+  
+//  }
+//  console.log(first,second)
+
+// }
+
+//0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144...
+//Kad ubaicmo index broj osam u ovo funkciju onda trebamo dobit 21 odnosi cijeli ovaj fiobnacic niz moramo staviti u array i onda sa indexom n prispitit toj array.
+//Znači na index broj osam u array bi se našao broj 21.
+//Ovdje se treba samo koncetriat i postaviti da se  array pusha  zbroj incijalna dva elementa unutar array
+// function fibonacci(n){
+//  let arr=[0,1]
+//  for(let i=2; i<=n; i++){
+//    arr.push(arr[i-2]+arr[i-1]) 
+//  }
+//  return arr[n]
+// }
+
+//ovo je onaj užasni spori big O time complexitiy big O(2^n).Exponential time. Čini mi se da je to zato jer imamo dva function call unutar svake ieracije funkcije.
+function fibonacciRecursive(n){
+  if(n<2){
+     return n
+  }
+  return fibonacciRecursive(n-2) + fibonacciRecursive(n-1)
+}
+fibonacciRecursive(8)
+
+//----------------------------------------------------------------------------------------------------------
+//Ovdje je bio cilj jel str paramtera završava sa onim što je ubačeno u target. Mogao sam korsiti endsWith, ali freecode camp vježeba je htela da to učinmo
+//bez te metode.
+// function confirmEnding(str, target) {
+//  if (str.slice(-target.length)===target) return true;
+//  else{
+//    return false
+//  }
+  
+// }
+
+// confirmEnding("Bastian", "n");
+
+//------------------------------------------------------------------------------------------------
+//Ovo je za slučaj kad samo treba vidjeti postoje li u arr[0] string sva slova koja postoje unutar arr[1] stringa. Također velika i mala slova se smatraju jednakim(zato toLowerCase).
+//Znači nije bitan broj slova unutar strina koejg dobijemo na prvom index u arr kao u onom zadatku sa codewars, samo je bilo bitna bilo utvrdit da sva slova iza iz druggo stringa
+// postoje u prvom.
+
+// function mutation(arr) {
+//  let chars=Array.from(new Set(arr[1].split('')))
+//    let a=chars.every(function(cur){
+//         for (let i=0; i<arr[0].length; i++){
+//             if(cur.toLowerCase()===arr[0][i].toLowerCase()) return true 
+//         }
+//          return false
+//     })
+
+//     console.log(a)
+// }
+
+// mutation(["helloante", "Hello"])// true
+
+//---------------------------------------------------------------------------------------------
+//freecode camp chunky monkey.
+// vidi fn. call da vidiš cilj ovdje. Za ovo moje rješenje je se dobro sjetiti što returna splice, da modficira orignali array.Također treba se sjetiti da neki itema nestanu
+// iz array radi splice onda automatski array iteme idu na novu index mjesto. Zato stalno ovaj početni index 0 unutar splice funkcionira.
+// function chunkArrayInGroups(arr, size) {
+//   let finalOutput=[]
+//     while(arr.length>0){
+//       finalOutput.push(arr.splice(0,size))
+//     }  
+//    return finalOutput
+// }
+
+// chunkArrayInGroups(["a", "b", "c", "d"], 2);//treba biti [["a", "b"],["c", "d"]]
+// chunkArrayInGroups([0, 1, 2, 3, 4, 5], 4)// treba biti [[0, 1, 2, 3], [4, 5]]
+//-----------------------------------------------------------------------------------------------------------------------
+//Ovo je dobar tehnika kada želimo izbjeći nested loop. Mogli smo ovo riješit sa nested loopa, ali tada bi time complexity Big O bio(a*b), a sad je (a+b). ovaj boolean true se
+//postavlja zato jer smo trebali neku truthy vriejdnost, može biti bilo koja truthy vrijednost.
+function containsCommonItem(arr1,arr2){
+  let hash={}
+  for(let i=0; i<arr1.length; i++){
+      if(!hash[arr1[i]]){
+          let item=arr1[i]
+          hash[item]=true; 
+      }
+  }
+
+  for(let j=0; j<arr2.length; j++){
+      if(hash[arr2[j]]){
+        return true  
+      }
+  }
+  return false
+}
+
+containsCommonItem(['a','b','c'],['x','a','z'])//true
+containsCommonItem(['a','b','c'],['p','i','g'])//false
+//----------------------------------------------------------------------------
+//Ovo će mergati i ako su incijalno sorted i ako nisu incijalo sorted array.
+function mergeSortedArrays(array1, array2){
+ return array1.concat(array2).sort((a,b)=>a-b)
+}
+
+let a=mergeSortedArrays([0,3,4,31], [3,4,6,30]);
+//-----------------------------------------------------------------------------
+class HashTable {
+  constructor() {
+    this.table  = new Array(137);
+    this.values = [];
+  }
+  
+  // Defining the hashing function which allows a sting to be used as a key
+  hash(string) {
+    const H   = 37;
+    let total = 0;
+
+    for (var i = 0; i < string.length; i++) {
+      total += H * total + string.charCodeAt(i);
+    }
+    total %= this.table.length;
+    if (total < 1) {
+      this.table.length -1
+    }
+    return parseInt(total);
+  }
+
+  showDistro() {
+    for (const key in this.table) {
+      if(this.table[key] !== undefined) {
+        console.log(key, ' : ', this.table[key]);
+      }
+    }
+  }
+
+  put(data) {
+    const pos = this.hash(data);
+    this.table[pos] = data;
+  }
+
+  get(key) {
+    return this.table[this.hash(key)];
+  }
+}
+
+// HashTable with Build Chains technique of collision-resolution.
+class HashTableChains extends HashTable {
+  constructor() {
+    super();
+    this.buildChains();
+  }
+  buildChains() {
+    for (var i = 0; i < this.table.length; i++) {
+      this.table[i] = new Array();
+    }
+  }
+
+  showDistro() {
+    for (const key in this.table) {
+      if(this.table[key][0] !== undefined) {
+        console.log(key, ' : ', this.table[key]);
+      }
+    }
+  }
+
+  put(key, data) {
+    const pos = this.hash(key);
+    let index = 0;
+    if(this.table[pos][index] === undefined) {
+      this.table[pos][index] = data;
+    } else {
+      ++index;
+      while (this.table[pos][index] !== undefined ) {
+        index++;
+      }
+      this.table[pos][index] = data;
+    }
+  }
+
+  get(key) {
+    const pos = this.hash(key);
+    let index = 0;
+    while (this.table[pos][index] != key) {
+      if(this.table[pos][index] !== undefined) {
+        return this.table[pos][index]
+      } else {
+        return undefined;
+      }
+      index++;
+    }
+  }
+}
+
+// HashTable with Linear Probing technique of collision-resolution.
+class HashTableLinearP extends HashTable {
+  constructor() {
+    super();
+    this.values = new Array();
+  }
+
+  put(key, data) {
+    const pos = this.hash(key);
+    if(this.table[pos] === undefined) {
+      this.table[pos]  = key;
+      this.values[pos] = data;
+    } else {
+      while(this.table[pos] !== undefined) {
+        pos++;
+      }
+      this.table[pos]  = key;
+      this.values[pos] = data;
+    }
+  }
+
+  get(key) {
+    const hash = this.hash(key);
+    if (hash > -1) {
+      for (let i = hash; this.table[i] !== undefined; i++) {
+        if (this.table[i] === key) {
+          return this.values[i];
+        }
+      }
+    }
+    return undefined;
+  }
+
+  showDistro() {
+    for (const key in this.table) {
+      if(this.table[key] !== undefined) {
+        console.log(key, ' : ', this.values[key]);
+      }
+    }
+  }
+}
+
+
+
+</script>
+</html>

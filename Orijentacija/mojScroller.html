@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+
+html{ 
+    box-sizing:border-box;
+    }
+    
+    *,::before,::after{
+    box-sizing: inherit;
+    margin:0;
+    padding:0;
+    } 
+    
+
+
+.customScrollBarCont{
+         height: 400px;
+         border: 1px solid grey;
+         position: relative;
+         margin: 0px 25px;
+         margin-top: 100px;
+         overflow: hidden;
+         /*Ovo je sve dizajnirano za overflow, ako pustimo više neće ga uopće biti sa trenutim postavkamo*/
+         max-width: 1400px;
+       }
+
+.stvarniScrollBarCont{
+         /* border: 1px solid blue; */
+         overflow-y: scroll;
+         height: 100%;
+         /*za radnu verziju širina, da se vidi što se događa*/
+         /* width: 80%; */
+         /*Ovo će biti finalne vrijednosti, iskomentirati ih u radnoj da vidš što se događa*/
+         padding-right: 15%;
+         width: 135%;
+
+       }
+    
+
+.customScroll-Thumb{
+       width: 10px;
+       height: 100px;
+       background: rgb(111, 111, 190);;
+       border-radius: 5px;
+       cursor: pointer;
+       position: absolute;
+       top:0;
+       right: 3px;
+       z-index: 5;
+       /*Ovje je jako mala tranzcija, eventalno može biti problme ako postjoi mega ogromni scroll*/
+       transition: top 0.04s;
+   }
+
+.customScroll-Track{
+    position: absolute;
+    content: '';
+    top: 0%;
+    right: 7px;
+    height: 100%;
+    width: 3px;
+    background: rgba(5, 5, 243, 0.3);
+}
+
+.content{
+    /*VAŽNO: ovaj postotak je jako bitan, nisam ovo spomenuo u videu.Događalo bi mi se da bi mi se pokazio nekad onaj miš znak 'zabranjenon' jer
+    text-select je none, iako ne bude tekst točno tamo gdje je .customScroll-Thumb, ali bude ostakak prostora unutar .content pa se to nekako zahvati.
+     Ovako samo ograničiš širnu sub-diva .content i još možeš imati overflow koji je potreban horizontalno.*/
+       width: 80%;
+       /*Ili smo mogli e.preventDefault u mousedown eventu fn.*/
+       user-select: none;
+   } 
+
+/*Dok se događa pomicanje, da ne biramo slučajno nešto izvan našeg containera.*/
+ .privremenoBodyUserSelectNone{
+     user-select: none;
+ }  
+
+    </style>
+</head>
+<body>
+    
+    <div  class="customScrollBarCont">
+        <div class="customScroll-Thumb"></div>
+        <div class="customScroll-Track"></div>
+
+        <div class="stvarniScrollBarCont">
+            <div class="content">
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Incidunt accusamus maxime voluptatem quasi. Recusandae optio nobis ratione iste consectetur consequatur cupiditate saepe laborum natus neque a provident eum explicabo delectus qui accusantium nostrum reiciendis soluta hic ut at sed laboriosam possimus repudiandae deserunt velit rerum. Aliquam ratione itaque corrupti aperiam quisquam unde aspernatur odio id repellendus corporis eaque expedita in ab minus possimus! Quo tempore consequatur repellat consectetur nemo molestiae perferendis ipsum esse nesciunt blanditiis nobis dicta? Laudantium quaerat inventore deleniti exercitationem explicabo quos pariatur sunt earum labore sed eius blanditiis architecto consequuntur ad consectetur unde sapiente nisi. Sunt eos.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Incidunt accusamus maxime voluptatem quasi. Recusandae optio nobis ratione iste consectetur consequatur cupiditate saepe laborum natus neque a provident eum explicabo delectus qui accusantium nostrum reiciendis soluta hic ut at sed laboriosam possimus repudiandae deserunt velit rerum. Aliquam ratione itaque corrupti aperiam quisquam unde aspernatur odio id repellendus corporis eaque expedita in ab minus possimus! Quo tempore consequatur repellat consectetur nemo molestiae perferendis ipsum esse nesciunt blanditiis nobis dicta? Laudantium quaerat inventore deleniti exercitationem explicabo quos pariatur sunt earum labore sed eius blanditiis architecto consequuntur ad consectetur unde sapiente nisi. Sunt eos.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Incidunt accusamus maxime voluptatem quasi. Recusandae optio nobis ratione iste consectetur consequatur cupiditate saepe laborum natus neque a provident eum explicabo delectus qui accusantium nostrum reiciendis soluta hic ut at sed laboriosam possimus repudiandae deserunt velit rerum. Aliquam ratione itaque corrupti aperiam quisquam unde aspernatur odio id repellendus corporis eaque expedita in ab minus possimus! Quo tempore consequatur repellat consectetur nemo molestiae perferendis ipsum esse nesciunt blanditiis nobis dicta? Laudantium quaerat inventore deleniti exercitationem explicabo quos pariatur sunt earum labore sed eius blanditiis architecto consequuntur ad consectetur unde sapiente nisi. Sunt eos.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Incidunt accusamus maxime voluptatem quasi. Recusandae optio nobis ratione iste consectetur consequatur cupiditate saepe laborum natus neque a provident eum explicabo delectus qui accusantium nostrum reiciendis soluta hic ut at sed laboriosam possimus repudiandae deserunt velit rerum. Aliquam ratione itaque corrupti aperiam quisquam unde aspernatur odio id repellendus corporis eaque expedita in ab minus possimus! Quo tempore consequatur repellat consectetur nemo molestiae perferendis ipsum esse nesciunt blanditiis nobis dicta? Laudantium quaerat inventore deleniti exercitationem explicabo quos pariatur sunt earum labore sed eius blanditiis architecto consequuntur ad consectetur unde sapiente nisi. Sunt eos.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Incidunt accusamus maxime voluptatem quasi. Recusandae optio nobis ratione iste consectetur consequatur cupiditate saepe laborum natus neque a provident eum explicabo delectus qui accusantium nostrum reiciendis soluta hic ut at sed laboriosam possimus repudiandae deserunt velit rerum. Aliquam ratione itaque corrupti aperiam quisquam unde aspernatur odio id repellendus corporis eaque expedita in ab minus possimus! Quo tempore consequatur repellat consectetur nemo molestiae perferendis ipsum esse nesciunt blanditiis nobis dicta? Laudantium quaerat inventore deleniti exercitationem explicabo quos pariatur sunt earum labore sed eius blanditiis architecto consequuntur ad consectetur unde sapiente nisi. Sunt eos.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Incidunt accusamus maxime voluptatem quasi. Recusandae optio nobis ratione iste consectetur consequatur cupiditate saepe laborum natus neque a provident eum explicabo delectus qui accusantium nostrum reiciendis soluta hic ut at sed laboriosam possimus repudiandae deserunt velit rerum. Aliquam ratione itaque corrupti aperiam quisquam unde aspernatur odio id repellendus corporis eaque expedita in ab minus possimus! Quo tempore consequatur repellat consectetur nemo molestiae perferendis ipsum esse nesciunt blanditiis nobis dicta? Laudantium quaerat inventore deleniti exercitationem explicabo quos pariatur sunt earum labore sed eius blanditiis architecto consequuntur ad consectetur unde sapiente nisi. Sunt eos.</p>
+            </div>
+        </div>
+    </div>
+    <div >Not special and not contained within scrolling</div>
+</body>
+<script>
+ 
+  const customScrollBarCont=document.querySelector('.customScrollBarCont');
+  const stvarniScrollBarCont=document.querySelector('.stvarniScrollBarCont');
+  const customScrollThumb=document.querySelector('.customScroll-Thumb')
+  const customScrollTrack=document.querySelector('.customScroll-Track')
+  let pozicijaScrollTopKadaJeMisPritisnut;
+  let misPritisnutPozicijaMisa;
+  let misPritisnutBoolean
+
+
+  const prilagodiVisinuScrollThumba=()=>{
+      //Znači visina se ovdje određuje na način da što je manja potreba za dugim scrollanjem to je veća scrollThumb visina.
+      let vidljiviPostotak=customScrollBarCont.clientHeight /stvarniScrollBarCont.scrollHeight;
+      //Dodao sam ovo provjeru da makne scrollbar ako nama overflowa iz customScrollBar containera. Makni max-width i sve makimslno raširi da vidiš.
+      if(vidljiviPostotak*100>=100){
+          customScrollThumb.style.display='none'
+          customScrollTrack.style.display='none'
+      }else{
+        customScrollThumb.style.display='block'
+        customScrollTrack.style.display='block'
+        let novaVisina=vidljiviPostotak * customScrollBarCont.clientHeight
+        customScrollThumb.style.height=novaVisina + 'px'
+      }
+ 
+
+ }
+ 
+ //VAŽNO: iskomentiraj ovo doli ako hoćeš fiksnu visinu. Napravljene su prialgdbe i sad sve radi i ako stavimo fiksnu visinu scroll-thumba.
+ //VAŽNO:Također, može se dogoditi stiucaicje gdje se dodaje element tj. raste scrollHegiht unutar diva gdje je overflow. Onda bi također trebali prilaogdii
+ //visunu scrollThumba. Znači treba gdje se ubacuje neki content unutar stvarniScrollVarCont i njegove nasljednicke isto tako pozvati ovo funkciju
+ //da se napravi prilaogdia scrollThumba.
+ 
+ prilagodiVisinuScrollThumba();
+ window.addEventListener('resize', function(){
+       prilagodiVisinuScrollThumba()
+ })
+
+
+
+function misPritisnut(e){
+ //Ovo je ovdje jer ne želim bezveze imati mousemove na window objekut stalno aktivan, niti mouseup(tamo će maknuti ove listenere)   
+ window.addEventListener('mousemove',micanjeMisa);
+ window.addEventListener('mouseup', misPusten);
+ document.body.classList.add('privremenoBodyUserSelectNone')
+ pozicijaScrollTopKadaJeMisPritisnut=stvarniScrollBarCont.scrollTop
+ misPritisnutPozicijaMisa=e.pageY
+ misPritisnutBoolean=true
+}
+
+function micanjeMisa(e){
+  if(misPritisnutBoolean){
+    let misPozicijeRazlika=e.pageY-misPritisnutPozicijaMisa
+    console.log("misPozicijeRazlika", misPozicijeRazlika)
+
+     //Orignala verzija
+    // let scrollRatioPrilagodba=misPozicijeRazlika * (stvarniScrollBarCont.scrollHeight / customScrollBarCont.clientHeight);
+    
+    //VAŽNO: moja verzija scrollRatioPrilagoda i promoćne varijable. Ovo je dosta bolja prilagodba jer sada sve radi i kad ne koristimo scroll thumb koji ima
+    //prilagođenu visinu, možemo korisiti fiksnu visinu. Stvar je bila u tome da će omjer scrollHegiht tamo gdje je stvarni scroll i clinetHeight tamo gdje je cusom
+    //scroll thumb uvijek biti veći od 1 i kad bi se dogodila situacija gdje je maksimalnni stvarni scrollTop manji od prostora koji ima custom scroll thumb stvar bi se raspala.
+    //Sada ako je scrollTop prostor manji nego što ima scroll thumb za vizualno kretanje se dogodi da omjer bude 0.7545, 0.484545 tj. neki broj manji od 1.
+    
+    let maxScrollTopStvarniScroll=stvarniScrollBarCont.scrollHeight-stvarniScrollBarCont.clientHeight
+    //Ekvivalnet gornjem maxScrollTop
+    let maxDostupniProstorZaMicanjeScrollThumb=customScrollBarCont.clientHeight - customScrollThumb.offsetHeight 
+    let scrollRatioPrilagodba=misPozicijeRazlika * (maxScrollTopStvarniScroll/maxDostupniProstorZaMicanjeScrollThumb)
+    stvarniScrollBarCont.scrollTop=pozicijaScrollTopKadaJeMisPritisnut + scrollRatioPrilagodba
+    
+    // console.log("misPozicijaRazlika",misPozicijeRazlika)
+    // console.log("scrollRationPrilagodba",scrollRatioPrilagodba)
+    // console.log("pozicijaScroolTopKadJeMisPritisnut",pozicijaScrollTopKadaJeMisPritisnut)
+    // console.log("stvarniScrollbarBont.scrollTop",stvarniScrollBarCont.scrollTop)
+
+   
+    }
+}
+
+function misPusten(e){
+   misPritisnutBoolean=false 
+   window.removeEventListener('mousemove', micanjeMisa)
+   window.removeEventListener('mouseup',misPusten)
+   document.body.classList.remove('privremenoBodyUserSelectNone')
+}
+
+function pomakniVizualno(){
+ //Ova varijable namjerno nisam stavio u globalni scope, trebaju nam svježe(kada imamo prilagodu visine customScrolThumb) i jer ovako
+ //preglednije vidjeti što predstvljaju.   
+ let maxScrollTopStvarniScroll=stvarniScrollBarCont.scrollHeight-stvarniScrollBarCont.clientHeight
+  //Ekivalnet gornjem maxScrollTop
+ let maxDostupniProstorZaMicanjeScrollThumb=customScrollBarCont.clientHeight - customScrollThumb.offsetHeight 
+ 
+ let trenutniPostotakScrollTopPomaka=stvarniScrollBarCont.scrollTop/maxScrollTopStvarniScroll
+ let prilagodiPomak=trenutniPostotakScrollTopPomaka * maxDostupniProstorZaMicanjeScrollThumb
+ customScrollThumb.style.top=prilagodiPomak + 'px'
+
+}
+
+
+stvarniScrollBarCont.addEventListener('scroll', pomakniVizualno)
+customScrollThumb.addEventListener('mousedown',misPritisnut)
+
+</script>
+</html>

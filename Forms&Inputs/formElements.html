@@ -1,0 +1,1889 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    html {
+      box-sizing: border-box;
+    }
+
+    *,
+    ::before,
+    ::after {
+      box-sizing: inherit;
+      margin: 0;
+      padding: 0;
+    }
+
+    input {
+      display: block;
+    }
+
+    /*ovo nikad nemoj raditi, radi ovoga sam morao restartirati margin stalno, često mi se dogodilo da su elemnet čudno poziconirani dok se ne
+   sjetim ovoga.Djeluje na sve elmente unutar forma, ne na izravne childove forma.*/
+    form * {
+      margin: 10px 0;
+    }
+
+    /*----------------------------------------------------BUTTON form elment, css styling-----------------------------------------------------------------------*/
+
+    /*Mičemo mu onaj tipačan Button izgleda sa border:none*/
+    .običniBotun {
+      outline: none;
+      border: none;
+      padding: 10px;
+      background-color: crimson;
+      color: white;
+    }
+
+    /*---------------------------------------------------Prvi checkbox css code---------------------------------------------------------------------------------------*/
+
+    .checkboxPrviCont {
+      display: flex;
+    }
+
+    .checkboxPrviCont {
+      margin: 0px 5px;
+    }
+
+    .prviLabel {
+      display: flex;
+      margin: 0 10px;
+      border: 1px solid red;
+      padding: 12px;
+    }
+
+    .customCheckbox {
+      margin: 0 10px;
+      width: 25px;
+      height: 25px;
+      background-color: #eee;
+      display: flex;
+      justify-content: center;
+      align-content: center;
+    }
+
+    .customCheckbox:hover {
+      background-color: rgb(192, 190, 190);
+    }
+
+    #prviCheckboxInput:checked ~ .prviLabel .customCheckbox {
+      background-color: #2196f3;
+    }
+
+    #prviCheckboxInput:checked ~ .prviLabel .customCheckbox::after {
+      content: "\002714";
+    }
+
+    .customCheckbox::after {
+      font-size: 18px;
+      color: white;
+      content: "";
+    }
+
+    /*------------------------------------------------------Drugi checkbox css-----------------------------------------------------------------*/
+
+    .drugiLabel {
+      display: flex;
+      margin: 0 10px;
+      border: 1px solid red;
+      padding: 12px;
+    }
+
+    .drugiLabel * {
+      margin: 0 5px;
+    }
+    /*Zadržao sam ovu .customChackbox klasu i na drugom customCheboxu pa zadnja klasa za prazni ::after iz prvog checkbox vrijedi i ovdje */
+    .drugiLabel input:checked ~ .customCheckbox {
+      background-color: #2196f3;
+    }
+
+    /*Ova klasa znači: biraj psuedo element ::after unutar klase .customCheckbox ako je taj .customCheckbox neizravni ili izravni sibling elemnta koji
+    se nalazi iza input elementa u html rasporedu u trentuku kada je taj input checked te ako se taj input nalazi unutar klase .drugiLabel*/
+    .drugiLabel input:checked ~ .customCheckbox::after {
+      content: "\002714";
+    }
+
+    /*Osnovna tehnika u ova dva primjera je da kada želimo dobiti custom checkbox to radimo na način da ubacimo input type chehckobx
+    unutar labela i onda će klik na label biti kao klik na input ili možemo ih spojitit putem for i id te u tom slučaju
+    fizčke ne moraju biti u istom elemnetu, ali opet radi tj. klik na label je kao klik na input.
+    Znači label možemo vizalno oblikovati, dok input type checkbox ne možemo i onda se samo moramo odliučiti kako ćemo povezati neki label sa inputom.
+    PAZI: ja ovdje label imam ogroman da stavim tekst opis i vizalano imam span element koji predstavlja custom chechbox. Ali
+    kada se bude radila stvarna verzija onda će se sakriti stvarni checkbox inputi i cijeli label element će veličnom odogovarani
+    tim span elementa koji su sada custom chechbox tj. biti će 100% width i height label elementa jer klik na label aktivira stvarni input.
+    VAŽNO:Bitno je da taj span koji vizalno predstavja input tj. bude custom input postoji u slučaju da je input unutar labela i ne koristimo for i id vezivanje
+    jer ne možemo postaviti css slektor koji bira parent tj.primjenuje promjene na label u trenutka kad je child labela input:checked.
+    Ako element lijevo u css slektora nije parent ni sibling koji je ranije u raspored stil se neće primjeniti.*/
+
+    /*---------------------------------------------- Radio input css*-------------------------------------------------------------------*/
+
+    /*note: ovdje sam imao problem sa nasljeđenim marginima pa sam ih resteriao na nula. To može biti problem kada se čudiš odakle
+    bespotrebni prostora unutar nekog grid calla vertiklano.Treba resetira sve nasljednike, ne samo grid iteme.
+    note: imao sam problem sa sibling selektorom ~ gdje sam zaboravio da je raspored u html važan i .customRadio1 je treba biti iza
+    inputa u html.
+    note: imao sam problem sa border-radius:50% gdje nije radio tj. nije bio krug nego elipsa neka dok nisam odredio jednaku visinu i širinu elementa ekplicitno.
+    note: imao sam problem da mi je sakriven input koji je absolute bježao iz relative containera, pa je trebalo postaviti top i left.To se događalo
+    note: kasnije sam skužio kada tipkovicom biramo radio input i kada sa tabom dođemo da se radi dodatnog outline opet malo vidi sakrivne input
+    pa sam se prestao igrati i samo sakrivati orginalnu veličinu nego sam ga smanjio sa .visually-hidden-input klasom koja je definiran
+    ovdje u csu u objašnjeu file inputa.
+    jer tako se ponaša absolute kada parent ima border-radius: 50% tj. kada parnet postane krug. Ponašao se kao da se to nije dogodilo.Vidi absolute sintezu.
+    note: imao sam generalno problem kako organizraiti elemente da stoje vertiklnog aligmentu(tekst span i radio botuni) i da uz to svi radio botuni u istoj vertiklanoj liiji
+    uz taj vertikal align.Ključno je bilo staviti jedan tekst elemnt tj. opisni span, pa iza njega label tj. input elmenta tj. da svi budu grid-itemi u pravom raspored
+    za dva stupca gdje je jedna vrsta elementa lijevo, jedna vrsta desno.
+    note: ako se korisiti :checked  tj. vizalne promjene kada neki radio input bude cheked se rade u css izravno i input se nalazi unutar label te je na taj
+    način povezan sa nekim lebelom,nije putom for i id onda treba staviti dodatan jedan element unutar labele koji će odgovariti 100% širine i visine labela i taj element
+    će predstvlja customCheckbox vizalno dok nismo klikli i njegov after element će predstavljati točkicu koja se pojavi kada kliknemo.
+    Treba nam jer ne možemo imati validan css slektor koji izgleda ovako: nekiInput:checked .ondaLabelKojiJeParentTogaInputaNaKojegĆemoPrimjnitiNekiStilKadaInputBudeChecked
+    Ako element lijevo u css slektora nije parent ni sibling koji je ranije u raspored stil se neće primjeniti.
+    Također je bitno da taj element koji se dodatno ubaci u label da bude iza radio inputa u html rasproedu jer tako sibling selektora funkconira.*/
+
+    .prvaRadioGrupaCont {
+      display: grid;
+      grid-template-columns: min-content min-content;
+      align-items: center;
+      width: 35%;
+    }
+
+    .prvaRadioGrupaCont span {
+      display: block;
+      margin: 0;
+      padding: 7px 0;
+    }
+
+    /*Label element,label je povezan sa inputom i klik na label se jedino gleda kada će se promjeniti checked state*/
+    .radioLabel1 {
+      margin-left: 12px;
+      margin-top: 0;
+      margin-bottom: 0;
+      /*VAŽNO: da bi border-radious: 50% radio ispravno tj. da bi dobili krug treba element imati isti width i height*/
+      border-radius: 50%;
+      width: 26px;
+      height: 26px;
+      position: relative;
+      /* border: 1px solid red; */
+      /* background-color: red; */
+    }
+
+    /*Input unutar labela,na njega se treba staviti :checked pesedo klasa */
+    .radioLabel1 input {
+      margin: 0;
+      position: absolute;
+      top: 2px;
+      left: 5px;
+      z-index: -1;
+    }
+
+    /*Element unutar labela koji visinom i širinom odogvara labelu i koji custom radio botun tj. vizualna repezentacija*/
+    .customRadio1 {
+      display: block;
+      margin: 0;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background-color: #eee;
+      transition: 250ms background-color;
+    }
+
+    .customRadio1:hover {
+      background-color: #ccc;
+    }
+
+    .radioLabel1 input:checked ~ .customRadio1 {
+      background-color: #2196f3;
+      position: relative;
+    }
+
+    /*After element koji predstvlja točkicu koja se pojavi kada kliknemo.*/
+    .customRadio1::after {
+      opacity: 0;
+      transition: 350ms opacity;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translateX(-50%) translateY(-50%);
+      background-color: white;
+      width: 40%;
+      height: 40%;
+      border-radius: 50%;
+      content: "";
+    }
+
+    .radioLabel1 input:checked ~ .customRadio1::after {
+      opacity: 1;
+    }
+
+    /*-------------------------------------------------------TEXT input css primjeri----------------------------------------------------------------*/
+
+    input[type="text"] {
+      display: inline-block;
+      outline: none;
+      width: 250px;
+      height: 25px;
+      margin: 10px;
+      /* Prvi stil,sve granice aktivne*/
+      border-radius: 4px;
+      border: 1.5px solid #ccc;
+
+      /*Drugi stil,samo donja granica*/
+      /* border: none;
+      border-bottom: #ccc 1.5px solid; */
+    }
+
+    /*Outline je css shorthand property za outline-style,outline-color,outline-width. Kada element nije u fokusu taj outline je nevidljiv.
+    Nije dio box modela, što znači da kako je width povećava onda se neće smanjivati content-box našeg elementa ako je box-sizing:border-box niti će se
+    drugi elmenti u containeru pomicati ili prilagođvati jer se povećao outline-width. Kada element bude u fokusa taj outline postanje vidljiv
+    ukoliko nismo postavili outline:none. Možemo izabrati da zadržimo outline i samo promjenimo default stil outline unutar
+    pseudo klase :focus. U tom slučaju ćemo unutar :focusa staviti cijelu border:none jer ne želimo duplu "granicu" vizualno.
+    Outline ne možemo kao granicu djelomično uključiti, mislim na border-bottom recimo.
+    PAZI: kada imaš uključeno djelomično border(outline:none tj. skroz isključeno u tome slučaju) kada je :focus aktivan onda ukoliko ne isključiš ostatak granica
+    opet će se vidjeti te uz recimo border-bottom trebaš border: none za ostale strane elementa.
+    Pazi da border-bottom postaviš ispod border:none jer je border shorthand koji će overwirati i tvoj prijašnji border-bottom.
+    note: također pripazi da vrijednost border-radiusa bude fiksna vrijednosti poput  4px, ne na vrijednost u postotica ako hoćeš samo malo zaobljene vrhove.
+   
+    note: ukoliko želimo da postaviti stil na neki element ukoliko sam element ili jedan od njegovih focusable descendents bude u fokusu onda treba
+    korisiti klasu :focus-within(obična focus psuedo klasa radi samo na elemntu koji je izravno fokusu,dok ova može izravno i da neki od nasljednika)
+    note: pseudo klasa :focus-visible se NE može korisiti na input elementima da targetira elemente koji su dobili fokus putem tastature.
+    Fokus će se uvijek pojaviti na input elmentima. Ta klasa se može primjeniti recimo na <button> element i ostale non-input elementa
+    i onda će stil definiran unutar :focus-visible se primjeniti samo kada <button> dođu u fokus putem tastature. Nije još dobro podržana.
+   
+    Kada će se primjenitit pseudo klasa :invalid na nekom text input elementu ovisi o stanju tri atributa(required,minlenght,pattern)
+    Kada je atribut required na text inputu onda stil na css pseudo klasi invalid će se prmjenjivati odmah dok nismo ništa upisali u input čak
+    i ako element nije u fokusu.
+    Ukoliko želimo primjenit :invalid kada imamo required tek kada element bude u fokusu onda treba staviti .nekiElement:focus:invalid.
+    Kada je atribut pattern na text inputu onda će se pseudo klasa invalid primjenjivati tek kada upišemo prvi karakter(ako taj jedan karkter ne zadovlji pattern)
+    Kada je atribut minlenght na text inputu onda će se tek psudo klasa invalid primjenjivati tek kada upišemo prvi karakter(ako taj jedan karkter ne zadovlji minlenght)
+    Naravno, psuedo klasa valid će se primjenjivti za ona stanje gdje se neće primjeniti pseudo klasa invalid.
+    Kada imamo dvi ili sva ta tri atributa odjenom onda se moraju zadovoljiti svi uvjeti koji ti atibuta postvljaju da se se aktivirao :valid stil.
+
+    -note: možemo korisit ::placeholder pseudo klasu da promjenimo stil placholder atributa.
+    -note:možemo korisiti :plaholder-shown psudeo klasu kada želimo primjeniti stil na neki element samo dok je aktivan placholder tj. dok nismo ništa upisali u neki
+    input. Treba se staviti na sami input element i onda se obično primjenje stil na label koji je sibling toga inputa.
+   
+    -PAZI: kada imaš neki label koji je postavljen sa translateY(ili abosolute) da stoji točno iznad nekog placholder texta i cilj je kada element bude
+    u foksusa da se taj lebel spusti ili podigne gore da se stvoris efekt pomaka placeholder onda treba uključiti ili visibility:hidden ako skriven label incijalno ili
+    postaviti pointer-events:none ako nije skriven inače kada kliknes na input neće sami input doći u fokus nego klik na non-focusable label će samo učinit da taj input
+    za koji želimo da ima fokusu izgubi tj. ne dođe u fokus.*/
+
+    /* input[type="text"] {
+      border: 1.5px solid blue;
+    }
+
+    input[type="text"]:valid {
+      border: 1.5px solid rgb(9, 255, 0);
+    }
+
+    input[type="text"]:invalid {
+      border: 1.5px solid rgb(255, 60, 0);
+    } */
+
+    input[type="text"]:focus {
+      /* Prvi stil,sve granice aktivne*/
+      border: chocolate 1.5px solid;
+
+      /*Drugi stil,samo donja granica*/
+      /* border-bottom: 1.5px solid chocolate; */
+    }
+
+    input[type="text"]::placeholder {
+      color: rgb(75, 167, 0);
+    }
+
+    /*---------------------Jonas text input------------------------------------*/
+
+    /*note: ove id slektore doli koristm jer sam koristo gore input type selektora pa trebam nešto jače*/
+    .jonasDivCont {
+      display: inline-block;
+    }
+
+    #jonasLabel {
+      padding: 5px;
+      font-size: 16px;
+      color: #777;
+      transition: opacity 300ms;
+      display: block;
+    }
+
+    #jonasInput:placeholder-shown + #jonasLabel {
+      transform: translateY(-41px);
+      /*vidi gore zašto sam stavio ovaj visiblity*/
+      visibility: hidden;
+      opacity: 0;
+    }
+
+    #jonasInput {
+      margin: 0;
+      height: 30px;
+      padding: 5px;
+      border: none;
+      border-bottom: 2.5px solid #ccc;
+    }
+
+    #jonasInput:valid {
+      border-bottom: 2.5px solid rgb(8, 158, 8);
+    }
+
+    #jonasInput:focus:invalid {
+      border-bottom: 2.5px solid rgb(221, 65, 4);
+    }
+
+    #jonasInput::placeholder {
+      font-size: 16px;
+      color: #777;
+    }
+
+    /*--------------------------Andrei text input(ovoj primjeri ma i javascript code)-------------------------------*/
+
+    .andreiDivCont {
+      display: inline-block;
+      position: relative;
+    }
+
+    #andreiInput {
+      margin: 0;
+      height: 34px;
+      border: none;
+      border-bottom: 2px solid goldenrod;
+      font-size: 18px;
+    }
+
+    #andreiLabel {
+      margin: 0;
+      position: absolute;
+      left: 5px;
+      top: 50%;
+      transform: translateY(-50%);
+      transition: all 300ms;
+      font-size: 18px;
+      /*Ovo se stavlja jer želimo da kada se klikne na ovaj elemnt da se to igniraira i da klik bude na elementu "ispod" tj. njegovom parentu*/
+      pointer-events: none;
+    }
+
+    #andreiInput:focus {
+      border-bottom: rgb(86, 47, 158) 2px solid;
+    }
+
+    /*------------------------------------------------EMAIL input css--------------------------------------------------------------------------*/
+    /*Pročitaj one stvari koje sam pisao u vezi css uređivanja text input skoro sve se može primjeniti i za email. Mala razlika
+    je kada se aktiviraju :invalid i :valid. Uz ona ponašnja koja smo naveli za text input da bi se :valid stil primjenio treba
+    se zadvoljiti i onaj default internalni regex koji imaju svi email type inputi. Znači ako imamo required atribut uz to što samo nešto upisali
+    treba imati string koji zadovljnva osnovi regex. Ista stvar i sa minlenght, tj. kada upišemo minimlna broj karaktera da bi
+    se primjenio :valid stil treba zadovljitit taj osnovni internalni regex. Također kada se zadovlji naš regex kojeg smo postavili na pattern
+    također treba se zadovljiti i taj internal regex.
+    Također to znači da i bez da stavimo neki od ta tri atributa će ovisiti o tome je li zadovljen internali regex za email validation
+    o tome hoće li se primjenit :valid ili :invalid*/
+
+    input[type="email"]:invalid {
+      background-color: rgba(255, 0, 0, 0.418);
+      outline: none;
+    }
+
+    input[type="email"]:valid {
+      background-color: rgb(0, 255, 157);
+      outline: none;
+    }
+
+    /*----------------------------------------------URL input css--------------------------------------------------------------------------*/
+    /*Ponašanje atributa required,pattern i minlenght se isto kao u text inputu, sa dodatinm uvjetom,slično kao email.
+     Kada je riječ o required nije dosta upisati bilo koje slovao kao u text inputu nego treba biti upisano htttp: prije nego
+     postane validan. Također uz tražni pattern ili traženi minlenght se isto treba naći taj http: da se primjeni :valid stil.*/
+
+    input[type="url"]:invalid {
+      background-color: rgba(255, 0, 0, 0.418);
+    }
+
+    input[type="url"]:valid {
+      background-color: rgb(0, 255, 157);
+    }
+
+    /*---------------------------------------------NUMBER input css-------------------------------------------------------------------------*/
+    /*Stanje pseudo klasa :invalid i :valid za input type number određuje required,min,max i step. Requried se ponaša standardno tj. automaski
+    je input number :invalid dok ništa ne upišemo, ali kada upišemo nešto onda to treba biti broj i eventalno zadovljiti još neki min,max,step koji je stavljen.
+    Ako nema required number input je po defaultu :valid dok nešto ne upišemo. Ukoliko imamo min,max i odmah taj broj zadovolji te uvjete onda će stil odmah biti
+    :valid tj. ostati će valid. Ako ne zadovlji biti će :invalid. Također ono što stavimo na kao vrijednost step određuje hoće li nešto biti :valid ili :invalid
+    Ako step ima vrijednost broj dva onda se neće prihvatiti brojvi 1,3,5 etc. tj. kada su oni upisani primjenivati će se :invalid. Doli sam opisvao kako step
+    radi u nubmber inputu tj. što browser smatra da je validno kada su različite step vrijednosti. Prema tome se ponašaju i invalid i valid pseudo klase.
+
+    -VAŽNO:Micanje default strelica unutar number inputa se radi ovako :*/
+
+    /*
+    input[type="number"] {
+      -moz-appearance: textfield;
+    }
+
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    } */
+
+    /*PAZI, primjeti gore kako da bi makli u firefoxu selktiramo izravno input elements dok unutar chrome
+     biramo outer i inner spin button koji je na nekom input elementu i onda tu postaviljamo -webkit-apperance:none
+     Jasno,ne mora biti ovi atribute selektori doslovno, mogli smo staviti .nekaKlasaKojaBiraInput ili .nekaKlasaKOjaBiraIhnput::webit-outer etc., ali postaviti sve ovako
+     je najbolje praksa jer i ako postoje jači id,style selektori ovo će se još primjenjvati za taj property ako nije overwritan u jačem*/
+
+    input[type="number"]:invalid {
+      background-color: rgba(255, 0, 64, 0.699);
+    }
+
+    input[type="number"]:valid {
+      background-color: rgb(0, 174, 255);
+    }
+
+    input[type="number"]::placeholder {
+      color: white;
+    }
+
+    /*----------------------------------------------------RANGE input css---------------------------------------------------------*/
+
+    /*Range input nema validaciju i nikad nećemo korisit psudeo klase :valid i :invalid. 
+     VAŽNO: međutim ima :in-range i :out-of-range psuedo klase gdje :in-range predstvlja stanje elmeneta kada je vrijednost atributa
+     value neki broj koji je između min i max vrijednost dok :out-of-range predstvlja stil koji će se primjjenit kada je vrijednost value
+     atirubuta manje od min ili veća od max. */
+
+    /*Selektori za thumb i track za webkit browsere:
+     .nekiRangeInput::-webkit-slider-thumb{}
+     .nekiRangeInput::-webkit-slider-runnable-track{}
+
+     Selektori za thum i track za firefox:
+     .nekiRangeInput::-moz-range-thum{}
+     .nekiRangeInput::-moz-range-track{}
+
+    VAŽNO: gotova svaka rečenica je VAŽNO-PAZI u mini odjeljku doli, pažljivo pročitaj:
+    Ne smiješ gore navedne selektore moz i -webkit kombinirati kao zajednički selektor i odvojiti ih sa zarezom jer neće raditi iz nekog razloga.
+    Za chrome/safari i ostale webkit browsere trebaš staviti apperance:none na sami input element i -webkit-apperance:none na thumb jer inače
+    će se sve tvoje vizualne postavke ignorirati. Kada to napraviš ne zaboravi staviti background na thumb i input/track inače se neće vidjeti.
+    Te postavke za track poput apperance,width,height,border-radius i background možeš kontrolirati sve na inputu i ako ne staviš visinu na track pseudo element
+    onda nećeš morati centrati thumb pa zato je bolje da se izbjegava korištenje track psuedo selektora tj. stavljanje visine na -webkit/moz track psuedo element.
+    Također ukoliko želiš staviti vlastitu boju sa linear-gradiant koja će  rasti kako raste neke range na input track onda se onda treba postaviti na sami input
+    element ne možeš track(ni thumb) pseudo elementom birati u javascriptu. Znači "track" uređuj na samom inputu osim ako iz nekog razloga vidiš da nešto ne radi i
+    korisit thumb psudo selektora za urediš thumb da imaš kao minimum jednaku širinu thumba u svim browserima ako ga nećeš uređivati detaljnije.
+    Za firefox trebaš postaviti na input element istu visinu koju ima moz track psuedo element(ako ga postaviš) inače će se ignorirati visina koju si
+    postavio(neće to ništa smetati za chorme).Također postoji čudni sivi kao outline na thumb u firefox koji ne znam kako maknuti
+
+    //objašnjne toga linear-gradiant u javasriput koji je background "tracka" tj. inputa odnosno zašto zelena boja raste kako mičemo range thumb:
+    Stoga kada želimo namjerno imati HARD EGDE(recimo u slučaju da želimo postaviti stil na range input da kako se  range thumb miče neka raste
+    neka boja koju stavimo) treba staviti dvije boje koje imaju ISTU vrijednost postotaka (ili da stavimo da boja lijevo ima veći od boje desno
+    pa će automski browser ih postaviti kao da imaju jedanki postotak.).
+    VAŽNO: kada imamo dvije boje i imamo postotak 0% na oba dvije boje onda je druga boja(desna) zauzimati cijeli gradiant image. Kada
+    imamo 25% na dvije boje onda će druga boja zauzimati efektivno 75% u gradiant image. Međutim kada imamo 75% na oba dvije boje onda
+    će prva boja(lijeva) efektivno zauzimati 75% contianter i kada imamo 100% onda će prva boja efekeitvno zauzimati cijeli container.
+    Stoga kada želimo da kako range input raste u postotku povećvati neku boju onda je stavimo na prvo mjesto tj. lijevo te će boja
+    koja stavimo na drugo mjesto biti default incijalno radi tih ponašanja koje sam ovdje odmah gore naveo.
+
+
+    VAŽNO: kada treba centriati ovaj thumb na ovoj track(ako smo postavili height na track psude element) ne možemo korisiti ni translate ni absolute
+    jer inače izgubi svoju osnovu funcionlnost tj. ne možemo ga micati(bez da sami napišemo code za pomak vizalano i da sami pratimo vrijednost range).
+    Zato ga treba centirati sa formulom (track-offsetHeight/2)-(thumb-offesetHeight/2).To možemo korisiti jer je gornja strana thuma odmah ispod gornje strane elementa
+    tj. možoma zamislit da je thumb absolte(a nije) pa kao da ima top:0.
+    U primjeru ovdje je to bude (5/2)-(20/2)=-7.5  To je razlog zašto je onaj margin -7, otprilke je to stavio iako je -7.5 točno gdje treba stati.
+    Ista formula vrijedi i za bottom:-5px za after i before elementa,također vidi absolute sintezu i negativnia margin point.*/
+
+    /*VAŽNO-PAZI: da ne bude predugo ovo, nisam stavljao thum i treack postavke za firefox i u firefoxu neće sve raditi kako treba*/
+
+    .labelPrviRange {
+      /*Na širinu ovog elmenta se referia absolute span element koji je child ovog elementa i koji prikazuje trenutni range pa je za postotak bitno da ovaj label odogvara
+      širini elmenta koji nas zanima i koji je vidljiv pa zato inline-block*/
+      display: inline-block;
+      position: relative;
+      margin-bottom: 30px;
+      margin-left: 30px;
+    }
+
+    .prviRangeInput {
+      margin: 0;
+      display: block;
+      /*Abosolute poziconirani after i before elementi se referiaju na ovaj element koji im je parent*/
+      position: relative;
+      /*Bitno je imati apperance:none ovdje i postavljeni height i u js postaviti background.*/
+      appearance: none;
+      height: 5px;
+      outline: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+
+    .prviRangeInput::before {
+      display: inline-block;
+      color: #888;
+      content: attr(min);
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      transform: translate(calc(-100% - 5px));
+    }
+
+    .prviRangeInput::after {
+      display: inline-block;
+      color: #888;
+      content: attr(max);
+      position: absolute;
+      /*Vidi gore zašto -5*/
+      bottom: -5px;
+      right: 0;
+      transform: translate(calc(100% + 5px));
+    }
+
+    .prviRangeInput::-webkit-slider-runnable-track {
+      border-radius: 3px;
+      /*pazi: kada iskljčiš ovdje visinu(ili cijeli selektor) onda trebaš iskljčiti onaj margin:-7px doli u thumbu koji je prilgodba za postvljenu visinu ovdje*/
+      height: 5px;
+      margin: 0;
+    }
+
+    .prviRangeInput::-webkit-slider-thumb {
+      /*Bitno staviti ovdje ovaj apperance*/
+      -webkit-appearance: none;
+      outline: none;
+
+      height: 20px;
+      /*Ovaj width je ključan tj. treba se pogledati ovo i onda postaviti varijablu u javscriput na vrijednost ovdje*/
+      width: 6px;
+
+      border-radius: 12px;
+      background-color: #0097f0;
+      /*Vidi gore zašto je ovdje stavio -7px*/
+      margin: -7px 0 0 0;
+    }
+
+    .prikaziRangeSpan {
+      margin: 0;
+      background-color: #ccc;
+      transition: background 0.3s ease;
+      border-radius: 3px;
+      /*Bolje stavljait ovako padding nego visinu i širinu jer inajclno je jedna znamenka, kasnije dvije*/
+      padding: 5px;
+      font-size: 10px;
+      text-align: center;
+      color: white;
+      position: absolute;
+      display: inline-block;
+    }
+
+    .labelPrviRange:hover .prikaziRangeSpan {
+      background-color: #0097f0;
+    }
+
+    /*--------------------------------------------FILE input type, prvi primjer-----------------------------------------------------------------*/
+
+    /*File input podržava atriubt required pa automski znači da postoji minimlana default validacija pa možemo korisit :valid i :invalid
+      Dok ne odabremo neki file stil će biti :invald kada odabre neki file stil će biti :valid
+      Tehnika sa postvljen stila na neki file input se svodi na sakrivanje file inputa i postvljanje stila na lebel.
+      File input može biti descendata label i povezan na taj način, ali ukoliko ne želimo dodati još neki element koji je biti sibling inputu pa
+      kada nekiFileInput:focus + .primjeniFocusStilNaSiblingKojiJeStoPostoŠirineIVisineParentLabela onda jedstavno stavimo
+      da je label sibling koji je iza inputa u html i povežmo ih sa id.
+      Naravno, cilj povezivanje jer činjenica da lebel možemo urediti kako hoćemo dok file input ne možemo i zato skrivamo file input.
+      Postoji tehnika gdje na file input stavimo diplay:none i onda u javascrioput programmatily sa nekiInput.click() otvorimo
+      file slekotar window(onda kada korising izabre file će se aktiviarti change i input event), ali te ne bi trebali koristiti
+      radi accesbilty concerns. Ova klasa .visualy-hidden-input ovdje je primjer sa mdn-a sa mojim dodatkm display:block.
+      Bitno je da sa aboslute stavimo content izvan DOM document flowa i ako je input recimo unutar flex contaiera kao item da ga se
+      zanemari. Nismo micali sa "usmjervačima" aboslute kao inače ostane u parent divu iako mu je containing block viewport.
+      Čini mi se da je ovaj rect overkill, ali neće nam naškoditi. Znaju se staviti vrijednost na rect da sve bude nula px.
+      Uglavnom nije bitno što je točno na nekom tome css selktora koji vizalno skriva, može se sakriti na više načina, samo neka se sakrije.
+      Ono što smo htjeli je da taj input ostane focusable i da ostane u acessiblity tree.
+      Stavljano na sliku diplay: none incijalno jer nam nije bitno da se vidi vizalno niti da je registraiju screen rederi sve dok
+      ne izabremo neku sliku i postavimo je pa promjenim na diplay: block.
+
+
+    */
+
+    .contZaPrviFileInput {
+      margin: 30px 10px;
+    }
+
+    .visually-hidden-input {
+      display: block;
+      position: absolute !important;
+      height: 1px;
+      width: 1px;
+      overflow: hidden;
+      clip: rect(1px, 1px, 1px, 1px);
+    }
+
+    .prviFileLabel {
+      background-color: rgb(0, 183, 255);
+      padding: 8px;
+      border-radius: 7px;
+      color: white;
+      text-align: center;
+    }
+
+    .visually-hidden-input:focus + .prviFileLabel {
+      border: solid 2px rgb(255, 0, 255);
+      outline: none;
+      border-radius: 7px;
+    }
+
+    .imgPrviFileInput {
+      display: none;
+    }
+
+    .izabranaSlika {
+      display: block;
+      max-width: 200px;
+    }
+
+    /*------------------------------------------------FILE input type, drugi primjer-----------------------------------------------*/
+    .mainArea {
+      display: flex;
+      justify-content: center;
+    }
+
+    .contZaDrugiFileInput {
+      width: 300px;
+      height: 300px;
+    }
+
+    .drugiFileLabel {
+      margin: 0;
+      border: green dashed 4px;
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: border 250ms;
+    }
+
+    .textDefault {
+      margin: 0;
+      font-size: 20px;
+      color: #ccc;
+    }
+
+    .visually-hidden-inputDrugi {
+      display: block;
+      position: absolute !important;
+      height: 1px;
+      width: 10px;
+      overflow: hidden;
+      clip: rect(1px, 1px, 1px, 1px);
+    }
+
+    .visually-hidden-inputDrugi:focus + .drugiFileLabel {
+      outline: none;
+      border: 7px solid rgb(21, 182, 0);
+    }
+
+    .zadnjihPetUploada {
+      max-width: 1000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 30px auto;
+    }
+
+    .ItemUnutarZadnjihPetUploada {
+      max-width: 200px;
+    }
+
+    .popisZaUpload {
+      width: 250px;
+      display: flex;
+      flex-direction: column;
+      margin: 20px 25px;
+    }
+
+    /*--------------------------------------------SELECT,OPTION I OPTGROUP,form elements css styling----------------------------------------------------*/
+    /*Select je poznat kao element kojeg je problematično stylat.
+    Postoje tri pristupa:
+    1.Postavljanje stila na sami select element gdje mičemo default strelicu i mijnjamo je sa našom, mijenjamo backgournd selecta i dajemu mu još nekakv druge s
+    stilske properties. Nemamo kontrolu koje je boje highlight kada je hover, niti možemo dodati stil na granice option elementa,visinu na option. Možemo
+    staviti background option elementa, ali uvijek bi treba imati istu bojo kao select te možemo promjniti font-siza pa tako utjecati na visinu. 
+    Možemo staviti :checked na neki option elemnet i to će biti aktivno kada bude izabran taj option, ali to je tako shitty da to nikad ne treba koristiti.
+    Vidi scott2019Select.html za primjer toga.
+    2.Postoji i hibridni pristup gdje korisnici uređaja kojima je primarni input miš(desktop, laptom) dobiju totalnu custom verziju "selecta" tj.
+    ne koristmo sami select element, dok ta verzija bude sakrivina u slučaju da je korisnk na tabletu, mobitelu ili je na desktpru ili laptomu, ali aktiviramo
+    je select sa tastaturom. Ključan za detekciju desktopa i laptoma je media query hover:hover. Ima samo jedan problme taj pristup, ako se koristi
+    screen reader Voiceover(za ios,mac) onda kada je u modu koje screen reader cursor glumi miš onda se neće obiične select nego custom select aktivrati.
+    Vidi hybridSelect.html
+    3.Postoji pristup da napravimo poptuno novi tj. imamo skorz "custom select" element gdje kopiramo sve accessbiltiy osobine selecta ne neki drugi input
+    poput texta i dodamo mu sve glavne karakterike selecta. Na primjeru toga što sam vidio mi se ne sviđa što imam dodatnu serach funkconalnost pa nije kao
+    originlan select,više je datalist, iako ima više features. 
+    Vidi julieGrundySelect.html 
+    note:linkovi na stranice odakle sam skinuo sva tri primjera u svakom tome filu.
+    note: iako se može na njega staviti required atribut, pošto ako imamo neki od optionsa sa nekim textom unutar option elementa automsaki
+    imamo neku vrijednost određenu pa će uvijek biti u validnom stanju.
+    */
+
+    select {
+      width: 250px;
+      height: 30px;
+      background-color: teal;
+      color: #fff;
+      font-size: 18px;
+      /*Ovo je za firefox,inače bude čudna sivkasta granica koja užasno izgleda*/
+      border: none;
+    }
+
+    select option {
+      padding: 15px 0;
+      height: 100px;
+      font-size: 18px;
+    }
+
+    /*-------------------------------------------TEXTAREA, form element css styling------------------------------------------------------------------------------*/
+    /*Textarea je po default display: inline:block. Također po default korisnik možega ga proširiti i smanjiti pa ako ne želiš takvo ponašanje
+    možeš staviti resize:none. Pošto se na njega mogu staviti atributu minlength, maxlength i requred onda će naravno imati :valid i :invalid stanja gdje
+    se treba zadovljit jedan ili više tih atributa da postane :valid.
+    Bolje mu je ovdje odrediti visinu u širinu ili default visinu i šririnu ako ćemo ostaviti resize nego sa atirubtaim cols ili rows.
+    */
+
+    textarea {
+      display: block;
+      /*Da se ne može proširivati ili smanjivati*/
+      resize: none;
+      width: 300px;
+      height: 200px;
+      margin-left: 30px;
+      padding: 5px;
+      font-size: 18px;
+      background-color: darkkhaki;
+      color: white;
+    }
+
+    textarea::placeholder {
+      color: white;
+    }
+
+    /*--------------------------------------------FIELDSET I LEGEND, form elements css styling----------------------------------------------------------*/
+    /*Css posebnog ovog elementa je u tome što je ovaj legend automatski postavljen da sa pola svoje visine izvan fieldset parent containera.
+    Kada imamo display: flex na fieldset parentu onda legend neće biti flex item i recimo jusisfay-content će biti ignoriran i naravno biti
+    će opet po default pozconiran izvan parent containera.
+    Kada je display:grid na fieldset parentu onda će legend biti postavljen kao inače izvana sa time da će i cijeli grid po default biti izvan
+    tj. legan će zaustati jedan ondaj prirodni red dok nisi postvio grid ručno i neće na njega dijelovati kao i kada je riječ o flexboxu
+    pozcijske popretes like justify-items u gridu.
+    Uglavnom, izbjegvatit ću koristit ova dva elemetna. 
+    */
+
+    fieldset {
+      margin-left: 15px;
+      width: 70%;
+      /* display: grid;
+      justify-items: center; */
+    }
+
+    fieldset input {
+      display: inline;
+    }
+
+    legend {
+      border: 1px solid blue;
+      padding: 3px;
+      margin: 0 auto;
+    }
+
+    /*---------------------------------------------COLOR PICKER tip inputa----------------------------------------------------------*/
+    /*Jedino ako se koristi neka js logika gdje korisnnik nekim drugim inputom može odredit vrijednost value property na input type color
+     na neku boju se ne može konvertirati automatski na validnu se može dogoditi da boja bude :invalid tj. ne bude hexidecimalna 
+     boja sa sedam karaktera. Ali nije praktično koristit :invalid i :valid selektore svakako. 
+     Ključna stvar kada je riječ o styling color inputa da ga sakrijemo, možemo čak i sa display:none jer radi se o vizulanom outcoomu pa accesiblity 
+     pristunost nije toliko bitna. Kada ga sakrijemo onda izabremo neki element koji će ga vizalno predstvljati i u javscriptu pokremo colorPickerInput.click()
+     kada se klikene na taj element koji ga vizulano predstavlja.
+     */
+
+    .contZaColor {
+      margin: 25px 0;
+      display: flex;
+      justify-content: center;
+      width: 70%;
+    }
+
+    .colorPicker-hidden {
+      display: block;
+      position: absolute !important;
+      height: 1px;
+      width: 10px;
+      overflow: hidden;
+      clip: rect(1px, 1px, 1px, 1px);
+    }
+
+    .spanZaColor {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: #eca409;
+      display: inline-block;
+    }
+
+    .asideColor {
+      display: flex;
+      align-items: center;
+      margin-right: 8px;
+    }
+
+    /*-----------------------------------------------------------------------------------------------------------------------------*/
+  </style>
+  <body>
+    <!-- -------------------------------------------GENERALNE NAPOMENE---------------------------------------------------------------------------- -->
+    <!--
+     VAŽNO: Ovdje su obrađeni svi input i form elements(element koji su inaču unutar forma elmeneta, a nisu baš input) osim:
+      datetime-local input,month input,week input,time input,datetime input. Pročitaj ovdje od date input objašnjenje i vidjeti ćeš zašto je bitno raditi 
+      vlastiti inpute koji imaj veze sa datuima i vremenom i ne oslanjati se na ove bulit in.
+      Također od form elementa nisam obradio <progress>, <metar>, <output> jer mi se ne čine bitnim.
+      Nažalost obradio sam i neke bezveze inpute i form elemente, ali šta je tu je. 
+
+     VAŽNO: U firefoxu kada mi promjenimo stanje nekog atributa ili maknemo cijeli atribut se događa kada bude refresh cijele stranice ti atribute se ne vraćaju
+     u origlano stanje nego bude stanje nekon tih eventa iako se dogodtio genralni refresh. Primjerce, upišemo nešto u text input ili izabermo neki radio input, 
+     kliknemo na checkbox kada to napravimo i refreshao u firefox će zapmatiti to što je upisano/izabrano ili će u kao slučaju <button> ignoriati da smo maknuli cijeli
+     atribut poput disabled. Treba dodati atribut autocomplete="off" da se to spriječi. 
+     Mislim da to nije relevatno za single page apps. 
+     VAŽNO: pogledaj ovaj video da vidiš koje su sve moguće vrijednost atributa autocomplete i kako korisinci imaju mogućnost unutar browsera odrediti
+     koji unosi na input poljima će se zapamtiti(Helping Users AutoFill Their Web Forms, steve griffith na youtube).
+  
+     VAŽNO: sakrivanje/disejblanjanje submit botuna dok se na zadovlji naša custom validacija u js predstvlja dobar način na koji gdje
+     možemo korisiti neki input bez da se brinemo kako vizulano izgleda poruka da je "invalid" jer tek kada pošaljemo
+     cijeli form sa submitiom nam to pokaže, a ne možemo poslati dok je submit disejblan, a disjeblan će biti dok se na zadovolji naša js validacija.
+     note: uglavnom puno sam pričao o validaciji :invalid i :valid, ali vrlo lako možemo sami napraviti vlasittua validaciju i ne treba biti
+     opsjeduno sa cijelom tom pričom o prirodnom validaicom proicesu kada ćemo ionako pisati vlastitu logiku i na prirodni proces ćemo 
+     samo dobrim dijelom kopirati.
+     Note: možemo koristiti constraint validation api tj. posuditi metodue poput nekiInputElement.checkValidity() unutar js, ali mislim da
+     to nije korisno.
+     Note: vidi react onaj form za tehnike kako raditi vlasitit vliadaciju empty inputa.
+    
+     VAŽNO: nisam u niti jednom elementu tj. inputu nabrajao apsolutno sve atribute nego sam spominjao najvažnije odnoso glavno sam obradio ogromnu većinu.
+     Također, svaki element može dobiti neki globani atribut poput id, class itd.
+     VAŽNO: enterkeyhint atribut je globalni atribit kojeg nisam spominjao te služi da promjeni izgeld tipke enter na virtualnoj mobilnoj tipkovisni
+     ovisno o vrijednosti. Vidi koje su moguće vrijednosti više o tome ovdje:
+     https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/enterkeyhint
+     Note: boolan atributi su atribut poput disable,required gdje nije potrebno postaviti vrijednost i sama njihova pristunost znači da su "true".
+
+     VAŽNO: uz input,change evente koji su najvažniji da ogromnu većinu form elementa na svaki form elment se naravno uvijek mogu staviti
+     svi ostali event listener poput mouseenter,click etc. ali rijetko će biti potreba da se to koristi.
+
+     VAŽNO:Name atribut će uvijek predstvljati key tj. njegova vrijednost unutar query stringa i ako se ne postavi na neki elment taj elment 
+     se neće nikad pojaviti unutar query stringa.
+     Svaki input i form element(osim fieldset el.) ima DOM property value, znači (nekiDomElement.value). Ako postavimo html atribut na neku vrijednost
+     onda će ta vrijednost incijalno postati (nekiDomElement.value) . Za one elemnete kojima korisnik ne može mijnjati (nekiDomElment.value) putem
+     unosa novih karaktera ili birsanjem karaktera, biranjem novog elementa u nekoj listi, biranjem novog datuma, micanjem range thumb slider ta inicijalna
+     vrijednost value elmenta koju samo postavili sa html atriubtam value će ostati konačna osim ako nismo je u javascriput nekako mijenjali naknadno.
+     
+     VAŽNO:Međutim, to nije bitno, niti se oko toga treba opterećivati. Bitno je znati da svi inputi i ostale form elements(osim filedset el.) imaju dom property value
+     i da će vrijednost toga value dom property u trenuku submita biti vrijednost unutar query string key/value para POD UVJETOM da je moguće poslati value
+     tj. key/value par nekog element unutar query stringa na server.(dolje nabrajmo za koje elemente nije moguće)
+     Za radio input i option element samo treba naglasiti da ćemo gotovo uvijek birati jedan option ili jedan radio input
+     unutar neke radio grupe i onda će se value izabranog biti poslan u query stringu. Value dom property select inputa/datalista će biti vrijednost izabranog optiona.
+    
+     //-----------Dio o elmentima koji se nikad neće slati unutar query stinga i nekim uvjetima koji se trebaju zadovoljidi da bi se slali ostali------------
+     Ne možemo poslati nekiElement.value kao vrijednosti query stringa tj. ništa se neće poslati u query stringu za ove elmente:
+     File input,image input,reset input, submit input, button input(input type button, ne <button>),fieldset(mogu se poslati vrijednosti ostalih inputa
+     i form elmenta kojima je on contianer, ali filedset.value ne postoji) . Ostali elementi koji se ne mogu poslati imao .value property, ali jednostvno
+     to se nikad neće slati na server u obliku querystringa(uostalom, što će nam name,value recimo submit inputa).
+     Možemo poslati name/value <button> elmenta u querystringa(iako nema puno smisla) samo ako se taj <button> klikao i aktivirao submit event na form elmentu.
+     Ako je jedan od botuna u <form> i nije kilk na njega pokrenuo proces slanja na server ništa se neće poslati čak i ako ima eksplictno navedemo name/value.
+     Također ako ne izabermo niti jedan radio input u nekoj radio grupi ili ne kliknemo na neki chekcbock element i postavimo ga u "checked" stanje
+     onda se name/value tih elmenta neće pojaviti u querystringu čak i kada ih eksplicitno postavimo. 
+     Narvno, za svaki input i form elment vrijedi pravilo da mora postojait postvlajni atriubt name koji će biti key unutar query stringa da bi se poslao.
+          
+     //-----------------------Dio o elemetni koji nikad neće imati empty string kao vrijednost nekiElement.value unutar query stringa------------
+     U checkbox/radio elementima ne možemo upisati unutar nekog polja value ili unutar nekog dropdown izbrornika izabrati value i onda ako ne navedmo
+     value eksplictno kao html atribut i postavmo mu vrijednost default value će biti on sa time što u slučaju radio inputa želimo razlikovat
+     i znati koji je izabran pa nam "on" vrijednost ništa ne znači i uvijek moramo navesti value kao html atribut.
+     Elementi koji će imati uvijek vrijednost koja nije empty string("") su također još color(hex,sedam znamenki) input i range input. 
+     Tehnički postoji mogućnost da ne postavimo html atriubt value na neki od option elementa unutar selecta ili datalista i da ti elementi nemaju textcontent
+     tj. textcontent i njihov  option.value im je empty string(""), ali u praksi uvijek će i select/datalist imati neku vrijednost koja nije empty string.
+     
+      //-----------------------Dio o elmentami za koje je moguće da imaju empty string value unutar query stringa-----------------------
+     PAZI: taj empty string value se unutar query stringa iskaže ovoJeNekiNameTjVrijednostNameAtributa=&nekiNoviKey=nekaVrijednost(ne budu doslovno "" nego 
+     nakon jednako znaka ne bude niti jedan karakter tj. bude & koji je "sparator" do iduće key/value para)
+     Za ove element je moguće da imaju empty string vrijednost value property:
+     Text input,email input(da, stvarno ako ga ostaviš prazno i bez required atributa),password input,serach input,tel input,url input,number input,date input,
+     textarea input. Uz to još select i datalist elementi, ali to je onda tehnička mogućnost, jako neobično bi bilo u praksi.
+
+     //--------------------------------------glupost koju sam ovdje napravio-----------------------------------------------------------------------------------
+     -Ovdje sam često restirao margin, nemoj kao ja gore na vrhu imat form *{} selektor,samo probleme radi i čudiš se zašto elementi nisu tamo gdje bi ih očekivao.
+     -note: dogodio mi se bizrani problem gdje je script tag content postao vidljiv(inače je po default display: none) jer je jedna od mojih 
+     display: block klasa ga učinla vidljivma, a to se dogodilo jer sam umjesto input stavio da se element zove type pa je sve poludilo gdje script postao
+     dio forma iako je izvan forma, a se nije pokazivo error u editoru. 
+    -->
+    <form method="GET">
+      <!-- -----------------------------------------BUTTON HTML ELEMENT-------------------------------------------------------------- -->
+      <!-- Miču mu se one granice i nadubljeni tipični izgled tako da se stavi border:none i eventalno stavi outline: none 
+      
+      VAŽNO: nema puno smisla slati u query stringu vrijednost nekog botuna, ali ako baš želimo onda treba postaviti atribut
+      name i njegovu vrijednost, postaviti atribut value i njegovu vrijednost te što je neobično kliknuti na baš taj botun gdje
+      samo to stavili kada idemo submitati form jer ako postoje drugi botuni koji isto mogu submitati i kliknemo na njih to
+      što je vrijednost name i value atributa na botunu neće se poslati u query stringu. 
+      -VAŽNO: možemo mu staviti type="submit", ali i bez toga kada se klikne na njega unutar nekog forma ako slušamo "submit" event(treba
+      ga uvijek slušati na <form> elementu, ne na button) će se dogoditi da se aktivira click event callback ako slušamo "click" event na samom
+      <button> i aktivirati će se "submit" callback fn. koju slušamo na <form> elementu.Ako iz nekoga razloga želimo to spriječiti onda
+      možemo staviti e.preventDefault() unutar click callbacka. Da bi to sve vidjeli u konzoli naravno da unutar submit callback trebamo uvijek
+      imati uključen e.prventDefault() da spriječimo refresh i default slanje forma.
+      Stoga slobodno možemo slušati click event na nekom form bottunu čak i ako ima type="submit" i kada se klikne callback će se aktivira, ali 
+      ako slušamo "submit" na botunu neće se ništa aktivirati callback jer se "submit" treba slušati na <form> elementu.
+    -->
+
+      <button class="običniBotun" name="ovoJeObičniBotun" value="ANTE">
+        Obični html Button element,spada pod form elements
+      </button>
+
+      <!-- -------------------------------------------RESET input--------------------------------------------------------- -->
+      <!-- Služi za restiranje svih polja u formu -->
+      <!-- Ono što bude kao vrijednost value će biti tekst samoga reset botuna.
+      Ništa od atributa neće završiti u query stringu 
+      Jasno, primarno za njega vrijede klike event, change i input za njega nisu relevatni.
+    -->
+      <input type="reset" value="Reset type input" />
+
+      <!-------------------------------------------- SUBMIT input------------------------------------------------ -->
+      <!-- Služi za slanje forma. Ako sami obrađujemo podatke i šaljemo neki http request bez da koristmo defalt query string koje šalje from kada bude submit
+        onda nam neće trebati i treba uključit e.preventDefault()
+       Može se još staviti <button> element umjesto njega sa type="submit" atributom.  
+       -Ono što bude vrijednost na value će biti sami tekst botuna 
+       Ništa od atributa neće završiti u query stringu  
+      Jasno, primarno za njega vrijedi klik event, change i input za njega nisu relevatni.
+
+      -->
+      <input type="submit" value="Submit type input" name="ovoJeSubmit" />
+
+      <!-- 
+       ----------------------------------------------CHECKBOX input------------------------------------------------------------------------------------------------------------ 
+      -VAŽNO:Checkbox se razlikuje od radio input botuna sa time što ih može odjednom biti više izabrano.
+      -Ako atribut checked na inputu type "checkbox"  postoji onda to samo znači da je automaski u checked stanju bez da smo mi išta pritisli tj. default je sada checked.
+      Kasnije možemo kliknuti i maknuti to stanje.
+      -Ako ima više checkboxa sa atributom name koji imaju iste vrijednosti onda će biti problema na serveru koji prima query string jer će po default uzesti samo jedan taj key name 
+      u queary string. Znači vrijednost atributa name će biti key unutar queary stringa. Stoga postavimo name="uvijekDrugiNaziv".
+      -Ako ne postavimo atribut name atribut value neće se pojaviti unutar query stringa.
+      -Ako postavimo atribut value na checkbox vrijednost queary stringa će biti vrijednost toga što je na atributu value.
+      Vrijednost tj. value će biti "on" u quary stirngu kada se klikne na neki checkbox ako nismo postavili atribut value tj. "on" bude default.ž
+      VAŽNO: čak ako postavimo vrijednosti na name i value atribit ako neki checkbox nije u "checked" stanju tj. nije kliknut onda se on neće 
+      pojaviti u query stringu.
+      -možemo mu postaviti od nekih uobičajnih atribata poput disabled i required.
+      -Required ne utječe na invalid i valide pseudo klasu unutar checkbox inputa kao u text inputu(i nizu ostalih) i mislim da te pseudo klase nisu relevatne za radio inpute. 
+      -Ako želimo u javascriptu slušati kada će promjenit checked state onda to možemo sa change event listnerom ili sa input event listnerom.Vidi
+      ovdje script tag da vidiš razliku između ta dva eventa.
+      -U css-u "slušamo" je neki checkbox checked sa psudo klasom :checked
+      -Vidi gore u css-u detaljan opis našeg primjera ovdje i eventalno vidi video. -->
+
+      <div class="checkboxPrviCont">
+        <input type="checkbox" id="prviCheckboxInput" checked value="Neka ovo bude value" name="prviCheckboxInput" />
+        <!-- Label element koji je povezan sa for i id atributama sa prvim checkbox inputom -->
+        <label for="prviCheckboxInput" class="prviLabel" name="prviCheckboxInput">
+          Label element koji je povezan sa for i id atributama sa prvim checkbox inputom LIJEVO
+          <span class="customCheckbox"></span>
+        </label>
+      </div>
+
+      <label class="drugiLabel">
+        <p>Label element koji je povezan sa checkboxom DESNO tako da se input type checkbox nalazi unutar labela</p>
+        <input type="checkbox" name="drugiCheckbox" value="andrijaVrijednostDrugogCheckboxa" />
+        <span class="customCheckbox"></span>
+      </label>
+
+      <!---------------------------------------------RADIO input---------------------------------------------------------------------------------------------------------- -->
+      <!-- -Radio input se razlikuje u odnosu na checkbox sa time što se samo jedna radio input iste radio grupe može izabrati.
+      -Radio grupa se formira na način da se doda atribut name iste vrijednosti na nekoliko različith radio inputa. Onda se samo jedan
+      od tih inputa može izabrati. Možemo imati više radio grupa unutar nekog forma. Često se unutar forma traži da odberamo muško ili žensko i traži se da odaberom
+      neku od kartica za plaćanje. To su dvije različite radio grupe, gdje svaka radio grupa ima svoje name.
+      PAZI: treba uvijek dodati atribut value i postavitit vrijednost toga atributa za svaki radio input posebno. Inače će vrijednost toga atributa biti "on"
+      unutar queary stringa kao value pa nećemo znati koji je radio input izbran od radio grupe. Znači postvljanje name(key u string) i value je nužno
+      ako želimo efeketivno korisitit radio inputs.           
+      -VAŽNO:Ako se ne izabere niti jedan radio input unutar radio grupe onda čak i ako imamo postvljeni name/value atribute ta radio grupa neće poslati ništa u queary stringu. 
+      -Možemo još dodati atribut checked tj. izabrati neki radio botun da bude default u svojoj radio grupi.
+      -Možemo koristi required atribut na jednom od inputa u radio grupi   pa from neće biti submited kada klinemo na input type submit 
+       dok ne izbaremo  neki od inputa u radio grupi. 
+      -Required ne utječe na invalid i valide pseudo klasu unutar radio inputa kao u text inputu(i nizu ostalih) i mislim da te pseudo klase nisu relevatne za radio inpute. 
+      -Možemo recimo dodati i atribut disabled jednom od inputa u radio grupi, međutim samo će taj jedan input biti disabled. Ako želimo
+      disable cijelu radio grupu onda treba dodati atribut disabled na svaki radio input.
+      -Možemo povezati input sa labelom pomoću for i id atributa, a možemo kao na našem primjer ovdje jednostva ubaciti input unutar labela pa će svaki klik
+      na label biti kao da smo klikli na sami input.
+      Change i input eventi slušaju promjne stanja radio inputa u js.
+      -vidi gore css za detalje i problem u uređivanju -->
+
+      <p>Radio inputi doli tj. jedna radio grupa:</p>
+      <div class="prvaRadioGrupaCont">
+        <span>MasterCard</span>
+        <label class="radioLabel1">
+          <input type="radio" name="kartica" value="MasterCard" class="visually-hidden-input" />
+          <div class="customRadio1"></div
+        ></label>
+        <span>Visa</span>
+        <label class="radioLabel1">
+          <input type="radio" name="kartica" value="Visa" class="visually-hidden-input" />
+          <div class="customRadio1"></div>
+        </label>
+        <span>Maestro</span>
+        <label class="radioLabel1">
+          <input type="radio" name="kartica" value="Maestro" class="visually-hidden-input" />
+          <div class="customRadio1"></div>
+        </label>
+      </div>
+
+      <!---------------------------------------------DATE input---------------------------------------------------------------------------------------- -->
+      <!-- Vrijednost koju postavimo na value će biti samo default value.Ako postavimo name koji će biti key(a bez key se neće postalti) onda će u queary će
+      string biti ta vrijednost koju smo izbarali u formatu YEAR-MM-DD i u tom formatu se treba postaviti value da bi se pojavila kao default.
+      Ako ne postavimo value onda će vizualno se na početku prikazati mm/dd/nekaGodinaOvdje. 
+      Min atribut tj.njegova vrijednost predstvlja najstariji datum koji možemo izabrati i treba biti u formatu YEAR-MM-DD.
+      Max atribut tj.njegova vrijednost predstvlja najnoviji datum u budućnosti kojeg možemo izabrati. 
+      VAŽNO: ako je min ili max datum nepostajeći poput "2021-11-31" umjesto ispravnog "2021-11-30" onda će se ignorirati taj krivi datum.
+      Step atribut tj. njegova vrijednost se može postaviti na vrijednost "any" ili "1" i u tom slučaju predstvlja default koliko sam shvatio.
+      Možemo još spomnetu required atribut koji se na njega može staviti.
+      Ako se recimo postavimo broj dva onda će se dogoditi da svako drugi dan ne možemo izabrati unutar date inputa. 
+      VAŽNO-PAZI: ja koristim us-en kao browser languge i mislim također windows lang. Zato kada je promjenim datum odjednom format postane
+      MM-DD-YEAR tj. onaj američki format.Također svaki browser ima drugačiji stil kako je date input prikazan. 
+      Radi toga mi se čini da ovaj input treba izbjegavati i samostalno kreirati date input. Pogledaj neka videa iz input screenshotva.
+      Baci oko na neke avio kompanije kako to rade, recimo ryanair korisiti web komponete.
+      Međutim, opet bi trebalo detektiratai nekako gdje je korisink i preme tome mu prikazati format datuma.
+      -zanimljivost: išao sam gledao koja ja najmanja godina koja se može izabratiti i to je godina 1, znači ništa bc. 
+      -Što se tiče css styling samo znam za ovo pseudo klasu,ali mi ne radi ::webkit-calendar-picker-indicator
+       -change i input event vrijedi i za njega -->
+      <!--  max="2021-11-30" -->
+      <p>Date input doli:</p>
+      <input type="date" name="departureDatum" value="2021-08-31" min="2021-05-01" step="1" />
+      <!-- ------------------------------------------TEXT input--------------------------------------------------------------------------------------- -->
+      <!--
+      -text input i ostali slični input gdje se može upisati nešto sa tipkovninicom te textarea form element imaju metodu nekiElement.select()
+      koja omgućuje da se highlight totalni tekst sadržaj.PAZI: taj select() returna undefined i korisite se prilikom kopiranja na clipborad
+      samo da korisniku vizalno pokaže što će biti kopirano.
+      -minlength(pazi,mala su sva slova) atribut tj. njegova vrijedost određuje minimalan broj karaktera koji input string u text inputu treba sadržavati.
+      -maxlenght atrtiva tj. njegova vrijednost određuje maksimlan broj karaktera koji input string treba sadržavati u text inputu.
+      -i za minlenght i maxlenght vrijednost je neki string reprezetacija broja(recimo,minlenght="3") koji ne može biti negativan,a kada je riječ o maxlenght ne može biti
+      niži od minlenght.
+      -pattern atribut tj. njegova vrijednost određuje neki pattern i treba biti neki string koji može biti validan regular expression.
+      Razlika je u tome što pattern vrijednost nema sytax /(tank){2}/ nego izgleda poput stringa "(tank){2}".Također je razlika 
+      ako sam dobro promjetio da se gleda da je pattern mora biti cijeli string tj. ^ je uključni kao i $ po defaultu kao dodatak pattern kojeg smo mi naveli
+      pa neće vrijedni neštotanktanknešto nego samo tanktank.
+      -size atribut određuje koliko će input field biti širok.Default je 20. Ne određuje maksimlana broj karaktera nego samo širinu input elementa.
+      Znači size nam neće biti puno od koristi jer uvijek možemo da width odrediti širinu elementa.  
+      -spellchek atribut tj.njegova vrijednost je default empty string i hoće li spellchek biti aktivan na nekom text inputu ovisi o parent elementu i browseru.
+      Ako spellcheck atribut želimo aktivrat stavimo mu vrijednost string true, a ako ga želimo maknuti stavimo mu string false. 
+      Za koji jezik provjerava spellcheck ovisi o browser postavkama mi se čini, možemo staviti atribut lang="hr" recimo, ali to neće raditi na chromeu.
+      moguće vrijednosi za lang atribut: https://www.w3schools.com/tags/ref_language_codes.asp
+      -placeholder atribut tj.njegova vrijednost predstavlja neki tekst koji je unutar text inputa koji će se odmah maknutit čim počmemo pisati.
+      -možemo mu postaviti još neke uobičjane atribute poput required i disabled
+    
+      -name atribut se mora staviti ukoliko želimo da se pošalje nešto u quary string i biti će key,dok će value biti ti karakteri koji su upisani unutar text inputa 
+      tj. stanje u trenuku slanja forma na Dom property nekiTextInput.value će biti vrijednost unutar query stringa. 
+      -value atribut koji u react koristmo gotovo stalno jer koristmo obično controlled input se ne stavlja na text input inače i ako se stavi
+      onda će to što je value biti početni text inputa, samo za razliku od placeholder neće se automaki maknuti kad mi nešto upišemo nego ćemo se samo
+      nadovezati na taj text koji je vrijednost value atributa.
+      -React controlled input znači samo da je vrijednost atributa value dio react state. Ako je uncontrolled isto ćemo vidjeti to što upišemo, isto će se pomoću
+      input eventa(u reactu i change eventa) moći regirati sa nekom handler fn. nakon svakog keystroka samo unutar state nismo registirali što
+      smo upisali(vidi doli u js. objašnjene razlike inputa/change eventa). Ako to što upišemo šaljemo negdje drugdje ona možemo uvijek sa e.target.value dobiti tu
+      vrijednost koja je upisana i to sve bez da smo promjenili state u samoj komponeti gdje je input. Naravno u tome onChange handleru gdje je input
+      treba promjenit state neke druge komponte onda putem reduxa eventalno ili akitivacijom neke <Route/> koja se izazvani re-reder neke komponente.
+     
+      -atributi required,minelenght i pattern tj. njihove stanje utječe hoće se se prmjeniti :invalid ili :valid pseudo klasa na nekom text inputu.
+      Za detalja o tome i ostatku uređivanja text inputa vidi gore css. 
+      -Ukoliko na atribut list na nekom text input se stavi ista vrijednost kao vrijednost id atributa na html elemntua <datalist> onda kada kliknemo na text input
+      pojaviti će se meni u stilu selecta(sa dodanim search moguć.). Unutar chorme se pojavi dodatna strelica na datalist i dolje link objašnjva kako je se može maknuti.
+      https://stackoverflow.com/questions/20937475/remove-datalist-dropdown-arrow-in-chrome
+       -change i input event vrijedi i za njega
+      -->
+
+      <!--       
+      note: pogleda ovaj video "Helping Users AutoFill Their Web Forms" (steve g. na yt) da vidš koje vrijednost se mogu staviti na autocomplete i kako.
+      
+   
+
+
+      -->
+
+      <input type="text" name="tekstInputJeOvo" spellcheck="true" placeholder="textInputPlaceholder" />
+      <div class="jonasDivCont">
+        <!-- dodaj requried na input ispod kada budeš ovo testirao, jer tako je bilo originalno, ali sam makao da mi ne blokira submit -->
+        <input type="text" name="jonasInput" placeholder="Full Name-textInput" id="jonasInput" />
+        <label id="jonasLabel">Full Name-textInput</label>
+      </div>
+      <div class="andreiDivCont">
+        <input type="text" id="andreiInput" name="andereiInput" />
+        <label id="andreiLabel">Display Name</label>
+      </div>
+
+      <!-- ----------------------------------------- EMAIL input------------------------------------------------------------------------- -->
+      <!--Osnovna razlika između text inuuta i email inputa je što email input ima internalni regex validation koji traži je li string validan email.
+      Browsers that support the email input type automatically provide validation to ensure that only text that matches the standard format for Internet e-mail addresses is 
+      entered into the input box. Browsers that implement the specification should be using an algorithm equivalent to the following regular expression:
+      /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
+      Taj regex će nam služiti da napravimo osnovnu provjeru međutim pravila za to koja je validna email adresa su jako labava pa se neki developeri
+      odlučuje za jendostvnij regex koji će eliminirati jako neobične slučajeve. Meni se čini da to nije toliko bitno i da je bolje ostaviti taj default
+      intrenal regex ili ga pirmjeniti u vlastitoj funkciji na nekom text inputu koji će služiti kao emiil input u react(radi kontrole stila poruka kada
+      je pattern kriv). Osnovna stvar je da korisik upiše @ i da se zadovolje još koje pravilo i to je to. Prava "provjera" za registraciju korisnka se
+      obavlja putem slanja akivacijakom email na adresu koju je korisnik poslao ili kako je netko naveo na stackoverflowu. 
+      Stronger checks like trying to connect to mail-server or ping domain should happen anyway on the server side.
+      Ono što je korisno da se obavi na client side su sugestije gdje provjeramo je li korisnik upisao dobro i točno riječ poput gmail,yahoo i onda
+      ponudimo "jeste li mislili". Dobre i korisne su sugestije, recimo upišeme @gm i onda se automatski pojavi mail.com dok se tipka sa druačijoj malo
+      manje opacity bojom. To sam vidio na hbo go stranici.
+      Za jeste li mislili ekteznzija: https://github.com/mailcheck/mailcheck
+      Kako napraviti vlasititu provjeru typosa i sugestiju vidi:
+      https://medium.com/hackernoon/how-to-reduce-incorrect-email-addresses-df3b70cb15a9
+      Eventaulno ostale uobičajne provjere se odnose da e-mail adrese nije sa gmail ili nekog ostalih velikog javnog servisa, da nije sa neke
+      privremene email usluge, odnosno oni slučajevi kada netko prihvaća samo "company" email adress.
+      Email ima atribute kao text uz to što ima dodatni atribut, multiple. Kada navedemo taj boolean(ne moramo ga postaviti na neku vrijednost) atribut
+      onda ako dodamo iza kraja unosa prvog email-a zarez onda ćemo moći unijeti i drugi sa time da će prazna mjesta i brojevi iza toga zareza prije @ drugog
+      emejla biti validni.
+      -za malu razliku u cssu email i text inputa vidi gore u css sekciji komentar.
+      -change i input event vrijedi i za njega -->
+
+      <input type="email" placeholder="type your email" name="emailJeOvo" />
+
+      <!-- -----------------------------------------PASSWORD input--------------------------------------------------------------------------------- -->
+
+      <!--
+      Osnovna razlika između pasword i text input je činjenica da kada upišeš neki karakter u password input da će automaski biti skriven ili
+      na mobilnim tipkovnicama da će se vidjeti na trenutak prije nego postane točkica ili zvijezdica.
+      -Dijeli sve atribute sa text inputom osim list,spellcheck pattern atributa koji se ne primjenuju na password inputima. 
+      inputmode globalni atribute-Global value valid for all elements, it provides a hint to browsers as to the type of virtual 
+      keyboard configuration to use when editing this element or its contents. Values include none, text, tel, url, email, numeric, decimal, and search. 
+      Osobito je zanimljva vrijednost "numeric" inputmode atributa. To je korisno kada želimo da korisnik upiše pin. Kada se ovo stavi kada se pogleda typeof toga
+      što je upisano u password input vidjetit ćemo da je to još string, to ne služi za to. Ovo je navodno hint za virtual keyboard pa je ovo
+      korisno primarno za mobilne uređaje kada se treba upisati neki pin.
+      -Ako želiš da korisnk ima opciju da pokaže ili sakrije to što je upisao u password onda stavi neki botun ili chekbox gdje akviraš fn. gdje
+      ćeš mijenjat type inputa sa pasword na text i ako se opet klikne sa text na password. To će stvorit efket pojave i micanje onih zvijedica ili točkica
+      koje predstlvja karaktere koje smo upisali.
+      -Pogledaj koje vrijednost se mogu staviti na autocomplte atribut kada je riječ o password mangaerima: -->
+      <!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/password#allowing_autocomplete 
+       -change i input eventi vrijede i za njega-->
+      <input type="password" inputmode="numeric" placeholder="ovo je password input" name="ovoJePasword" />
+
+      <!-- -------------------------------------------SEARCH input----------------------------------------------------------------------- -->
+      <!-- Razlika između search inputa i text inputa svodi se na to kako neki browseri primjenju stil i kako postoje
+      autocomplete opcije gdje se prikaže što se upisalo ranije u search input kada se poslao neki submit. U chrome
+      postoji x križić gdje se može izbristai to što se upisalo u taj input. U firefoxu postaje te automske sugestije dok mi iz nekog
+      razloga u chrome ne radi i kada stavimo atriubt autocomplete="on". 
+      -change i input event vrijede i za njega-->
+
+      <input type="search" name="ovoJeSearch" placeholder="ovo je search input" />
+
+      <!-- -------------------------------------------TEL input---------------------------------------------------------------------------- -->
+      <!-- Jedina razlika između tel i text input je u tome što kada korisnik pokuša unijeti nešto u tel input onda će se na  mobilnim browserima 
+        pojaviti tipkovnica sa brojevima. Pošto su formati telefonskih brojava toliko različitit  diljem svijeta ne postoji nikakva internalna 
+        validacija prije nego se može to što smo upisali unutar tel inputa submitatit sa cijelim formom. 
+        -Dijeli sve atribute sa text inputom. Text input mu je fallback ukoliko browser ne podržava taj input.
+        -change i input eventi vrijede i za njega -->
+      <input type="tel" name="ovoJeTelInput" placeholder="tel input je ovo" />
+
+      <!-- -------------------------------------------URL input-------------------------------------------------------------------------------------- -->
+      <!-- Razlika između url inputa i text inputa se svodi da to da ukoliko unesemo nešto u input onda to treba biti 
+        validan url(djelomično validan točnije dosta je http:) inače će se pojaviti "please enter url" kada pokušamo submitati form čak i ako
+        ne stavimo required atribut. Naravno, name će biti key u query stringu dok će stanje urlNekiInput.value biti vrijednost u query stringu.
+       -za css razlike vidi gore css
+       -change i input eventi vrijede i za njega-->
+
+      <input type="url" name="ovoJeUrlTipInputa" placeholder="ovo je url tip inputa" />
+
+      <!-- ------------------------------------------NUMBER input------------------------------------------------------------------------- -->
+      <!-- PAZI: Kada se u chrome browseru pokuša unijeti neka karakter koji nije broj unutar number inputa onda se neće moći
+      upisati, osim slova e iz nekog razloga. Kada se pokuša submitita form dok unutar number inpute nešto što nije
+      number biti ćemo blokiranu čak i ako nema required. U firefoxu možeš upisati slova unutar number inputa, ali će se
+      opet blokirati ako pokuša submitat form kada broj nije napisan unutar inputa čak i ako nema required.
+      -Efekt reqiured atributa se vidi naravno ako ništa ne upišemo u inpuput i pokušamo submitat.
+      -VAŽNO: kada pogledamo u javascriput typeof toga što unesmo u input onda ćemo uvijek vidjeti da je to string čak i kad upišemo broj. 
+      Znači ako želimo broj trebamo to konventirati.To rade i browseri kad određuju jesmo li upisali neki broj ili string u number inputa.
+      -Step atribut služi da promjenimo za koliko se pomiču brojevi kada kliknemo na one strelice koje input number ima po defaultu.
+      Ako je vrijednost step recimo broj dva onda će kada pomaknemo recimo strelicu za gore ići 2,4,6 umjesto default 1,2,3.
+      VAŽNO: ako želimo decimalne vrijednost onda kao vrijednost step atributa treba staviti "0.01" i onda kada upišemo recimo 1.5 unutar
+      input polja kada pokušamo submiattit form će prihvatiti tu vrijednost koju inače ne bi prihvatio.
+      Također, ako recimo stavimo step="2" onda ako upišemo broj 1,3,5 etc. to neće biti valjan unos i kada pokušamo submitati form biti ćemo
+      blokirani. 
+      -min atribut tj. njegova vrijednost određuje koja je minimlna veličina broja kojeg trebamo unijeti u input i ako ne unese taj
+      minimlan broj onda ćemo biti blokirana kada pokušamo submitati form.
+      -max atribut je samo max verziija toga što sam opisao gore za min.
+      -Kada mobilni browseri vide input type number onda pripreme odgovarajuću brojačnu tipkovnicu kada taj input doše na red tj. bude u fokusu.
+      -change i input event vrijedi i za njega
+      -vidi gore css kako se miču strelice i još neke stvari.
+
+
+       -->
+
+      <input type="number" name="ovoJeNumber" placeholder="number input je ovo" />
+
+      <!-- ----------------------------------------RANGE input-------------------------------------------------------------------------- -->
+      <!--Default vrijednost rangeInput.value će biti točna neka vrijednost između min i max ili približno ta središnja vrijedno ako nije dijeljiv sa dva, te će
+        range thumb slijedit to vrijednost vizulano. Ako pokušamo postaviti value na vrijendost koja je manja od minimua biti će minimum i ako pokušamo
+        postaviti value na vrijednost koja je veća od max biti će max.
+        Default vrijednost za atribut min koji određuje koja je minimlna vrijednost nekog ranga je broj 0. 
+        Default vrijednost za atribut max koji određuje koja je maksimllna vrijdnost nekog range je broj 100.
+        Default vrijednost za atribut step je broj 1. To znači da će range rasti jedan po jedan kako mičemo prema desno.
+        Atributi autocomplete,name i list su još atributi koji se znaju korisiti sa range inputom iako datalist unutar ranga mi nikako nije jasan, ali
+        nije bitno jer browser suppoort za to je slab.
+        U query stringu vrijednost name atributa će biti key dok će vrijednost rangeInput.value biti vrijednost u query stringu.(naravno ako ne postavimo
+        name neće se ništa poslati)
+        Range input ne podržava atribut required tj. required se ne koristi na atributu range.
+        -range input se prati pomoću change i input eventa.
+        -vidi css gore -->
+
+      <p>Ovo doli range input:</p>
+      <label class="labelPrviRange">
+        <input type="range" name="ovoJeRange" class="prviRangeInput" min="0" max="20" value="0" />
+        <span class="prikaziRangeSpan">0</span>
+      </label>
+
+      <!-- ----------------------------------------FILE input------------------------------------------------------------------------- -->
+      <!-- Na sami <form> element se treba staviti atribut enctype sa vrijednošću "multipart/form-data" (enctype="multipart/form-data") da 
+          bi ovo optimalno funkconiralo navodno.
+         
+         -atribut multiple je boolean atribut(ne moramo mu postaviti vrijednost) i ako ga postavimo to znači da ćemo moći uploadi
+         više filova svaki put kada kliknemo na input botun ili ubacimo više filova sa drag&dropom u "dropzone".
+         O tome atributu i stvari na koju trebaš paziti ćeš pročitati u nastavaku ovdje.
+         
+         -files atribut spominju na mdn što je jako čudno iz nekoliko razloga. Nikad se ne treba stavljati files
+         kao atribut u html,files je samo key tj. property name na file input dom objektu. 
+         Na tome nekiFileInput.files keyu vrijednost će biti objekt koji se zove fileList koji će sadržavti objekte koji
+         se zovu File tip objekta koji proširena verzija sa dodatnom funkcionalošću Blob objekta i može se koristi svugdje gdje i Blob objekt.
+         Znači kada vidmo neku funckije tj metodu gdje piše nekaMetoda.(blob) to znači da možemo ubaciti File tip objekta ili Blob.
+         https://stackoverflow.com/questions/61277500/whats-the-difference-between-blob-objects-and-file-objects-in-js
+         Uz nekiDomElement.files(e.target bude neki DOM objekt) možemo još pristupiti fileList objektu unutar samog event objekta tj. e.dataTransfer.files
+         kada koristimo drag&drop evente. Pa ćemo unutar input i change event handler pristupati sa e.target.files dok ćemo u drag&drop eventima
+         onda trebaš izabrati više filova odjednom za svaki klik na input type file botun. Uhvatiš ih mišem nekoliko.
+         Ako za svaki file klikneš opet na input botun, naravno da zoveš opet change i input evente i kreiraš se novi fileList sa jednim objektom.
+         VAŽNO: kada se želi omogućiti da korisnik izabere folder umjesto file onda se mogu staviti ovi samostalni boolean atributi: webkitdirectory directory
+         na input type file element. Teško je naći nešto više o njima i nisam siguran kakav im je browser support.
+
+        Properties na File objektu:
+        -lastModified je timestamp koliko je ms prošlo od 1970 u trenutku kada je zadnji put file bio modificran.
+        -lastModifiedDate je Date object reprezentacija gore spomenutog timestampa, ali navodno je depracted i treba ga izbjegavati
+        odnosno treba napraviti vlastitu konverziju putem Date objekta.
+        -name property je naravno ime file samo kao string.
+        -size predstvlja veličinu file u byte-ima. note: konverzija se obavlja obično ne radi sa službenih 1000 bytova= jedna kilobyayte nego
+        se radi inače 1024bytova=1 kilobayte. Tako i windows radi konverziju sa 1024 među jedinicama. Vidi u math folderu funkciju koja
+        radi konverziju i reče korisniku koja je veličina filova.
+        -type property vrijednost bude neki MIME type poput image/png, video/mp4, text/html itd. kao string,naravno.
+        Znači kada provjeravamo je li neki file objekt recimo slika onda možemo korisiti fileObj.type.startsWith("image/")
+        -webkitRelativePath, slabo je podržan, relative path do current directory, nije važno ovo.
+
+        -accept atribut tj. njegova vrijednost određuje koje tipove fajlova tj. ekstenzija želimo automatski sugeriati korisnku. To ne znači
+         da se neće moći uploadati fijlovi i ekstenzije koje nismo naveli kao vrijednost accepta ako korisnik makne default file izbor.
+         Ukoliko želimo prihvati slike bilo koje ekstenzije onda navedemo "image/*", za video navedemo "video/*", audio navedmo "audio/*".
+         Možemo navesti više tipova filova koje prihvaćamo, na mora to biti samo jedan tip fajlova. Treba ih onda odvojitit sa zarezom
+         pa recimo možemo staviti "video/*, audio/*"
+         Ako želimo navesti točnu ekstenziju onda je dosta postaviti samo ime neke ekstenzije sa točkom ispred.
+         Recimo da prihvaćemo ".jpg, .png, .pdf, .doc, .exe". Možemo slobodno kobinirati i staviti "image/*, .pdf"
+        -VAŽNO-PAZI: accept atribut tj. njegova vrijednost određuje koji tipovi filova će biti prikazani korisnku kao izbor za upload
+         unutar njegovog OS i taj ako korisnik umjesto recimo images izabera all files onda će korisnik još moći izabrati neki random file pa
+         accept atriput nije dostatan da spriječi korisika da izabere file nekog tipa za upload koji mi ne želimo.
+         Mi unutar fileList objekta očitamo o kojeg ekstenziji se radi i ako je korisnik izabrao tip ekstenzije koju ne želimo
+         pokažemo mu vizualnu u poruci to i kasnije ne pošaljemo na server.
+
+         -Nikad se vrijednost value atributa neće slati na server.Kada pogledamo što je vrijednost toga sa e.target.value
+         čak i kada imamo atribut multiple onda ćemo vidjeti C:\fakepath\imePrvogFile.eksteznija. Znači kada izabremo više filova
+         onda će e.target.value biti prvi file po redu. 
+         Na server će se slati vrijednoNameAtriubtaNaFileInput="imePrvogFile"&vrijednoNameAtriubtaNaFileInput="imeDrugiFile" itd.
+         Znači obično ime nekog file(bez fakepatha) će biti vrijednost u query stringu dok će key biti vrijednost name atributa.
+        
+         -capture atribut se postvlja ukoliko želimo recimo omogućiti da kada korisnik klikne na input da se otovri kamera na mobitelu
+         i onda korisnik uplaod to što snimi. Uglavnoj pogledaj primjer na mdn u mobilnom okruženju i kada budeš radio u mobilnom okruženju toj testiraj
+         Ako nismo na mobitlu biti će obični input kao da nema caputure.
+         https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/capture
+
+         -required atribt možemo staviti na file input.
+
+         -change i input eventi vrijede i za file input. Pazi, ako se koristit tehnika display: none; i programatically korisit nekEl.click()
+         da simulira klik onda se dogodi samo da se otvori izborink kada bude klik, dok se  change i input eventi pokrenu kada izberamo item/iteme.
+         -VAŽNO: vidi doli javascript objašnjeje gdje govorim o FileReader API, URL.objectCreate() i ostalim bitnim stvarima.
+         -vidi i css gori.
+
+       
+
+
+      -->
+      <p>Dva file inputa doli:</p>
+      <div class="contZaPrviFileInput">
+        <input type="file" id="prviFileId" accept="image/*" class="visually-hidden-input" />
+        <label for="prviFileId" class="prviFileLabel">Select image file</label>
+        <img src="" class="imgPrviFileInput" alt="pokaži sliku" />
+      </div>
+      <main class="mainArea">
+        <div class="contZaDrugiFileInput">
+          <input id="drugiFileId" type="file" multiple class="visually-hidden-inputDrugi" />
+          <label for="drugiFileId" class="drugiFileLabel">
+            <div class="textDefault">Drop files here or click to upload</div>
+          </label>
+        </div>
+        <div class="popisZaUpload"></div>
+      </main>
+
+      <section class="zadnjihPetUploada"></section>
+      <!-- ------------------------------------------------SELECT,OPTION I OPTGROUP, form elments---------------------------------------------- -->
+      <!-- Select je element koji nam omogućuje da izabermo neku od opcija putem dropdowna ili putem tastture i onda se ta odabrana opcija pojavi kao vidljivi
+      element na ekranu(bez atrbiut multiple to vrijedi). U njega se treba postaviti elment options ili ako želimo groupirati određeni izbor ottgroup element. 
+      Praksa je da imamo label sibling ispred selecta koji je poveza sa for i id. 
+      -event listri koji se inače stavljuju na select su change,input i oni će se aktivirati kada izbermo neki option dok će se click event akvirati odmah kada
+      kliknemo na select pa se pojavi izbornik i kada izabermo nešto. Možemo spomenuti još eventulano focus,blur od među uobičajnijm.
+      -pogledaj css da vidš kako se uređuje. 
+       
+      -Option elemnet se smije stvljati samo unutar selecta,optgroup-a i datalist elemeta. Predstvlja opcije unutar tih elementa.
+       Option atributi:
+       -selected je važan atribut koji se stavlja na neki option element želimo da vrijednost atributa value na tom option bude default vrijednost select query stringa
+       -disabled atiribut možemo staviti na neki option element.
+       -value sam već spomenio, ukoliko se ne stavi onda će vrijednost nekog selcta biti text content izabranog option elementa.
+       
+       -Optgroup elemnent služi za groupiranje tj. podibzor. Recimo imaš select izberi neku automobil i onda u svakom optgroup elmentu imaš
+      option elmenet koji predstaljva automobile iz određene zemlje. Doda mu se atribut label(ne element,atribut) i tamo se stavi to ime podgrupe
+      poput talijanski automobili kao vrijednost atributa.
+     
+      Select tj. neki od select atributa:
+      -Name atribut se stavlja na sami select element dok se value atribut treba staviti na neki od option elementa. Ukoliko ne stavimo value
+      atribut na neki od option elementa onda će text content izabranog option elemetna biti vrijednost unutar queary stringa dok će vrijednost
+      name atributa odrediti key.
+      -form atribut se može staviti na select element da se neki slect poveže sa nekim formum čak i ako se select ne nalazi unutar nekog forma, ali
+      nisam siguran da je samo to dostano da se poveže sa nekim formom pa to neću koristiti.
+      -multiple atribut selecta nam omogućuje da izabremo više opcija. Jedna od opcija kako se izbere više elementa je da držimo shift i kliknemo na neku opciju 
+      pa isto ponovimo na idućem optionu element kojeg želimo izabrati.
+      -size atribut selecta se koristi obično kada koristmo multiple atibiuta i optgroup element i želimo odrediti koji će podizbori instatno biti vidljvi
+      bez scrollanja.
+      -uglavnom multiple i size izbjegavaj koristito kao Optgroup element i bolje je odvojiti izbor u više selecta.
+      -required se može staviti na select element
+      -disabled se može staviti, autocomplte, autofocus i još globalni atributi.
+
+
+
+
+    -->
+      <p>Select input doli:</p>
+      <label for="prviSelect">Izaberi najboljeg web developera-label prvog select inputa</label>
+      <select id="prviSelect" class="selectPrvi" name="ovoJeSelectPrvi" required>
+        <option>Ante</option>
+        <option>Mate</option>
+        <option>Ivana</option>
+        <option>Karolina</option>
+      </select>
+      <!-- ------------------------------------------------TEXTAREA, form element---------------------------------------------------------------------------- -->
+      <!-- Textarea služi da korisnik upiše neki poduži komentar.
+           -cols i rows atributu nam omogućuju da odredi visinu i širinu textarea gdje je jedna cols ili jedan rows širna/visina ovisi o font-size.
+           Nemoj to korisitit nego postavi visinu i širinu koja ti treba.
+           -warp atribut može imati vrijednst soft, hard te ekpermitalni "off". Ne vidim razliku među njima na konkretnom primjeru.
+           -spellcheck atribut se može staviti, vidi spellcahck u text input opisu sa time da se na textare može staviti i vrijedonst default.
+           -minlengh i maxlength atribute se mogu korisiti.Ako ne navedemo maxlenght možemo unijeti neogirančeno karaktera.
+           -placeholder atribut možemo stavitit
+           -možemo mu staviti required atribut.
+           -form atriubt ima da ga povežmo sa nekim formom ako nije nested unutar nekog forma.
+           -name atribut će naravno biti key u query stringu.
+           -PAZI-VAŽNO: na mdn kažeu da se na textarea ne koristi value atribut, ali u javascirpti kada želimo pogledati što je upisano unutar textarea
+            onda ćemo normlano pirstupitia sa nekiTextarea.value. Oni očito misle da ako staviš atribut value na textarea i tamo postaviš vrijednost
+            da ta vrijednost neće biti vrijednost query stringa koji se poslao na server.
+            Vrijednost query string koji textarea šalje će uvijek biti vrijednost koju je korisink upisao tj. ono što je vijrednost textarea.value u javascriptu.
+            Tehnički možemo mi u html odmah staviti neku default vrijedsnot koju onda korisink može izbrisati, ako korisnik ništa ne upiše onda bi to bila value.
+            note: treba imati label ispred njega koji je povezan sa textarea 
+
+
+
+       -->
+      <label for="zaTextarea" style="display: block"> Textarea doli,label povezan da textarea</label>
+      <textarea id="zaTextarea" name="ovoJeTextarea" placeholder="upiši nešto u ovaj textarea" wrap="hard"></textarea>
+
+      <!-- ------------------------------------------------LABEL, form element------------------------------------------------------------------------------- -->
+      <!-- Label je sastavi dio svakog forma i treba svaki input povezati sa nekim labelom. Možemo to učiniti sa for i id atirubtima ili možemo povezati label 
+      sa nekim inputom na način da input bude child labela. To povezivanje služi da screen reader pročiti label prije nego što dođe do nekog inputa i služi 
+      nam to povezivanje kada sakrivamo input element na kojeg je teško postaviti stil da bi postavili na label jer klik tj. aktivacija lebela će aktivirati 
+      i sami input elmenet jer su povezani. Radi css selektora tj. kako oni funckoniraju lakše je da povežemo label i input sa for i id jer inače ćemo 
+      morati imati još jedan element unutar lebela koji odgovra visini i širina labela(jer jedino je label povezan sa inputom) tj. taj dodatni element će vizalno 
+      predstvljati stil inputa jer se ne može postaviti selektor parentLabel childInput:checked primjerci tj. može ali mi želimo primjeit stil na neki drugi elment kada je input
+      aktiviran nego mora biti childInput ~ tajStilElement(pazi: mora taj "stil" element biti iza inputa u html kod oba dva sibling selektora).
+      Unutar label elementa nikad ne treba stavljati <button>, <a/> ili heading element radi acessibitly problema.
+      note:Label je po default inline element.  
+      note: na njega se ne postavljaju name i value atributi.
+       -->
+      <label style="display: none">
+        Eto da je i on ovdje postvljen, ali pošto smo ga već koristili nećemo ga zasebno imati ovako pa je display:none
+      </label>
+
+      <!--------------------------------------------------DATALIST, form element------------------------------------------------------------------------------------->
+      <!--Datalist je čudan html element koji ima default diplay:none. U njemu se može staviti option elementi i onda se doda id na na neki datalist i te se taj
+        id stavi kao vrijednost list atributa nekog text input recimo ili nekog drugog inputa koji podržva taj atribut.
+        Nema nikakvih drugih atributa osim globalnih atributa.  
+        Ukoliko na atribut list na nekom text input se stavi ista vrijednost kao vrijednost id atributa na html elemntua <datalist> onda kada kliknemo na text input
+        pojaviti će se meni u stilu selecta sa razlikom da ćemo moći upisati neštu untar datalista tj. da obavimo search. Točnij moći ćemo upisati nešto unutar
+        text input koji je povezan sa datalistom. 
+        Unutar chorme se pojavi dodatna strelica na datalistu i dolje link objašnjva kako je se može maknuti.
+         https://stackoverflow.com/questions/20937475/remove-datalist-dropdown-arrow-in-chrome
+         -->
+
+      <label for="ice-cream-choice">Ovo je nesretni datalist,Choose a flavor</label>
+      <input list="ice-cream-flavors" id="ice-cream-choice" name="ovoJeDatalist" type="text" />
+      <datalist id="ice-cream-flavors">
+        <option value="Chocolate"></option>
+        <option value="Coconut"></option>
+        <option value="Mint"></option>
+        <option value="Strawberry"></option>
+        <option value="Vanilla"></option>
+      </datalist>
+
+      <!-- -----------------------------------------------FIELDSET I LEGEND, form elements------------------------------------------------------ -->
+      <!--Fieldset element služi za groupiranje elementa i ima dvije korisne sposbnosti. Mogućnost da kada se na njega stavi atribut disabled
+          pa ću automatski svi input unutar njega biti disabled. Druga sposobnost je da ima atribut "form" na koji možemo staviti vrijednost
+          id atributa nekog form elemeta sa kojim ga želimo poveznat u slučaju da je fieledset izvan nekog forma. Ali navodno postoji zbunjenost oko ovoga
+          pa možda treba povezati i same input elmenete unutar fieldset elementa. Uglavnom tu drugu speosnot neću koristiti.
+          Legend element se postvlja unutar fielset elemneta i njegova sposbnost je u tome što ima default css pozciniranje da mu pola visine
+          bude izvan containera. Vidi css za druge detalje oko ova dva elementa.
+          -mdn kaže da se na fieldset možeš staviti name atribut, ali kada staviš name atriubt na fieldset koji je razčilit od name atriubta
+          na input elmenta unutar filedseta onda se ta vrijednost ignorira i samo bude ime inputa unutar fieldesta u query stringu. 
+          -VAŽNO: stoga nikad nemoj stavljati atribut name na fieldset, a nemoj stavljati niti value jer ne može koristit na njemu.
+        -->
+      <fieldset>
+        <legend>Ovo je legend element i ovo je moja default postavka unutar fieldset parent elemneta</legend>
+
+        <input type="radio" id="kraken" name="drugaRadioGrupaMonster" value="kraken" />
+        <label for="kraken">Kraken</label><br />
+
+        <input type="radio" id="sasquatch" name="drugaRadioGrupaMonster" value="sasquatch" />
+        <label for="sasquatch">Sasquatch</label><br />
+
+        <input type="radio" id="mothman" name="drugaRadioGrupaMonster" value="mothman" />
+        <label for="mothman">Mothman</label>
+      </fieldset>
+
+      <!-- ----------------------------------------COLOR input------------------------------------------------------------------------------- -->
+      <!-- 
+      -Value vrijednost color inputa će uvijek biti a 7-character string specifying an RGB color in hexadecimal format. 
+      While you can input the color in either upper- or lower-case, it will be stored in lower-case form. The value is never in any other form, and is never empty.
+      Možemo postaviti default boju, ako želimo. Izbermo boju u color pickeru koju želimo i kopiramo to kao vrijednost koju ćemo postaviti na value.
+      PAZI: ako ne postaviš default boju, onda unutar chorme kada vučeš onaj selektor koji ide lijevo-desno boja se neće mijanjati dok ne klikneš gori
+      mišem na ono polje gdje možeš izabrati boju. Znači čak i ako želiš default crnu boju, promjeni je bar malo da taj lijevo-desno radi odmah na početku.
+      -name atribut je kao uvijek naravno key u query stringu, vallue će biti boja koju izabermo u u hexadecimalnom formatu sa time da će "#" unutar
+      -required atribut ne možemo postaviti na ovaj input.
+      query stinga predstvljati %23 prije ostatlih šest hex brojeva.
+      -vidi js i css.
+      -input i change eventi vrijede za color type inputa.
+
+      - -->
+      <p class="paragrafZaColor">Ovo je neki tekst kojemu će korisnik putem color pickera odrediti boju</p>
+      <div class="contZaColor">
+        <input type="color" class="colorPicker-hidden" name="ovoJeColorInput" value="#eca409" />
+        <aside class="asideColor"></aside>
+        <span class="spanZaColor"></span>
+      </div>
+
+      <!-- ----------------------------------------HIDDEN input--------------------------------------------------------------- -->
+      <!-- Kada želimo poslati neke podatke na server bez da korisniks vizalno vidi neki input možemo korisisit hidden input.
+        Taj input će biti vidljiv u browser dev alatima i tamo se može manipulirati.
+        Kada postavimo vrijednost atribuata name na _charset_ onda će vrijednost biti the character encoding used to submit the form(UTF-8 u mom slučaju)
+        ako mi sami na postavimo nešto kao value. 
+        -ne možmo postaviti required na ovaj input.
+        -na njemu se NE primjenuju input ili change eventi.
+       
+      -->
+
+      <input type="hidden" name="ovoJeHiddenInput" value="ovo je vrijednost hidden inputa" />
+
+      <!-- ----------------------------------------IMAGE input---------------------------------------------------------------------------- -->
+      <!-- Ovaj input nema change ili inpute event(nema niti klik) i koliko sam skužio sa nekim od ovih atributa formNešto se može napraviti
+      da djeluje kao submit botun pa praktički jedina smislna upotreba ovoga bi bila da stavimo neku sliku koja je botun kao src.
+      Zapravo i bez da se stave ti atributa djeluje kao submit botun. -->
+      <!-- Supported common attributes	alt, src, width, height, formaction, formenctype, formmethod, formnovalidate, formtarget -->
+      <div>
+        <input type="image" src="./login-button.png" name="ovoJeImageInput" style="display: inline" />
+        <label style="display: inline">ovo je image input</label>
+      </div>
+    </form>
+
+    <!-- -----------------------------------------BUTTON input type-------------------------------------------------------------------- -->
+    <!-- 
+    
+      -Na njemu vrijednost atributa value će biti tesktualno opis botuna koji će se vidjeti u html.
+      -I kada mu dodamo name atribut i postavimo value kada šaljemo form onda se to iz nekog razloga neće poslati u query stringu na server
+       iako je besmislno slati vrijednosti botuna.
+       -naravno, on ne može biti type="submit" tj. ne možemo ga korisitit za to jer je on type="button"
+      -Uglavnom, ovo sigurno neću koristiti kada imamo <button/> element.
+     -->
+    <input type="button" value="Ovo je input type='button' " name="ovoJeButtonTypeInput" style="margin: 35px 25px" />
+  </body>
+</html>
+
+<script>
+  //---------------------------------------------INPUT EVENT--------------------------------------------------------------
+  // The input event fires when the value of an <input>, <select>, or <textarea> element has been changed.
+  //Pazi input type="button", button type="submit" ili input type="submit" neće korsitit input event kada se dogodi neki klik. Fali gori
+  //u defincije riječ "some" <input/> elements.
+
+  //--------------------------------------------CHANGE EVENT----------------------------------------------------------------------------------------------
+  // The change event is fired for <input>, <select>, and <textarea> elements when an alteration to the element's value is committed by the user.
+  // Unlike the input event, the change event is not necessarily fired for each alteration to an element's value.
+  //https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/change_event
+  //Pazi input type="button", button type="submit" ili input type="submit" neće korisiti change event kada se dogodi neki klik. Fali gori
+  //u defincije riječ "some" <input/> elements.
+
+  //Vidi primjer unutar linka gori. Kada imaš recimo obični text input, chege event će se aktivirati tek kada nešto upišeš ili izbriše & bude
+  //blur event tj. fokus ode na drugi element.
+
+  //U Reactu očito syntetic onChange event se ne ponaša na taj način nego svaki put kada upišemo nešto aktivira se.
+  //onChange
+  //VAŽNO:The onChange event behaves as you would expect it to: whenever a form field is changed, this event is fired.
+  //We intentionally do not use the existing browser behavior because onChange is a misnomer for its behavior and React relies on this event to handle user input in real time.
+  //Stoga nema razlike između onInput i onChange u reactu.
+
+  //------------------------------------- ------SUBMIT event-----------------------------------------------------------------------------------------------
+  //The submit event fires when the user clicks a submit button (<button>(sa atributom type="submit") or <input type="submit">) or presses Enter while editing
+  // a field (e.g. <input type="text">) in a form.
+  //PAZI: event listener za ovaj event se postavlja na sami <form> element, ne na input type="submit ili bottun iako će upravo klik na taj input ili botun biti trigger koji je
+  //aktivirati "submit" event. Ako postavimo submit event na samome botunu neće ga se registrirati.
+  //Vidi gore BUTTON html element opis standardne moje zbunjenosti u vezi ovog eventa.
+
+  //-------------------------------------------VAŽNA NAPOMENA----------------------------------------------------------------------
+  //To što korismo ova gornja tri eventa najćešće sa inputima to ne znači da ne možemo slušati evente poput fousu,blur,keyup,mouseenter,click itd. na input
+  //elementima. Obično nema smisla slušati te evente(može najviše focus ili blur), ali ako želimo ih možemo staviti.
+
+  //------------------------------------------BUTTON form,element primjer------------------------------------------------------------------------------
+
+  //Ovo neka stoji isključeno, inaće će klasični query string submit biti blokiran.
+  // document.querySelector(".običniBotun").addEventListener("click", function (e) {
+  //   e.preventDefault();
+  //   console.log("alo alo, botun callback");
+  // });
+
+  // document.querySelector("form").addEventListener("submit", function (e) {
+  //   e.preventDefault();
+  //   console.log("form submit event");
+  // });
+
+  //------------------------------------------FORMDATA OBJEKT----------------------------------------------------------------------------------------
+
+  //Ovo neka stoji isključeno, inaće će klasični query string submit biti blokiran.
+  // document.querySelector("form").addEventListener("submit", function (e) {
+  //   e.preventDefault();
+  //   const formData = new FormData(e.target);
+  //   console.log('formData objekt:',formData);
+  //   const arrFormData = Array.from(formData);
+  //   console.log("arrFormData:",arrFormData);
+  //Kada podatke u nekom http requesta onda ne možemo slati javscript objekt nego možemo slati:
+  //-url enocoded query string
+  //-JSON.string
+  //-Array.buffer
+  //-Blob/File objekt
+  //-FormData objekt
+  //PAZI: axsios automatski za nas obavi trasformacija js objekta u JSON, pa zato možemo ubaciti obični objekt.
+
+  //Znači posebnost(u odnosu na obični objekt) FormData objekta je da može biti body fetch/xhr requesta, a općenito
+  //je samo jedan od mogućnosti kako ćemo poslati neki podatke na server.
+  //Ima sposobnost da kada slušamo "submit" event na nekom <from> elmenet onda ukoliko ubacimo taj form elmenet
+  //unutar new FormData(nekiFormElement) konstruktora da dobijemo formData objekt koji će sadržavati sve podatke
+  //iz forma tj. svaki key/value pair.
+  //VAŽNO: da bi vidio što sadrži ubaci formData objekt u Array.from() i vidjeti ćeš da je to array koji
+  //sadrži arrays od key/value parova.
+  //Taj FormData objekt sadrži niz metode gdje je najvažnija formData.append(keyString,valueString)
+  //i formData.append(keyString,nekiFileObjektKojiJeIzabranUFileInputu,imeFila.nekaEkstenzija)
+  //Kada budemo koristili React onda nećemo ubaciti cijeli form element unutar new FormData konstruktor
+  //kada budemo koristili controlled inputs jer bi react state podaci i stanje u input polju mogli biti drugačiji
+  //i različitog tipa. Možemo u tom slučaju kreirati state objekt u reactu koji sadrži key value parirs i onda kada
+  //bude submit loopati taj objekt i kreirati formData objekt sa konsturktorm sa formDataObjekt.append() ispuniti formData objekt i onda to poslati.
+  //Ali čini mi se praktičniji pristup da u reactu ne koristimo formData.
+  //NOTE: ne treba kreirako svaki put new Request() kao što steve griffith radi kada šalje formData sa fetch-om, sami formData objekt je validan body.
+  //VAŽNO: ovako se fromData objekt šalje u axiosu:
+  //const response = await axios.post("https://nekiURL", formDataObjekt, { headers: formDatObjekt.getHeaders() });
+  //više info na: https://javascript.info/formdata
+  // });
+
+  //--------------------------------------------TEXT input primjer, treci skorz desno-------------------------------------------------------------------
+
+  let andreiInput = document.querySelector("#andreiInput");
+  let andreiLabel = document.querySelector("#andreiLabel");
+  andreiInput.addEventListener("input", function (e) {
+    if (e.target.value) {
+      andreiLabel.style.transform = "translateY(0)";
+      andreiLabel.style.top = "-14px";
+      andreiLabel.style.fontSize = "12px";
+    }
+  });
+
+  //Fokus event se aktivra kada neki element dobije fokus
+  //note:možemo saznati koji je element trentno fokuiran unutar doma uvijek sa document.activeElement
+  andreiInput.addEventListener("focus", function (e) {
+    if (!e.target.value) {
+      andreiLabel.style.transform = "translateY(0)";
+      andreiLabel.style.top = "-14px";
+      andreiLabel.style.fontSize = "12px";
+    }
+  });
+
+  //Blur se aktivra kada neke element nije u fokusu.
+  andreiInput.addEventListener("blur", function (e) {
+    if (!e.target.value) {
+      andreiLabel.style.transform = "translateY(-50%)";
+      andreiLabel.style.top = "50%";
+      andreiLabel.style.fontSize = "18px";
+    }
+  });
+
+  //----------------Range input javascript-------------------------------------------------------------
+
+  const prviRangeInput = document.querySelector(".prviRangeInput");
+  const label = document.querySelector(".labelPrviRange");
+  const showSpan = document.querySelector(".labelPrviRange span");
+  //Ne možeš iz nekog razloga sa query selektoraom birati nekiInput pa onda :webkit/moz track ili thumb pa ih onda u javascriptu uređivati.
+  //Zato se pogleda u css-u taj width koji se postavio za thumb pa stavi se ovako ovdje tu infromaciju.
+  //Default thumb width je 15px u chrome i mislim 16px u firefoxu.Naravno uvijek treba staviti našu kontroliranu jednaku thumb width u css.
+  const thumbWidth = 6;
+
+  //Ovo je za incijalni load poziv.
+  prviRangeFn();
+
+  document.querySelector(".prviRangeInput").addEventListener("input", prviRangeFn);
+
+  //Prekomplicrano je da se ovdje detaljnije ovaj code objašnjava, pogledaj video.
+  function prviRangeFn() {
+    //VAŽNO: ako recimo slušaš load na window objektu i imaš ovu fn. kao callback ili ako imaš kao ja ovdje incijalni poziv ne možeš stavljati e.target jer
+    //kada se incijalno pokrene funckija e.target neće biti range input.Ako ne radi inicijalno onda je to radi toga.
+    const rangeValue = parseInt(prviRangeInput.value);
+    const min = parseInt(prviRangeInput.min);
+    const max = parseInt(prviRangeInput.max);
+    const rangeWidthClient = prviRangeInput.clientWidth;
+    const showSpanWidthClient = showSpan.clientWidth;
+
+    const total = max - min;
+    const decimalPerc = (rangeValue - min) / total;
+    const adjustRatio = rangeWidthClient / total;
+    const centerThumbOffset = (decimalPerc - 0.5) * thumbWidth;
+    const px = (rangeValue - min) * adjustRatio - showSpanWidthClient / 2 - centerThumbOffset;
+
+    showSpan.style.left = px + "px";
+
+    showSpan.textContent = rangeValue;
+    showSpan.style.bottom = -35 + "px";
+
+    //Sa ovim doli kreiramo rast zelene boje kako raste range. Vidi gore css obješnjnje za detalje.
+    const endUsePerc = decimalPerc * 100 + "%";
+    prviRangeInput.style.backgroundImage = `linear-gradient(to right, rgb(0, 255, 157)${endUsePerc} ,#222 ${endUsePerc})`;
+  }
+  //----------------------------------------FILE  input, prvi primjer-------------------------------------------------------------------------
+
+  //Ovdje postavljamo image preview, ako nije slika šaljemo upzornje da se treba uploadi slika.
+  //Naravno ništa nećemo slati na server dok ne naučimo Node i kako napraviti server.
+  const slikaPrviFileInput = document.querySelector(".imgPrviFileInput");
+  const divGdjeJePrviFileInput = document.querySelector(".contZaPrviFileInput");
+  let span = null;
+
+  //podsjetnik da kada imaš id na nekom elementu da automski imaš u js kao varijablu.Ali ovo nije vizulalno dobra praksa.
+  prviFileId.addEventListener("change", function (e) {
+    const url = URL.createObjectURL(e.target.files[0]);
+
+    if (e.target.files[0].type.startsWith("image/")) {
+      slikaPrviFileInput.classList.add("izabranaSlika");
+      slikaPrviFileInput.src = url;
+      span ? divGdjeJePrviFileInput.removeChild(span) : null;
+    } else {
+      span = document.createElement("span");
+      span.textContent = "You must select image";
+      span.style.display = "block";
+      span.style.fontSize = "22px";
+      slikaPrviFileInput.classList.remove("izabranaSlika");
+      URL.revokeObjectURL(url);
+      divGdjeJePrviFileInput.appendChild(span);
+    }
+  });
+
+  //--------------------------------------FILE input, drugi primjer-----------------------------------------------------------------------------
+  const fileInputDrugi = document.querySelector(".visually-hidden-inputDrugi");
+  const labelDrugiFileInput = document.querySelector(".drugiFileLabel");
+  const textDefault = document.querySelector(".textDefault");
+  const zadnjihPetUploada = document.querySelector(".zadnjihPetUploada");
+  const popisZaUpload = document.querySelector(".popisZaUpload");
+  const visibleElements = [];
+  const listOfAllElements = [];
+
+  //Ovaj primjer je video i image preview koji podržava i drag&drop funkcionalnost i ima multiple atriubt na file inputa sa time da ako nije
+  //ni video ni slika, da se samo dodan na popis i stavi jedna element na glavni dropzone.
+  fileInputDrugi.addEventListener("change", readyForUpload);
+  //Ovdje je bilo bitno staviti za ove drag&drop evente da se sluša label ne sakriveni mini input.
+  //Očito da cijela priče kada "spojiš" label i input priča funkconira samo na input eventima poput "change" i "input".
+  labelDrugiFileInput.addEventListener("dragover", function (e) {
+    e.preventDefault();
+    labelDrugiFileInput.style.border = "4px red solid";
+  });
+  labelDrugiFileInput.addEventListener("drop", readyForUpload);
+
+  labelDrugiFileInput.addEventListener("dragleave", function (e) {
+    console.log("dragleave");
+    labelDrugiFileInput.style.border = "4px green dashed";
+  });
+
+  function readyForUpload(e) {
+    //e.preventDefault je za "drop" i firefox.
+    e.preventDefault();
+    //Kada dropamo neka se makne crvena granica koje se aktivira na "dragoveru"
+    labelDrugiFileInput.style.border = "4px green dashed";
+    const fileList = e.target.files || e.dataTransfer.files;
+    const arrFiles = Array.from(fileList);
+    const lastSixUploads = arrFiles.slice(arrFiles.length - 6);
+    //makni sve stare postavke kada se dogodi neki novi event gdje uploadmo nove fajlove
+    textDefault.remove();
+    visibleElements.forEach((curEl) => {
+      curEl.remove();
+    });
+    listOfAllElements.forEach((curEl) => {
+      curEl.remove();
+    });
+
+    arrFiles.forEach((curFile) => {
+      const div = document.createElement("div");
+      listOfAllElements.push(div);
+      div.textContent = curFile.name;
+      div.style.margin = "2px 2px";
+      popisZaUpload.appendChild(div);
+    });
+
+    lastSixUploads.forEach((curFile, index) => {
+      if (curFile.type.startsWith("image/") || curFile.type.startsWith("video/")) {
+        let el = null;
+        curFile.type.startsWith("image/")
+          ? (el = document.createElement("img"))
+          : (el = document.createElement("video"));
+        visibleElements.push(el);
+        //Nigdje neću revokati tj. maknuti iz memorije ovaj objekt, pročitaj sintezu.
+        const url = URL.createObjectURL(curFile);
+        el.src = url;
+        index === 0 ? (el.style.maxWidth = "286px") : el.classList.add("ItemUnutarZadnjihPetUploada");
+        index === 0 ? labelDrugiFileInput.appendChild(el) : null;
+        index !== 0 ? zadnjihPetUploada.appendChild(el) : null;
+      } else {
+        const parag = document.createElement("p");
+        visibleElements.push(parag);
+        parag.textContent = curFile.name;
+        index === 0 ? labelDrugiFileInput.appendChild(parag) : null;
+      }
+    });
+  }
+
+  //---------------------------------GLAVNI KOMENTARI FILE INPUTA U JAVASCRIPTU te parseFile fn.-----------------------------------------------
+
+  //Kada je riječ o slikama i video previws nakon što korisnku bude koristio file input type da ih izabera sa svoga diska
+  //ili ako korisitmo neki tzb. dropzone elemente i "drop" event onda je preporučeno koristiti URL.createObjectURL(nekiFileKojiJeKorisnkIzabrao)
+  //umjesto da se koriste const reader=new FileReader() tj. metode na tome reader objekut poput reader.readAsDataURL(nekiFileKojiJeKorisnkIzabrao)
+  // When you want to display a File (or a Blob) that is in the browser's memory or on user's disk, then all you need is to generate an URL that do
+  // point to this memory slot. That's exactly what URL.createObjectURL(blob) does: it returns a Blob URI (blob://) that points to the data either
+  // in memory or on the disk, acting exactly as a simple pointer.
+  //Znači kada želimo postaviti image ili video src u svrhu previewa onda treba postaviti return URL.createObjectURL(nekiImageILiVideo)
+  //umjesto da stavljamo nekiObjKojiFileReaderReturna.readDataAsURL(nekiImageIliVideo) i onda postavimo nekiObjKojiFileReaderReturna.result kao src
+
+  //Mali problem koji ovaj pristup donosi je što ga moraš ručno maknuti iz memorije sa URL.revokeObjectURL(returnURL.createOjectURLKojegŽelimoIzbirati)
+  //Kada je riječ o slikama kada postavljamo na obično <img/> onda je dosta postaviti img.src=URL.createObjectURL(nekiFileKojiJeKorsinkIzabrao)
+  //i onda kada pokrenuti img.onLoad handler funkciju i tamo koristi URL.revokeObjectURL(returnURL.createOjectURLKojegŽelimoIzbirati)
+  //Kada postvljamo css backgournd-image onda možemo korisiti tehniku gdje u setTimout callbacku koristmo URL.revokeObjectURL eventualno.
+
+  //VAŽNO: bitno je naglasiti o čemu ja govorim, o preview u browseru, ne uploadu na server. Možeš se pitati
+  //ako korisitiš URL.revokeObjectURL i makneš to iz memorije kako ćeš onda uploadati to na server ? Stvar je u tome što će na server poslati
+  //cijelu sliku u oblik File tipa objekta  tj. poslatit ćeš e.target.files[index].
+  //https://stackoverflow.com/questions/5587973/javascript-upload-file
+  //Iako ćeš čak i na stackoverlow naći ljude kako govore o "uploadu" nema samog uploada do slanja na server i kada korismo
+  //taj URL.createObjectURL samo linkamo na file na disku korisnika. NOTE: loaded into memoery misli se na chrome kada se
+  //objšnjava zašto se ne treba korisit reader.readDataAsURL()
+
+  //Kada je riječ o video ukoliko želimo imati situaciju da korisnik izabere nekoliko videa i ima ih nekoliko na stranici i da
+  //se vi ti video mogu pokrenuti kada korisnik želi onda ne smijemo koristiti URL.revokeObjectURL jer inače će prestati raditi.
+  //Možemo staviti situacija tako da se samo najzadnji izabrni video može koristiti previwat i maknuti sa svih ostalih videa URL.revokeObjecktURL
+  //tj. imamo samo jedan video element na strainci sačuvamo sve te file objekte(koji su bili u e.target.files) koji su bili izabrani sa
+  //input type file ili dropani sa drag and drop i onda prikažemo samo neki popis tih starih izabranih videa i sve te vida pošaljemo
+  //na serera kao File tip objekta.
+
+  //Navodno je micanje iz memoerija sa URL.revokeObjectURL nije apsolutno nužno za slučajve video i img previwa.
+  //Do I always need to call URL.revokeObjectURL() explicitly?
+  // It mainly depends on what you pass to createObjectURL.
+  // If you pass a File selected by the user from an <input type=file>, then the blobURI you created is a direct pointer to the file on the
+  // user's disk, nothing apart this mapping URI-file_path is saved in memory. So in this case, you can create a lot of these without ever revoking it with no real risk.
+  //https://stackoverflow.com/questions/49209756/do-i-always-need-to-call-url-revokeobjecturl-explicitly
+  //Međutim, vidio sam i jedan komentar gdje kaže da je netko iamo problem sa ogormnom slikom. Uglavnom, treba saznati više o memoery mangemntu u browserima
+  //saznati koliko možemo imati videa i slika linkank sa URL.creatObejctURL() bez da imamo problema.
+
+  //FileReader API:
+  //note: objekt koji new FileReader() returna je nazivam reader, naravno možemo birati kako ćemo ga nazvati. Ali na njemu se zovu sve one metode.
+  //VAŽNO:Znači FileReader api tj. metode reader objekta(objekt koji returna new FileReader()) nam ne trebaju kada je riječ
+  // o image ili video previews, ali kada nam trebaju ? Najbolje ih je korisiti kada trebamo uploadti neki ogromni file. Za preview ćemo
+  //i u tom slučaju koristiti URL.createObjectURL(), ali ćemo slicati File tip objekta tj. taj neki ogromni file i onda ćemo svaki
+  //taj chunk obraditi unutar metode reder objekta sa reader.readDataAsText(nekiChunck).
+  //Primjer toga je funkcija parseFile koju sam prilagodio sa stackoverflowa,gdje sam popravio neke nedostatke koji su bili navedne u drugim komentarima
+  // i promjenio nazive varijabli da meni više odgovara.
+  //Note: Kada se pokuša očitati neki ogromni file sa .readAsText() bez ga se slica na male chuncks onda neće raditi i čak je problem što error neće biti izbačen.
+  //Navodno je chrome limt nekih 261 MB. Znači fileReder metode se korisna tek u kombinaicja sa slice-om.
+  //VAŽNO:FileReader tj. njegovi event handlers su async. Ovaj readAsArrayBuffer() je navodno koristan kada želimo konventirati ekstenziju slike u neku drugu
+  //, ali nigdje nisam vido neke primjere kako se to raditi, niti primjere kako se koristite za očitvanje velikih filova za koje je navodno dobar.
+  //Jedino korisno što sam našao je .readAsText() u kombinacija sa .slice tj. kreacije malih chunks.
+  //Opis nekih FileRader metoda:
+  //readAsText(): This reads a file and returns its content as text. Suitable for small text files.
+  // readAsBinaryString(): This reads a file and returns its content as a binary string. Suitable for small files of any type.
+  // readAsDataURL(): This reads a file and returns a Data URL referencing it. This is inefficient for large files as the file is loaded into memory as a whole
+  //before being processed.
+  // readAsArrayBuffer(): This reads a file and returns an ArrayBuffer containing the input file 'chopped up in smaller pieces'. This works for very large files, too.
+  // Bitan property je reader.result:
+  //The file's contents. This property is only valid after the read operation is complete, and the format of the data depends on which of the methods was used to initiate
+  //the read operation.
+  //Neke od event handlera sam opisao u opisu funkcije parseFile, možemo korisiti i standerdne event listners kao zamjenu za event handlers, ali obično se koriste
+  //event handlers.
+
+  //ovo nije aktivna funkcija, samo primjer koji ćemo korisitit kada se Node nauči.
+  function parseFile(file, callback) {
+    //file je file objekt koji se nalazi unutar fileList objektu i File property size je u baytovima.
+    const fileSize = file.size;
+    //chunkSize je postavljen na 64 KB.
+    const chunkSize = 64 * 1024; // bytes
+    let incramentingIndex = 0;
+
+    //Ovaj onLoadHandler se aktivira samo ako je sve uspješno završeno i nije bilo errora niti je bio aborted reading.
+    const onLoadHandler = function () {
+      incramentingIndex += chunkSize;
+      //Ova callback funckije će biti neka funkcija koja će slati na server taj chunck kojeg smo ovdje obradili.
+      callback(e.target.result); // callback for handling read chunk
+
+      //chunkSize je 65536 bytes, dok je incramentingIndex incijalno nula.Kada dođe prvi put code ovdje changinIndex će već biti
+      //icramentan i biti će taj chunkSize kada prvi bude budemo code ovdje.Znači vrlo brzo taj chaningIndex postane puno veći broj nego
+      //inače index sa kojim radim i samo će rasti. Zamisli da da je fileSize 20 bytova i chunkSize je 6 baytova. Uvijek
+      //je lakše na manjim brojevima vidjetit što se događa. U tom slučaju incramentingIndex bi bio 0,6,12,18,24 i kad bi bio taj
+      //zadnji 24 ušli bi u ovaj if i returnali.PAZI: 24 bi bio ovdje,nakon incrament iznad gori. Doli u fn. chunckReaderBlock
+      //gdje doista splicamo bi zadnja vrijednost incramentingIndexa bila 18.
+      //Slice funkcionira na način ako staviš na drugi argument index koji je puno veći od str.length da je to kao da si stavio
+      //str.lenght i zato >= funkconira. Zato možemo imati sve jednake chukove osim zadnjega koji je recimo manji
+      // jer nije se sve moglo podijeliti na točan chunckszie.
+      if (incramentingIndex >= fileSize) {
+        console.log("Done reading file");
+        return;
+      }
+      // of to the next chunk
+      chunkReaderBlock(incramentingIndex, chunkSize, file);
+    };
+
+    const onErrorHandler = function (err) {
+      console.log("error:", err);
+      return;
+    };
+
+    //Možemo pozvati reader.abort() kada želimo gdje je reder objekt koji new FileReader() returna i onda će se ovaj handler aktivirati.
+    //Nisam siguran hoće se aktiivrati ako sami ne pozvemo .abort(). Recimo korisin klikne cancel upload botun i onda tamo zovemo .abort()
+    const onAbortHandler = function (e) {
+      //The abort event is fired when the resource was not fully loaded, but not as the result of an error.
+      console.log("aborted");
+      return;
+    };
+
+    const chunkReaderBlock = function (incramentingIndex, chunkSize, file) {
+      //Uglavnom, File tip objekta se izgleda može slicati i kasnije spojiti. Nazvao je tu varijablu
+      //blob za svaki chunck, ali File je verzija Blob objekta sa dodatnom fukconlnošću i može se koristit svugdje gdje i Blob.
+      const reader = new FileReader();
+      //Zamislimo da je chunkSize 6 baytova i fileSize je ukupno 20 baytova.Ovdje bi prvo bilo
+      //file.size(0,6) zatim (6,12) zatim (12,18) zatim (18,24). Vidi komentar gori za još detaljnije objšnjenje.
+      const blob = file.slice(incramentingIndex, chunkSize + incramentingIndex);
+      reader.onload = onLoadHandler;
+      reader.onerror = onErrorHandler;
+      reader.onAbortHandler = onAbortHandler;
+      reader.readAsText(blob);
+    };
+
+    // now let's start the read with the first block
+    chunkReaderBlock(incramentingIndex, chunkSize, file);
+  }
+
+  //---------------------------------------------------COLOR Picker input---------------------------------------------------------------
+  const colorPickerInput = document.querySelector(".colorPicker-hidden");
+  const paragrafZaColor = document.querySelector(".paragrafZaColor");
+  const spanZaColor = document.querySelector(".spanZaColor");
+  const displaySelectedCol = document.querySelector(".asideColor");
+
+  function izaberiBoju() {
+    spanZaColor.style.backgroundColor = colorPickerInput.value;
+    paragrafZaColor.style.color = colorPickerInput.value;
+    displaySelectedCol.textContent = colorPickerInput.value;
+  }
+
+  //Za inicijalno postavljane custom defualt boje ovo se treba odmah pokrenuti na početku pa zato poziv:
+  izaberiBoju();
+
+  spanZaColor.addEventListener("click", function (e) {
+    //Programmatically zovemo klik event na color inputu koji je sakriven vizulano
+    //kada kliknemo na span kojeg smo uredili kako smo htjeli.
+    colorPickerInput.click();
+  });
+
+  colorPickerInput.addEventListener("input", izaberiBoju);
+  //-----------------------------------------------------------------------------------------------------
+</script>

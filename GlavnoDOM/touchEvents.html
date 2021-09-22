@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Touch Events</title>
+    <meta name="viewport" content="width=device-width">
+    <!--  -->
+    <style>
+        p{
+            padding: 1rem;
+            font-size: 1.6rem;
+            line-height: 1.5;
+            font-family: "andale mono", sans-serif;
+            background-color: rebeccapurple;
+            color: white;
+        }
+
+        div{
+            height: 1000px;
+            border: yellow 2px solid;
+        }
+    </style>
+</head>
+<body>
+    <h1>Touch Events</h1>
+    <p>This is a paragraph with some text. It is waiting to be touched. It can only be touched on a touch capable device like a mobile phone or tablet. Clicking it with a mouse will not accomplish anything.</p>
+    <div></div>
+   
+
+   
+   <script>
+       // Steve g youtube video. Pogledaj, samo kratko spomne što je touchcanel event, iako ga ne stavi. Koliko sam skužio trigger za taj event su neke automaski objave
+       // browsera, kad izleti neki drugi prozor opratovnog sustava itd. Vidi u onom foleder u Dom bookmarskisam u vezi toga touch eventa.
+        // https://www.youtube.com/watch?v=ga_SLzsUdTY
+
+        //VAŽNO: POINER EVENTS-https://caniuse.com/#search=pointer%20events Ovo je pokušaj ujedinjea miš i touch eventa, ali još nema veliki browser support.
+        // Ne brkati to se css property, vidi canIuse link
+
+        //https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events
+
+        //touch events - touchstart, touchend, touchmove, touchcancel
+        //There is NO tap, doubletap, swipe, swipeleft, swiperight, rotate, pinch, or zoom
+        //You would have to create those events yourself by connecting to the touch events.
+        //work on devices that are touch capable
+        //No error on other devices because 'touchstart' is just a name like winlottery
+        //The event will probably just never happen on my laptop
+        // document.querySelector('p').addEventListener('touchstart', f);
+        // document.querySelector('p').addEventListener('touchend', f);
+        // document.querySelector('p').addEventListener('touchmove', f);
+        document.querySelector('p').addEventListener('touchcancel', f);
+        
+        // document.querySelector('p').addEventListener('click',f);
+        
+        function f(ev){
+            console.log( ev.touches, ev.type );
+        }
+        
+    </script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        *{
+            box-sizing: border-box;
+        }
+        
+      .prvi{
+          position: relative;
+          width: 500px;
+          height: 200px;
+          border: solid red 1px;
+        
+          padding-top: 20px;
+      }  
+
+      .unutarnji{
+          background: blue;
+          margin-left: 20px;
+         }
+
+      .drugi{
+       position: relative;
+       border: 1px solid green;
+       padding-top: 20px;
+     }
+
+     span{
+      
+       padding-left: 50px;
+       margin-left: 50px;
+       border-top: 5px solid indigo;
+     }
+
+    
+
+    
+     /* VAŽNO: offsetParent će predstvljati najbliže pozicioniran(postion bilo što osim static) ancestor element(ne mora biti doslovno parent).
+         Ukoliko ne postoji ancestor koji ima postion vrijednost koja nije default static onda će najbliži <td>,<th> ili <table> ancestori biti vrijednost offsetParenta. 
+         Ako nema niti jedan ancestor koji je neki od tih elementa onda če body element biti vrijednost offsetParent, što je najćešće slučaj kad nema positioned ancestora.
+         offsetParent će imat vrijenost null kada je display: none. Kada element kojemu pristupamo, znači element.offsetParnet ima postion: fixed(firebox će tada returna body)
+         Ili kad je element predstvlja body ili html, onda će također vrijednsot offsetParent biti null. */
+        /* https://developer.mozilla.org/en-US/docs/Web/API/HTMLelement/offsetParent */
+
+        /*VAŽNO: offsetLeft je vrijednost koja predstvlja udaljenost lijevog gornjeg kuta tj.lijeve strane elementa kojem pristupamo i lijeve strance elementa koji je vrijednost offsetParent
+         property  na tome element kojem pristupamo. Pogledaj gore koji će ancestor element biti vrijednost offsetParent-a.
+         VAŽNO: ako granica tj. border nije eksplictno uključen tj. naveden u css onda će rubovi naravno biti padding,content granice i opet će prakitčki sve biti isto. Zato samo gori govorio o 
+         stranama elementa, ne granicama jer teoretski je moguće da granice neće biti eksplicteno navedene kao u ovom mome gori prvom primjer gdje div .unutarnji nema granicu.
+         VAŽNO: NE POSTOJI offsetRight
+         https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetLeft
+        
+         VAŽNO:offsetTop predstvlja udaljenost gornje strane elementa koji pristupa toj property i gornje strane elementa koji je vrijednost offsetParent propertya.
+         VAŽNO:Treba paziti kad je riječ o inline elementima. Kad je gori unutar span elementa uključen border-top:5; vidimo da je offsetTop 15px(promjeni u drugu vrijednost border-top na span
+         elementu da vidiš zašto je 15px kad je border-top 5px,pod uvjetom da je padding-top offsetParenta(.drugi) 20px) umjesto 20px radi padding-top:20 na parentu.
+         Ovo vrijedi i za offsetLeft naravno.
+         VAŽNO: također vidimo kako kad se inline element proteže u više redova i miče se na onaj čudan način granice se računa onda početka "kutija" za offsetTop i offsetLeft. Makni
+         <br> element unutar span elementa da vidi koja je bila originala pozicija 'kutije' na koje se offsetLeft i offsetTop referiraju.
+         VAŽNO: NE POSTOJI offsetBottom
+         https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetTop*/
+
+         
+        /* VAŽNO: offsetHeight i offsetWidth nemaju veze sa offsetParent tj. sa udaljenoću do nekog drugog ancestor elementa.
+         Oni predstvljaju vrijednost koja će biti ekvivlantna computed visini i širini nekog elementa kad je border-box uključen. 
+         https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetHeight
+         https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetWidth*/
+
+         /*VAŽNO: ako iz nekoga razloga trebamo udaljenost nekog elementa do desnog ruba ili donjeg ruba elemnta koji je offsetParent onda jednostavno saznamo. 
+         Ako tražimo udaljenost do desnog ruba: 
+         elementZaKojiTražimo.offsetParent.offsetWidth-(elementZaKojiTražimo.offsetLeft + elementZaKojiTražimo.offsetWidth)*/
+    
+    </style>
+</head>
+<body>
+    <div class="prvi">
+         <div class="unutarnji">Unutarnji div</div>
+    </div>
+         <br/>
+         <br/>
+         <br/>
+        <div class="drugi">
+                <span>Ovo je span, ovo je span</span>
+              </div>
+              <br/>
+             
+    <script>
+      
+      let unutarnji=document.querySelector('.unutarnji')
+      let unutarnjiStil=window.getComputedStyle(unutarnji)
+      console.dir(unutarnji)
+      
+      let span=document.querySelector('span')
+      let spanStil=window.getComputedStyle(span)
+       console.dir(span)
+
+
+    
+    </script>
+</body>
+</html>

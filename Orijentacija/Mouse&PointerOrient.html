@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+       html{ 
+box-sizing:border-box;
+}
+
+*,::before,::after{
+box-sizing: inherit;
+margin:0;
+padding:0;
+} 
+
+.cont{
+    border: 1px solid red;
+    padding-top:100px; 
+    width: 600px;
+    height: 400px;
+    display: inline-block;
+}
+
+.klikniMe{
+    border: 10px solid blue;
+    width: 200px;
+    height: 100px;
+}
+
+h1{
+    display: inline-block;
+    margin-left: 20px;
+}
+
+.desno{
+    width: 300px;
+    height: 200px;
+    border: 5px solid blueviolet;
+    margin-left: 2500px;
+}
+
+.doli{
+    width: 500px;
+    height: 200px;
+    border: 5px solid seagreen;
+    margin: 0 auto ;
+    margin-top: 1000px;
+    
+}
+
+    </style>
+</head>
+<body>
+    <div class="cont">
+        <div class="klikniMe"></div>
+    </div>
+    <h1>Ima jedan element desno i jedan doli</h1>
+    <div class="desno"></div>
+    <div class="doli"></div>
+
+</body>
+<script>
+    //VAŽNO: vidi slike u ovom folderu(ili bolje desktpu gdje ih možeš i rotirat), dobro ilustrraju koncept dokumenta,viewporta i window.scrollY.
+    //VAŽNO: svi ovi propertes se nalaze na event objektu, ne na event.target.
+    //I svi se odnose na udaljenost miša(tj. pointer) od viewporta, dokumenta,fizičkog ekrana ili udaljnost do granice target elementa(offsetX/Y)
+    //Ne odnose se na udaljenost nekog elementa do drugog elementa ili udaljenost nekog elementa od viewporta ili dokumenta, fizičkog ekrana. Za takve
+    //stvar gdje nas zanima udaljenost elementa do nečega koristimo getBoudingClientRect (+ prilagodba za scroll, ako želimo pageX/Y ekvialnet za element)
+    //pageY je udaljenost miša(ili nekog touch-a tj. pointera) u trenutka kada je neki event pozvan i vrha dokumenta.
+    //pageX je udaljenost miša(ili nekog touch-a tj. pointera) u trenutka kada je neki event pozvan i lijve strane dokumenta.
+    //clientY je udaljenost miša(ili nekog touch-a tj. pointera) u trenutku kada je neki event pozvan i vrha viewporta.
+    //clientX je udaljenost miša(ili nekog touch-a tj. pointera) u trenutku kada je neki event pozvan i lijeve strane viewporta.
+    //Ta četri su najvažniji i najćešće koršteni properties.
+    //screenY je je udaljenost miša(ili nekog touch-a tj. pointera) u trenutka kada je neki event pozvan i vrha fizičkog ekrana.
+    //screenX je je udaljenost miša(ili nekog touch-a tj. pointera) u trenutka kada je neki event pozvan i lijeve strane fizičkog ekrana.
+    //Nećemo puno koristiti ovi screnX/Y.
+    //Properties x i y koje dobijemo na mouseEvent objektu su ista stvar kao clientX i clientY.
+
+    document.querySelector('.desno').addEventListener('click',function(e){
+        console.log(e)
+        let desnoBoundRect=document.querySelector('.desno').getBoundingClientRect()
+        console.log(desnoBoundRect.left);
+        console.log(desnoBoundRect.left+scrollX);
+
+
+    })
+
+
+
+    document.querySelector('.doli').addEventListener('click',function(e){
+        console.log(e)
+        let doliBoundRect=this.getBoundingClientRect()
+        let desnoBoundRect=document.querySelector('.desno').getBoundingClientRect()
+
+        let stariXDesno=desnoBoundRect.left+window.scrollX
+
+        let newX=e.pageX-stariXDesno 
+        let stariYDesno=desnoBoundRect.top+window.scrollY
+        let newY=e.pageY-stariYDesno
+        console.log(`translate(${newX}px,${newY}px)`);
+        document.querySelector('.desno').style.transform=`translate(${newX}px,${newY}px)`
+    })
+    
+    //VAŽNO: ostatak tekst i code doli se odnosi na offsetY(vrijedi i za offestX)
+    //VAŽNO: offsetX/Y nije dobro podržan bio u firefoxu, još ima oznaku da je eksprimentalna tehnologija.
+    //VAŽNO: zamjeni ovdje element i stavi .cont element unutar event listenera. Vidjeti ćeš da se još offset odnosi na e.target, stvarni target ne na currentTarget tj. element
+    //na kojemu je listener.
+    //VAŽNO: property currentTrager ne može vidjet sa c.logom tj. biti će null. Samo u debuggeru možemo vijdeti stvarno vrijednost....
+    document.querySelector('.klikniMe').addEventListener('click',function(e){
+        console.dir(e)
+        console.log('offsetY',e.offsetY); 
+        console.log('standardna formula za udljanost miša gdje je bio klik do vrha elementa gdje se to dogodilo',(e.clientY + window.scrollY)-e.target.getBoundingClientRect().top);
+        //VAŽNO: ovo daje različite razultate jer offsetY je udaljenost do početka granice elementa tj. kada kliknemo na samu granicu offest će biti negativan.
+        //Dok ovaj boundRect to je udaljnost viweporta do vrha granice elementa.
+        //VAŽNO: ako želimo dobiti vrijednost offset-a bez da koristmo tj. property(ako browser ne podržaje) možemo korisiti ovo.
+        console.log('forumla da dobijemo offsetY ekvivalent',(e.clientY + window.scrollY)-(e.target.getBoundingClientRect().top+e.target.clientTop));
+    })
+
+</script>
+</html>

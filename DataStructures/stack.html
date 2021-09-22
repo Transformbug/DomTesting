@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+    
+</body>
+<script>
+   //stack implemented with list
+   class Node{
+       constructor(value){
+           this.value=value
+           this.next=null
+       }
+   }
+
+   class Stack{
+     constructor(){
+         this.top=null
+         this.botttom=null
+         this.length=0 
+       }
+    
+    peek(){
+        return this.top
+    }
+
+    push(value){
+        let newNode=new Node(value)
+      if(this.length===0){
+        this.top=newNode
+        this.botttom=newNode  
+      }else{
+     let holdingPointer=this.top
+     this.top=newNode
+     this.top.next=holdingPointer 
+      }
+     this.length++
+     return this
+      }
+
+    pop(){
+        //ovo je za slučaj kada nema itema
+        if(!this.top){
+            return null
+      }
+      //ovo je za slučaj da smo samo jedan put sa push postvili jedan item. 
+      if(this.top===this.botttom){
+          this.botttom=null
+      }
+     
+     this.top=this.top.next
+     this.length--
+     return this 
+
+    }  
+
+   }
+
+myStack.push('google');
+myStack.push('udemy');
+myStack.push('discord');
+myStack.pop();
+
+   //stack implemented with array
+
+class Stack {
+  constructor(){
+    this.array = [];
+  }
+  peek() {
+    return this.array[this.array.length-1];
+  }
+  push(value){
+    this.array.push(value);
+    return this;
+  }
+  pop(){
+    this.array.pop();
+    return this;
+  }
+}
+
+const myStack = new Stack();
+
+
+</script>
+</html>

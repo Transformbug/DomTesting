@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+
+<head>
+  <title>Drag and Drop File Upload</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <link rel="shortcut icon" href="/assets/favicon.ico" />
+</head>
+<style>
+  .drop-zone {
+    max-width: 200px;
+    height: 200px;
+    padding: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-family: "Quicksand", sans-serif;
+    font-weight: 500;
+    font-size: 20px;
+    cursor: pointer;
+    color: #cccccc;
+    border: 4px dashed #009578;
+    border-radius: 10px;
+  }
+
+  .drop-zone--over {
+    border-style: solid;
+  }
+
+  .drop-zone__input {
+    display: none;
+  }
+
+  .drop-zone__thumb {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #cccccc;
+    background-size: cover;
+    position: relative;
+  }
+
+  .drop-zone__thumb::after {
+    content: attr(data-label);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 5px 0;
+    color: #ffffff;
+    background: rgba(0, 0, 0, 0.75);
+    font-size: 14px;
+    text-align: center;
+  }
+
+  /* .običniFileInput{
+
+  } */
+
+  .pokažiText {
+    color: red;
+    max-width: 800px;
+  }
+</style>
+
+<body>
+  <div class="drop-zone">
+    <span class="drop-zone__prompt">Drop file here or click to upload</span>
+    <input type="file" name="myFile" class="drop-zone__input" />
+  </div>
+
+  <input class="običniFileInput" type="file" multiple />
+  <div class="pokažiText"></div>
+
+  <script>
+    document.querySelectorAll(".drop-zone__input").forEach((inputElement) => {
+      const dropZoneElement = inputElement.closest(".drop-zone");
+
+      dropZoneElement.addEventListener("click", (e) => {
+        //Input je sakriven sa display:none i onda kada se klikne njegove parent elment mi ovdje stavljao kao da je input kliknut.
+        //Ako se pitaš odakle click na file eventu, zar nije change ili input, klik se dogodi kada tek klikneš, kada izabreš file onda
+        //se dogodi change i input. Ovu tehnike ne bi trebali korisitit već bi trebali korisiti visuali hidden, da bude dostupan sreen reader i focusable.
+        inputElement.click();
+      });
+
+      inputElement.addEventListener("click", function (e) {
+        console.dir(e.currentTarget);
+        console.log("ovo se neće aktivirati kada kliknemo");
+      });
+
+      inputElement.addEventListener("input", function (e) {
+        // console.dir(e.currentTarget);
+        console.log("ovo je input event callback");
+      });
+
+      inputElement.addEventListener("change", (e) => {
+        console.log("ovo je change event");
+        if (inputElement.files.length) {
+          updateThumbnail(dropZoneElement, inputElement.files[0]);
+        }
+      });
+
+      dropZoneElement.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropZoneElement.classList.add("drop-zone--over");
+      });
+
+      ["dragleave", "dragend"].forEach((type) => {
+        dropZoneElement.addEventListener(type, (e) => {
+          dropZoneElement.classList.remove("drop-zone--over");
+        });
+      });
+
+      dropZoneElement.addEventListener("drop", (e) => {
+        e.preventDefault();
+
+        if (e.dataTransfer.files.length) {
+          inputElement.files = e.dataTransfer.files;
+          updateThumbnail(dropZoneElement, e.dataTransfer.files[0]);
+        }
+
+        dropZoneElement.classList.remove("drop-zone--over");
+      });
+    });
+
+    function updateThumbnail(dropZoneElement, file) {
+      let thumbnailElement = dropZoneElement.querySelector(".drop-zone__thumb");
+
+      // First time - remove the prompt
+      if (dropZoneElement.querySelector(".drop-zone__prompt")) {
+        dropZoneElement.querySelector(".drop-zone__prompt").remove();
+      }
+
+      // First time - there is no thumbnail element, so lets create it
+      if (!thumbnailElement) {
+        thumbnailElement = document.createElement("div");
+        thumbnailElement.classList.add("drop-zone__thumb");
+        dropZoneElement.appendChild(thumbnailElement);
+      }
+
+      thumbnailElement.dataset.label = file.name;
+
+      // Show thumbnail for image files
+      if (file.type.startsWith("image/")) {
+        const reader = new FileReader();
+
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+          thumbnailElement.style.backgroundImage = `url('${reader.result}')`;
+        };
+      } else {
+        thumbnailElement.style.backgroundImage = null;
+      }
+    }
+
+    //---------------------------------MOJE NOVO DIVLJANJE--------------------------------------------------------------------------
+
+    const obični = document.querySelector(".običniFileInput");
+    obični.addEventListener("click", function (e) {
+      console.log("click event obični input");
+    });
+
+    obični.addEventListener("change", function (e) {
+      console.log("change event obični input");
+      console.log("file length", e.target.files[0].length);
+
+      const fileList = e.target.files;
+
+      const fileObject = fileList[0];
+
+      const reader = new FileReader();
+      console.log(reader);
+
+      reader.readAsText(fileObject);
+
+      //Obično se dodaje event handler ovako, ali može se dodati standardi event listener.
+      reader.onload = (e) => {
+        console.log("ovo je e.target unutar reader.onload:", e.target);
+        const showDiv = document.querySelector(".pokažiText");
+        console.log("ovo je reader.result", reader.result);
+        console.log(typeof reader.result);
+        console.log("ovo je cijeli reader objekt", reader);
+        showDiv.textContent = reader.result;
+      };
+
+      // reader.addEventListener("load", () => {
+      //   const showDiv = document.querySelector(".pokažiText");
+      //   console.log("ovo je reader.result", reader.result);
+      //   showDiv.textContent = reader.result;
+      // });
+    });
+
+    //Sa fileRedarom  video upload
+    // obični.addEventListener("change", function (e) {
+    //   console.log("change event obični input");
+    //   console.log(e.target.files);
+
+    //   const fileList = e.target.files;
+    //   console.log(fileList);
+
+    //   const fileObject = fileList[0];
+
+    //   const reader = new FileReader();
+
+    //   reader.readAsDataURL(fileObject);
+
+    //   //Obično se dodaje event handler ovako, ali može se dodati standardi event listener.
+    //   reader.onload = () => {
+    //     const showDiv = document.querySelector(".pokažiText");
+    //     const video = document.createElement("video");
+    //     video.style.maxWidth = "800px";
+    //     video.src = reader.result;
+    //     showDiv.append(video);
+    //   };
+    // });
+
+    //Saznaj dimezije i družinu videa uplodanog sa input type file bez da pokažeš zapravo video u html.
+    // obični.addEventListener("input", function (e) {
+    //   console.log("input event obični input");
+
+    //   const file = e.target.files[0];
+    //   const url = URL.createObjectURL(file);
+    //   console.log("ovo je url", url);
+    //   const video = document.createElement("video");
+    //   video.onloadedmetadata = (evt) => {
+    //     // Revoke when you don't need the url any more to release any reference
+    //     URL.revokeObjectURL(url);
+    //     console.log(video.videoWidth, video.videoHeight, video.duration);
+    //   };
+    //   video.src = url;
+    //   video.load(); // fetches metadata
+    // });
+
+    //Loadaj video sa URL.createObjectURL
+    // obični.addEventListener("input", function (e) {
+    //   console.log("input event obični input");
+    //   const fileList = e.target.files;
+    //   console.log("ovo je fileList", fileList);
+    //   //Uz nekiDomElement.files(e.target bude neki DOM objekt) možemo još pristupiti fileList objektu unutar samog event objekta tj. e.dataTransfer.files
+    //   //kada koristimo drag&drop evente. Pa ćemo unutar input i change event handler pristupati sa e.target.files dok ćemo u drag&drop eventima
+    //   //pristupati sa e.dataTransfer.files
+    //   //PAZI: kada imaš multiple atribut na nekom input type file onda da bi vidio efekte toga i da bi fileList imao više od jednog File objekta
+    //   //onda trebaš izabrati više filova odjenom za svaki klik na input type file botun. Uhvatiš ih mišem nekoliko.
+    //   //Ako za svaki file klikneš opet na input botun, naravno da zoveš opet change i input evente i kreiraš se novi fileList sa jednim objektom.
+    //   //VAŽNO: kada se želi omogućiti da korisnik izabere folder umjesto file onda se mogu staviti ovi samostalni boolean atributi: webkitdirectory directory
+    //   //na input type file element. Teško je naći nešto više o njima i nisam siguran kakav im je browser support.
+
+    //   //Properties na File objektu unutar fileList-a.
+    //   //-lastModified je timestamp koliko je ms prošlo od 1970 u trenutku kada je zadnji put file bio modificran.
+    //   //-lastModifiedDate je Date object reprezentacija gore spomenutog timestampa, ali navodno je depracted i treba ga izbjegavati
+    //   //odnosno treba napraviti vlastitu konverziju putem Date objekta.
+    //   //-name property je naravno ime file samo kao string.
+    //   //-size predstvlja veličinu file u byte-ima. note: konverzija se obavlja obično ne radi sa službenih 1000 bytova= jedna kilobyayte nego
+    //   //se radi inače 1024bytova=1 kilobayte. Tako i windows radi konverziju sa 1024 među jedinicama. Vidi u math folderu funkciju koja
+    //   //radi konverziju i reče korisniku koja je veličina filova.
+    //   //-type property vrijednost bude neki MIME type poput image/png, video/mp4, text/html itd. kao string,naravno.
+    //   //Znači kada provjeravamo je li neki file objekt recimo slika onda možemo korisiti fileObj.type.startsWith("image/")
+    //   //-webkitRelativePath, slabo je podržan, relative path do current directory, nije važno ovo.
+
+    //   let bytesTotalSize = 0;
+
+    //   Array.from(fileList).forEach((curFile) => {
+    //     const url = URL.createObjectURL(curFile);
+    //     console.log("ovo je url", url);
+    //     const video = document.createElement("video");
+    //     video.style.maxWidth = "800px";
+    //     bytesTotalSize += curFile.size;
+
+    //     video.onloadeddata = (e) => {
+    //       // Revoke when you don't need the url any more to release any reference
+    //       // URL.revokeObjectURL(url);
+    //       console.log(video.videoWidth, video.videoHeight, video.duration);
+    //       console.dir(video);
+    //     };
+
+    //     video.src = url;
+    //     const showDiv = document.querySelector(".pokažiText");
+    //     showDiv.append(video);
+    //   });
+
+    //   const kilobaytesTotalSize = bytesTotalSize / 1024;
+
+    //   //Obično se ovako napiše
+    //   const megabaytesTotalSize = bytesTotalSize / (1024 * 1024);
+    //   //Meni je ovo doli prirodnije:
+    //   // const megabaytesTotalSize = bytesTotalSize / 1024 / 1024;
+
+    //   const gigabaytesTotalSize = bytesTotalSize / (1024 * 1024 * 1024);
+    //   // const gigabaytesTotalSize = bytesTotalSize / 1024 / 1024 / 1024;
+
+    //   console.log("bytesTotalSize:", bytesTotalSize);
+    //   console.log("kilobaytesTotalSize:", kilobaytesTotalSize);
+    //   console.log("megabaytesTotalSize:", megabaytesTotalSize);
+    //   console.log("gigabaytesTotalSize:", gigabaytesTotalSize);
+    // });
+
+    //Verzija gdje loadamo sliku na background
+    // obični.addEventListener("input", function (e) {
+    //   console.log("input event obični input");
+
+    //   const file = e.target.files[0];
+    //   const url = URL.createObjectURL(file);
+
+    //   const showDiv = document.querySelector(".pokažiText");
+    //   showDiv.style.maxWidth = "300px";
+    //   showDiv.style.height = "300px";
+    //   showDiv.style.backgroundSize = "cover";
+    //   showDiv.style.backgroundImage = `url(${url})`;
+
+    //   setTimeout(() => {
+    //     console.log("setTimout aktiviran");
+    //     URL.revokeObjectURL(url);
+    //   }, 5000);
+    // });
+
+    //Kada je riječ o slikama i video previws nakon što korisnku bude koristio file input type da ih izabera sa svoga diska
+    //ili ako korisitmo neki tzb. dropzone elemente i "drop" event onda je preporučeno koristiti URL.createObjectURL(nekiFileKojiJeKorisnkIzabrao)
+    //umjesto da se koriste const reader=new FileReader() tj. metode na tome reader objekut poput reader.readAsDataURL(nekiFileKojiJeKorisnkIzabrao)
+    // When you want to display a File (or a Blob) that is in the browser's memory or on user's disk, then all you need is to generate an URL that do
+    // point to this memory slot. That's exactly what URL.createObjectURL(blob) does: it returns a Blob URI (blob://) that points to the data either
+    // in memory or on the disk, acting exactly as a simple pointer.
+    //Znači kada želimo postaviti image ili video src u svrhu previewa onda treba postaviti return URL.createObjectURL(nekiImageILiVideo)
+    //umjesto da stavljamo nekiObjKojiFileReaderReturna.readDataAsURL(nekiImageIliVideo) i onda postavimo nekiObjKojiFileReaderReturna.result kao src
+
+    //Mali problem koji ovaj pristup donosi je što ga moraš ručno maknuti iz memorije sa URL.revokeObjectURL(returnURL.createOjectURLKojegŽelimoIzbirati)
+    //Kada je riječ o slikama kada postavljamo na obično <img/> onda je dosta postaviti img.src=URL.createObjectURL(nekiFileKojiJeKorsinkIzabrao)
+    //i onda kada pokrenuti img.onLoad handler funkciju i tamo koristi URL.revokeObjectURL(returnURL.createOjectURLKojegŽelimoIzbirati)
+    //Kada postvljamo css backgournd-image onda možemo korisiti tehniku gdje u setTimout callbacku koristmo URL.revokeObjectURL eventualno.
+
+    //VAŽNO: bitno je naglastiti o čemo ja govorim, o preview u browseru, ne uploadu na server. Možeš se pitati
+    //ako korisitiš URL.revokeObjectURL i makneš to iz memorije kako ćeš onda uploadati to na server ? Stvar je u tome što će na server poslati
+    //cijelu sliku u oblik File tipa objekta koji je instanca Blob objekta tj. poslatit ćeš e.target.files[index].
+    //https://stackoverflow.com/questions/5587973/javascript-upload-file
+    //Iako ćeš čak i na stackoverlow naći ljude kako govore o "uploadu" nema samog uploada do slanja na server i kada korismo
+    //taj URL.createObjectURL samo linkamo na file na disku korisnika. NOTE: loaded into memoery misli se na chrome kada se
+    //objšnjava zašto se ne treba korisit reader.readDataAsURL()
+
+    //Kada je riječ o video ukoliko želimo imati situaciju da korisnik izabere nekoliko videa i ima ih nekoliko na stranici i da
+    //se vi ti video mogu pokrenuti kada korisnik želi onda ne smijemo koristiti URL.revokeObjectURL jer inače će prestati raditi.
+    //Možemo staviti situacija tako da se samo najzadnji izabrni video može koristiti previwat i maknuti sa svih ostalih videa URL.revokeObjecktURL
+    //tj. imamo samo jedan video element na strainci sačuvamo sve te file objekte(koji su bili u e.target.files) koji su bili izabrani sa
+    //input type file ili dropani sa drag and drop i onda prikažemo samo neki popis tih starih izabranih videa i sve te vida pošaljemo
+    //na serera kao File tip tj. Blob instancu.
+
+    //Navodno je micanje iz memoerija sa URL.revokeObjectURL nije apsolutno nužno za slučajve video i img previwa.
+    //Do I always need to call URL.revokeObjectURL() explicitly?
+    // It mainly depends on what you pass to createObjectURL.
+    // If you pass a File selected by the user from an <input type=file>, then the blobURI you created is a direct pointer to the file on the
+    // user's disk, nothing apart this mapping URI-file_path is saved in memory. So in this case, you can create a lot of these without ever revoking it with no real risk.
+    //https://stackoverflow.com/questions/49209756/do-i-always-need-to-call-url-revokeobjecturl-explicitly
+    //Međutim, vidio sam i jedan komentar gdje kaže da je netko iamo problem sa ogormnom slikom. Uglavnom, treba saznati više o memoery mangemntu u browserima
+    //saznati koliko možemo imati videa i slika linkank sa URL.creatObejctURL() bez da imamo problema.
+
+    //FileReader API:
+    //note: objekt koji new FileReader() returna je nazivam reader, naravno možemo birati kako ćemo ga nazvati. Ali na njemu se zovu sve one metode.
+    //VAŽNO:Znači FileReader api tj. metode reader objekta(objekt koji returna new FileReader()) nam ne trebaju kada je riječ
+    // o image ili video previews, ali kada nam trebaju ? Najbolje ih je korisiti kada trebamo uploadti neki ogromni file. Za preview ćemo
+    //i u tom slučaju koristiti URL.createObjectURL(), ali ćemo slicati File tip objekta tj. taj neki ogromni file i onda ćemo svaki
+    //taj chunk obraditi unutar metode reder objekta sa reader.readDataAsText(nekiChunck).
+    //Primjer toga je funkcija parseFile koju sam prilagodio sa stackoverflowa,gdje sam popravio neke nedostatke koji su bili navedne u drugim komentarima
+    // i promjenio nazive varijabli da meni više odgovara.
+    //Note: Kada se pokuša očitati neki ogromni file sa .readAsText() bez ga se slica na male chuncks onda neće raditi i čak je problem što error neće biti izbačen.
+    //Navodno je chrome limt nekih 261 MB. Znači fileReder metode se korisna tek u kombinaicja sa slice-om.
+    //VAŽNO:FileReader tj. njegovi event handlers su async. Ovaj readAsArrayBuffer() je navodno koristan kada želimo konventirati ekstenziju slike u neku drugu
+    //, ali nigdje nisam vido neke primjere kako se to raditi, niti primjere kako se koristite za očitvanje velikih filova za koje je navodno dobar.
+    //Jedino korisno što sam našao je .readAsText() u kombinacija sa .slice tj. kreacije malih chunks.
+    //Opis nekih FileRader metoda:
+    //readAsText(): This reads a file and returns its content as text. Suitable for small text files.
+    // readAsBinaryString(): This reads a file and returns its content as a binary string. Suitable for small files of any type.
+    // readAsDataURL(): This reads a file and returns a Data URL referencing it. This is inefficient for large files as the file is loaded into memory as a whole
+    //before being processed.
+    // readAsArrayBuffer(): This reads a file and returns an ArrayBuffer containing the input file 'chopped up in smaller pieces'. This works for very large files, too.
+    // Bitan property je reader.result:
+    //The file's contents. This property is only valid after the read operation is complete, and the format of the data depends on which of the methods was used to initiate
+    //the read operation.
+    //Neke od event handlera sam opisao u opisu funkcije parseFile, možemo korisiti i standerdne event listners kao zamjenu za event handlers, ali obično se koriste
+    //event handlers.
+
+    //Are there file size limitations when using javascript FileReader API?
+    //It seems in Chrome 45 the limit is 261 MB.
+
+    //Unfortunately there is no error (FileReader.error == null) when the size is above that limit, the result is just an empty string.
+
+    //1A.Don't use a FileReader at all.
+
+    // When you want to display a File (or a Blob) that is in the browser's memory or on user's disk, then all you need is to generate an URL that do
+    // point to this memory slot. That's exactly what URL.createObjectURL(blob) does: it returns a Blob URI (blob://) that points to the data either
+    // in memory or on the disk, acting exactly as a simple pointer.
+
+    // This method has various advantages over the FileReader.readAsDataURL() method. To name a few:
+
+    // Store the data in memory only once, when FileReader would need it at reading, then generate a copy as an base64 encoded, and an other one at displaying...
+    // Synchronous. Since all it does is to generate a pointer, no need to make it async.
+    // Cleaner code.
+
+    //1B. Optimized solution : don't use a FileReader, use the URL.createObjectURL(blob) method.
+
+    // When the blobs passed to this method come from an <input type="file">, the URI returned is a direct pointer to the file on the user system, hence
+    // it is faster, less memory consumptive and easier to use (since synchronous) than a FileReader and its toDataURL method.
+
+    //2. I revoked my blob after I set it as an img src, everything was fine.(mislie se na URL.createObjectURL i URL.revokeObjectURL(nekiURLobj) gdje je blob zaparavo
+    //file objekt koji je instanca bloba)
+    //I revoked my blob after I set it as a background-image css property, everything was not fine! Firefox was used
+    //https://stackoverflow.com/questions/35161139/when-is-it-safe-to-call-url-revokeobjecturl
+
+    // But, using FileReader to preview images is not a good choice, as FileReader.readAsDataURL() converts the whole image
+    // to a large string (in the form of "data:image/jpeg;base64,/9j/4SVaRXhpZgAAS......"), and you show the image by placing the
+    //whole string of image data into the img.src attribute, if your image is large, you take the risk of running out of memory.
+
+    // img.src is meant to contain the url of the image, not the data of the image, although you can assign a url containing the
+    //  whole image data via img.src = "data:image/jpeg;......".
+
+    // So, you should use window.URL.createObjectURL() to create a url referring to your local image, and assign this url to img.src:
+
+    // 3.Do I always need to call URL.revokeObjectURL() explicitly?
+    //.The other answer is right, but I thought I should add some info for the sake of completeness.
+
+    // It mainly depends on what you pass to createObjectURL.
+
+    // If you pass a File selected by the user from an <input type=file>, then the blobURI you created is a direct pointer to the file on the
+    //  user's disk, nothing apart this mapping URI-file_path is saved in memory. So in this case, you can create a lot of these without ever revoking it with no real risk.
+
+    // If you pass a Blob (or a File) that you did generate (or which has been fetched), then the Blob has to be stored in memory, and the
+    // blobURI will indeed keep being a pointer to this Blob and its data, protecting it from GC, until the document dies.
+    // In this case, don't forget to revoke it when you don't need it anymore.
+
+    // If you pass a MediaStream coming from the user device, don't, it's being deprecated and for good reasons: As for the generated Blob, UAs
+    //  had to keep the connection to the external device open while the blobURI is alive, and even though the MediaStream was closed, it could happen
+    //   the connection was still open and lead to unavailability of requesting new connections.
+    //https://stackoverflow.com/questions/49209756/do-i-always-need-to-call-url-revokeobjecturl-explicitly
+
+    //5.
+    //readAsText(): This reads a file and returns its content as text. Suitable for small text files.
+    // readAsBinaryString(): This reads a file and returns its content as a binary string. Suitable for small files of any type.
+    // readAsDataURL(): This reads a file and returns a Data URL referencing it. This is inefficient for large files as the file is loaded into memory as a whole
+    //before being processed.
+    // readAsArrayBuffer(): This reads a file and returns an ArrayBuffer containing the input file 'chopped up in smaller pieces'. This works for very large files, too.
+
+    //     When doing a file upload from a File on disk, the browser doesn't load the full file in memory but streams it through the request.
+    //     This is how you can upload gigs of data even though it wouldn't fit in memory. This also is more friendly with the HDD since it allows
+    //     for other processes to access it between each chunk instead of locking it.
+
+    // When reading the File through a FileReader you are asking the browser to read the full file to memory, and then when you send it through XHR the data from memory is being used.
+    //  You are thus limited by the memory available, bloating it for no good reasons, and even asking the CPU to work here while the data could have gone from the disk to the
+    //  network card almost directly.
+    // https:/stackoverflow.com/questions/65976145/what-is-the-difference-between-file-upload-using-filereader-and-formdata
+
+    //------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    function parseFile(file, callback) {
+      //file je file objekt koji se nalazi unutar fileList objektu i File property size je u baytovima.
+      const fileSize = file.size;
+      //chunkSize je postavljen na 64 KB.
+      const chunkSize = 64 * 1024; // bytes
+      let incramentingIndex = 0;
+
+      //Ovaj onLoadHandler se aktivira samo ako je sve uspješno završeno i nije bilo errora niti je bio aborted reading.
+      const onLoadHandler = function () {
+        incramentingIndex += chunkSize;
+        //Ova callback funckije će biti neka funkcija koja će slati na server taj chunck kojeg smo ovdje obradili.
+        callback(e.target.result); // callback for handling read chunk
+
+        //chunkSize je 65536 bytes, dok je incramentingIndex incijalno nula.Kada dođe prvi put code ovdje changinIndex će već biti
+        //icramentan i biti će taj chunkSize kada prvi bude budemo code ovdje.Znači vrlo brzo taj chaningIndex postane puno veći broj nego
+        //inače index sa kojim radim i samo će rasti. Zamisli da da je fileSize 20 bytova i chunkSize je 6 baytova. Uvijek
+        //je lakše na manjim brojevima vidjetit što se događa. U tom slučaju incramentingIndex bi bio 0,6,12,18,24 i kad bi bio taj
+        //zadnji 24 ušli bi u ovaj if i returnali.PAZI: 24 bi bio ovdje,nakon incrament iznad gori. Doli u fn. chunckReaderBlock
+        //gdje doista splicamo bi zadnja vrijednost incramentingIndexa bila 18.
+        //Slice funkcionira na način ako staviš na drugi argument index koji je puno veći od str.length da je to kao da si stavio
+        //str.lenght i zato >= funkconira. Zato možemo imati sve jednake chukove osim zadnjega koji je recimo manji
+        // jer nije se sve moglo podijeliti na točan chunckszie.
+        if (incramentingIndex >= fileSize) {
+          console.log("Done reading file");
+          return;
+        }
+        // of to the next chunk
+        chunkReaderBlock(incramentingIndex, chunkSize, file);
+      };
+
+      const onErrorHandler = function (err) {
+        console.log("error:", err);
+        return;
+      };
+
+      //Možemo pozvati reader.abort() kada želimo gdje je reder objekt koji new FileReader() returna i onda će se ovaj handler aktivirati.
+      //Nisam siguran hoće se aktiivrati ako sami ne pozvemo .abort(). Recimo korisin klikne cancel upload botun i onda tamo zovemo .abort()
+      const onAbortHandler = function (e) {
+        //The abort event is fired when the resource was not fully loaded, but not as the result of an error.
+        console.log("aborted");
+        return;
+      };
+
+      const chunkReaderBlock = function (incramentingIndex, chunkSize, file) {
+        //Uglavnom, File tip objekta se izgleda može slicati i kasnije spojiti. Nazvao je tu varijablu
+        //blob za svaki chunck, ali File je instancea Blob objekta.
+        const reader = new FileReader();
+        //Zamislimo da je chunkSize 6 baytova i fileSize je ukupno 20 baytova.Ovdje bi prvo bilo
+        //file.size(0,6) zatim (6,12) zatim (12,18) zatim (18,24). Vidi komentar gori za još detaljnije objšnjenje.
+        const blob = file.slice(incramentingIndex, chunkSize + incramentingIndex);
+        reader.onload = onLoadHandler;
+        reader.onerror = onErrorHandler;
+        reader.onAbortHandler = onAbortHandler;
+        reader.readAsText(blob);
+      };
+
+      // now let's start the read with the first block
+      chunkReaderBlock(incramentingIndex, chunkSize, file);
+    }
+  </script>
+</body>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button class="botun">Botun debounce</button>
+</body>
+<script>
+
+function debounceWesBos(func, wait = 5000, immediate = true) {
+      var timeout;
+      return function() {
+        console.log('ovo je debouncedFn');
+        var context = this, args = arguments;
+        
+        var later = function() {
+          timeout = null;
+          if (!immediate)func.apply(context, args);
+           };
+        
+        var callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) func.apply(context, args);
+      };
+    };
+
+    
+function izvrši(broj){
+    console.log("IZVRŠI c.log broj:",broj)
+    // console.log("IZVRŠI c.log")
+}
+
+let debouncedFn=debounceWesBos(izvrši)
+
+document.querySelector(".botun").addEventListener("click",debouncedFn)
+
+</script>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button class="botun">Botun throttle</button>
+
+</body>
+<script>
+
+ let obj={remainingCount: 1}   
+
+ //={leading:false,trailing: true}
+function throttleUnderscore(func, wait=5000, options={leading:true, trailing:false}) {
+  var timeout, context, args, result;
+  var previous = 0;
+  if (!options) options = {};
+
+  var later = function() {
+      console.log("later fn. aktivirana")
+    previous = options.leading === false ? 0 : new Date().getTime();
+    timeout = null;
+    result = func.apply(context, args);
+    if (!timeout) context = args = null;
+  };
+
+  var throttledFn = function() {
+    var now = new Date().getTime();
+    if (!previous && options.leading === false) previous = now;
+    // console.log("now",now)
+    // console.log("previous",previous)
+    // console.log("now-previous=",now-previous)
+    var remaining = wait - (now - previous);
+    console.log("remaining and reneamingCount:",remaining," ",obj.remainingCount)
+    
+    obj.remainingCount++
+    context = this;
+    args = arguments;
+   
+    if (remaining <= 0 || remaining > wait) {
+      if (timeout) {
+          debugger
+          console.log("ALO ALO unutar if ako timeout varijabla truthy postoji")
+        clearTimeout(timeout);
+        timeout = null;
+      }
+      console.log("unutar glavnog if")
+      previous = now;
+      result = func.apply(context, args);
+      if (!timeout) context = args = null;
+    } else if (!timeout && options.trailing !== false) {
+        console.log("ovo je unutar else if")
+      timeout = setTimeout(later, remaining);
+    }
+    return result;
+  };
+
+  throttledFn.cancel = function() {
+    //   debugger
+    clearTimeout(timeout);
+    previous = 0;
+    timeout = context = args = null;
+  };
+
+  return throttledFn;
+}
+
+function izvrši(broj){
+    console.log("IZVRŠI c.log broj:",broj)
+    // console.log("IZVRŠI c.log")
+}
+
+let throttledFn=throttleUnderscore(izvrši)
+
+
+document.querySelector(".botun").addEventListener("click",throttledFn)
+
+// setTimeout(()=>{
+//     throttledFn.cancel()
+// // },4500)
+
+
+// setTimeout(()=>throttledFn(1), 0)
+// setTimeout(()=>throttledFn(2), 1000)
+// setTimeout(()=>throttledFn(3), 2000)
+// setTimeout(()=>throttledFn(4), 2500)
+// setTimeout(()=>throttledFn(5), 5500)
+
+
+setTimeout(()=>throttledFn(1), 0)
+setTimeout(()=>throttledFn(2), 2500)
+setTimeout(()=>throttledFn(3), 3000)
+setTimeout(()=>throttledFn(4), 5500)
+
+
+
+
+
+
+
+</script>
+</html>

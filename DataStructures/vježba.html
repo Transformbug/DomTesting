@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+ 
+ class Node{
+     constructor(value){
+      this.value=value
+      this.next=null   
+     }
+ }
+
+ class List{
+     constructor(value){
+         this.head={
+             value: value,
+             next: null
+         }
+         this.tail=this.head
+         //Kad kreiramo incijalno linked list sa new automatski imamo jedan item i zato je vrijednost this.length broj 1 incijalno
+         this.length=1
+     }
+
+    push(value){
+        let newNode=new Node(value)
+        this.tail.next=newNode
+        this.tail=newNode
+        this.length++
+        return this 
+    } 
+   
+   unshift(){
+    let newNode=new Node(value)
+    newNode.next=this.head
+    this.head=newNode
+    this.length++ 
+   }
+
+   insert(index, value){
+     let newNode=new Node(value)  
+     let prev=transverseToIndex(index-1)
+     let temp=prev.next
+     prev.next=newNode
+     newNode.next=temp
+     this.length++
+   }
+
+   remove(index){
+      let prev=transverseToIndex(index-1)
+      let willBeRemoved=prev.next
+      prev.next=willBeRemoved.next 
+      this.length--
+   }
+
+   transverseToIndex(index){
+     let current=this.head
+     let counter=0
+     while(index!==counter){
+      current=current.next    
+      counter++
+     }
+     return current
+   }
+
+   printList(){
+       let arr=[]
+       let current=this.head
+      while(current!==null){
+         arr.push(current.value)  
+         current=current.next
+       }
+       return arr 
+   }
+
+   reverse(){
+     let first=this.head
+     let second=this.head.next 
+     this.tail=this.head
+
+      while(second){
+        let temp=second.next
+        temp.next=first
+        first=second
+        second=temp 
+     }  
+
+    this.head.next=null
+    this.head=first 
+  
+   }
+
+ }
+
+</script>
+</html>

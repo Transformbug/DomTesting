@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+    crossorigin="anonymous">
+  <title>Task List</title>
+  
+   <style>
+        .kont{
+          border: solid 3px red;
+          height: 300px;
+          width: 300px;
+          padding: 20px;
+        }
+
+        .klasaGranica{
+          border:blue 3px solid;
+          display: block;
+        }
+    </style>
+</head>
+
+<body>
+<!--  
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br> -->
+
+  <div class="kont">
+        <a class="clear-tasks klasaGranica" href="#">Ovo je Clear-tasks anchor tj. botun</a>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col s12">
+        <div id="main" class="card">
+          <div class="card-content">
+            <span class="card-title">Task List</span>
+            <div class="row">
+              <form id="task-form">
+                <div class="input-field col s12">
+                  <input type="text" name="task" id="task" value="Walk the dog">
+                  <label for="task">New Task</label>
+                </div>
+            </div>
+            <input type="submit" value="Add Task" class="btn">
+            </form>
+          </div>
+          <div class="card-action">
+            <h5 id="task-title">Tasks</h5>
+            <ul class="collection">
+              <li class="collection-item">
+                List Item
+                <a href="#" class="delete-item secondary-content">
+                  <i class="fa fa-remove"></i>
+                </a>
+              </li> 
+              <li class="collection-item">
+                List Item
+                <a href="#" class="delete-item secondary-content">
+                  <i class="fa fa-remove"></i>
+                </a>
+              </li> 
+              <li class="collection-item">
+                List Item
+                <a href="#" class="delete-item secondary-content">
+                  <i class="fa fa-remove"></i>
+                </a>
+              </li>
+              <li class="collection-item">
+                List Item
+                <a href="#" class="delete-item secondary-content">
+                  <i class="fa fa-remove"></i>
+                </a>
+              </li>
+              <li class="collection-item">
+                List Item
+                <a href="#" class="delete-item secondary-content">
+                  <i class="fa fa-remove"></i>
+                </a>
+              </li>
+            </ul>
+            <a class="clear-tasks btn black" href="#">Clear Tasks</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+ 
+</body>
+<script>
+// document.querySelector('.clear-tasks').addEventListener('click', function(e){
+//   console.log('Hello World');     //e može biti bilo koji naziv jer to paramter, a paramteri se mogu se zvati bilo kako.
+ //mi ne zovemo niti ubacujemo arugment u ovu funkciju.ovo je async callback, kad stavimo paramtetar samo govorimo toj addEventLisetner funckiji  
+ // kad  pozove ovu anonimnu funckiju da nam ubaci i event objekt.
+//   // e.preventDefault();  //sa qSel. smo izbarali anchor element. Kad taj element ima href="" ili href='neka web stranica' onda se taj elemnt po defalut ponaša da reloda i ode
+//                         //na taj link pa nam se hello world pojvai samo na dijelić sekunde u konzoli. kad uključimo e.preventDefault()  onda dobijemo noramlno Hello world    
+// });                     //također postvljanje href="#" napravi isti efekt bez e.preventDefault() aktivacije.                                          
+
+document.querySelector('.clear-tasks').addEventListener('click', onClick);
+
+function onClick(e){
+  //console.log('Clicked');
+
+  let val;
+
+  val = e; //ako želimo vidjeti event object
+
+  // // Event target element
+//   val = e.target;             // target property na event objekut predstvlja onaj element na kojem se pokrenuo neki addEventLister method call. Koristan je jer postoji event bubbling
+                              //pa se addEventLister može pokrenuti iako nije izravno neki element kliknut nego njegov child, pa sa target property možemop točno saznati koji je element kliknut.
+  // val = e.target.id;
+  // val = e.target.className;
+  // val = e.target.classList;
+   //   val=e.target.textContent='Promjena'  //zašto bude velikm slovima napisanu na web stranici.  .toLowerCase ne pomaže. vjerjoajtno radi linkanih stylsheeta 
+
+  // // Event type
+//   val = e.type;        //tip eventa, tj ono što je u prvom argument addEventListener build in metode. 
+
+  // // Timestamp
+//   val = e.timeStamp;  //ovaj timeStamp na event objektu callbacku funckije u addEventListeneru predstvlja vrijmee u ms otkad smo otvorili ili refresali neku stranicu.
+                                         
+                           //VAŽNO(ovo je krivo): kod svih ovih pozicijskih property event objekta x i y axsis imaju drugačije značenje nego kad je riječ o uobičnajnim nazivima u matematici
+                            // ili recimo u css transfrom:translateX() ili translatrY(). Kod ovih property horizonalna je Y, dok je vertikalna linija X što je obrnuto od css traslate.
+
+  // // Coords event relative to the viewport            odkomentiraj br element u html da vidiš razliku između clientY i pageY
+//   val = e.clientY;                     // broj pixela do vrha stranice viewport stranice od one točke nekog element gdje smo kliknuli sa mišem. 
+                                          //Znači kada imamo vertikalni scroll bar onda se taj y axsis se "supusti" ako  iskorismo taj scroll bar da supustimo viewport.
+//   val = e.clientX;                         // broj pixela do lijeve strane veiwporta. Znači taj koridinati sustave kreće u lijevom vrhu viewporta i ima obrnute nazive nego za axsise nego u css trans.
+     
+    //   val=e.x   // kada imamo neki event sa mišem onada ćemo dobiti i propertes zvane x i y koji će biti isti kao clientX i clientY.
+    //   val.e.y   
+
+  // Ovi propertis "page" oređujeu udaljenost one točke gdje smo kliknuli sa mišem od gornjeg lijevog vrha html documenta. Netko je glupo rekao da je to sve ispod searh bara,ali i ona linija gdje
+   // su boomarksi se ne računa. Znači kad spustimo viewport sa vertilani scroll barom, clientY će odrediti udaljenost od te horizonalne lnije viewporta dok će page Y odrediti udaljenost do 
+    //vrha html documenta. PageX i clientX će biti jedanki sve dok se ne pojavi evenutalno horinzonalti scroll bar i onda kada pomkanemo vieport desno će imati različite vrijednosti.
+    //  val=e.pageY;  
+    // val=.e.pageX;
+
+  // Postoji još pozicijske properties na event objektu screen i layer. Layer se odnosi na najbliži element koji nema default static positon css property, dok je screen predstvlja udaljenost
+    //od fizičkog lijvog vrha nekog uređaja poput monitora. Navodno je scrren property je u fizičkim, ne css pixelima kao ostalie ove properties...
+  
+    // // Coords event relative to the element            odkomentrija div kont u html da vidiš što je ovaj offset.
+  val = e.offsetY;             // ovo gleda udaljenost od one točke na botunu(nekom elementu) gdje je miš kliknuo do one zadnje horinzonalne linije gdje završava padding-top parent elementa.
+  // val = e.offsetX;                 //ovo je udaljenost of pixela od točke je miš klikno od one vertikalne crte gdje paddin-left parent elementa završava.       
+
+  console.log(val);
+  console.log((e.clientY + window.scrollY)-e.target.getBoundingClientRect().top);
+}
+
+// MOUSE EVENTS LEKCIJA TREVESTY
+
+// const clearBtn=document.querySelector('.clear-tasks')
+// const card=document.querySelector('.card')
+// const heading=document.querySelector('h5')
+
+// clearBtn.addEventListener('click',runEvent)   //Obični click event, aktivira ga samo lijevi mouse klik, kad se pritise element i pusti miš tipka nad nekim elmentom
+// clearBtn.addEventListener('dblclick',runEvent)  //Dupli click, primjeti kako nije camel case, isto samo lijva miš tipka
+
+// clearBtn.addEventListener('mousedown',runEvent) //razlika između ovoga i običnog klika je što klik se ne aktivira dok držiš klik tipku nad nekim elementom, ovo se odmah 
+                                                     //aktivira čim se pritse miš tipka nad nekim elmentom, čak i ako se pritinse desna tipka
+// clearBtn.addEventListener('mouseup',runEvent)  // ove se aktivira kad pritisneš i pustiš neku tipku nad target objektom. jedina razlika u odnosu na klik mi se čini što
+                                             // ovo radi i na desnoj tipki, dok je click samo za lijevu tipku
+
+// clearBtn.addEventListener('mouseenter',runEvent)   //ako samo stavimo miš, bez da išta klilnemo iznad buttona ovo će se aktivirati, trevesty je ovo stavio na const card                                            
+
+// clearBtn.addEventListener('mouseleave',runEvent)  // ako stavimo miš na butun i maknemo miš sa botuna bez da išta kliknemo, možemo mi klilnit,ali će se aktivira i bez toga
+
+//  card.addEventListener('mouseenter',runEvent)   //sad je const card, treba nam to da ilsutriramo razliku u ondosu na mouseover i mouseout
+// card.addEventListener('mouseleave',runEvent) 
+
+//  card.addEventListener('mouseover',runEvent)  //razlika u ondosu na mouse enter je što se mouseover aktivira kad pomaknemo miš preko svakog nested tj. child elmenta
+                                //od toga target elementa koji je aktivirao eventListenr funkciju. Zato smo morali koristiti const card pa pokažemo razliku jer
+                                //button nije imao child tj. nested elemente.
+// card.addEventListener('mouseout',runEvent) // svaki put kad maknemo miša sa nekog nested elmenta će se ovo aktivirati,naravno i kad izađemo sa glvnog target elmenta. 
+
+// card.addEventListener('mousemove',runEvent) // svaki pokret miša unutar target elementa aktivira ovaj event. razlika u odnosu na mouseout ili mouseover je što doslovno
+//            //svaki se pokret broji tj. aktivra event dok mouseout i mouseover se aktivira kad se miš pomakne ili dođe sa jednog nesteg elemnta na drugi, 
+//                 //uz naravno dolazak i pokret sa target parent elmenta
+
+// function runEvent(e) {
+//    console.log(`EVENT TYPE: ${e.type}`); //koji je tip eventa će nam reć
+
+//    heading.textContent=`MouseX: ${e.offsetX} MouseY: ${e.offsetY}`;
+//    document.body.style.backgroundColor=`rgb(${e.offsetX}, ${e.offsetY}, 40)`; //rgb je uvijek tricky, bio je razmak između rgb i zagrade i nije radilo radi toga
+//                                                                                //ovo je u kombinaciji sa 'mousemove' 
+// }
+
+//KEYBOARD EVENTS and Input events      MALI SIDE NOTE: ctrl+f(ne doslovno plus) otvri find opciju u html filu, sa escape se zatvori.class se ne traže sa točkom nego po imenu, nisu potrebne ""
+                                       //pomjenito sam font size u visual studio codu sa 14 na 15,tako što samo upsiao fonts u settings search bar, znači fonts ne font
+const form=document.querySelector('form')
+const taskInput=document.getElementById('task')
+// // console.log('ovo je form',form)
+// // console.log('ovo je task input',taskInput)
+// // console.dir(taskInput)
+
+//  form.addEventListener('submit',runEvent2) // uključi preventDeafult() u runEvent2 funkciji. Ovaj event se pokreće tako da kliknemo mišem i upišemo nešto unutar inputa koji se nalazi
+  // unutar forma(tehnički ne moramo ništa upisati) i onda pritisnemo tipku enter ili kliknemo na neki <button> html elemennt koji  nalazi unutar toga forma ili klikmeno na neki input
+  // unuatr toga forma koji služi kao botun jer smo dodali atribut vrste "submit". Bitno je naglasiti da je iz nekog razloga e.target cijeli taj form element, nije e.target taj input element
+  // gdje smo upisali neki text. Pa nemožemo korisiti e.target.value. I kad klilnemo na boutn ili kada pritinsmo enter sve bude isto, tj. cijeli form bude target iako smo upisali text
+  //  unuatr input elementa koji je njegov nested element. Vidi doli runEvent2 funckiju, biti će jasnije.
+
+
+//  taskInput.value="" //ovo je trevesty dodao nakon što sam testriali submit event, sad samo ispraznili onaj default value u input tagu
+
+// taskInput.addEventListener('keydown',runEvent2)  //kad pritsenemo bilo koju tipku unutar target elmenta. znači prvi kliknmo mišem na target i onda kad pritsetno tipke broji
+ // VAŽNO nešto se čudno dogodi kad pogledamo e.target.value keydown eventa. kad prtisnemo prvu tipku, registira je, ali ništa ne ispiše u konozlu, isto tako kad napišemo rečencu, pokaže sva slova osim 
+ //zadnjeg kojeg smo upisali. 
+// taskInput.addEventListener('keyup',runEvent2)  //keyup je kad pritisneš tipku i onda pustiš na target elmentu, znači ne aktivira se dok držiš tipku
+// taskInput.addEventListener('keypress',runEvent2) //The keypress event has been deprecated. You may want to use beforeinput or keydown instead. Isto mi se čudno ponaša kao mousedown.
+                                                 //također za razliku od mousedowna ne regira kad pritsneš recimo backsapce
+// taskInput.addEventListener('focus',runEvent2)  // ovaj event aktvira i klik miša, čak ga ne aktivira tipkovnia, šta je trevestyu
+// taskInput.addEventListener('blur',runEvent2)  //blur bi kao trebao biti suprotno od focusa kad klikneš izvan targeta onda target više ne bude u focus. treba još za focus i blur vidijti sa 
+//vlastitim css, travesty mi je sumljiv, zašto je ovo uvalio u keyword events lekciju mi nije nikako jasno, možda zato jer je ovo i input events pameti
+// taskInput.addEventListener('cut',runEvent2) // kad netko aktivira cut sa shorcutom na tipkovinici ili mišem napravi cut nad target elementom
+// taskInput.addEventListener('paste',runEvent2) //slično kao i cut, kad netko miše ili tipkovnicom paste nešto nad target elementom
+// taskInput.addEventListener('input',runEvent2) // ovo registirmo bilo koji input tipkovnicom, cut,paste,ne ragiramo na miš
+//https://developer.mozilla.org/en-US/docs/Web/Events/input The DOM input event fires synchronously when the value of an <input>, <select>, or <textarea> element has been altered 
+//prvo što mi znači synchronously, a šta je ovo sa select i textarea. ovo još treba testirati.
+// VAŽNO: travesty je testirao change event, ali i reako je da se to korisiti sa select botunima, koje je dodao u html i onda je isljučio materialize css pa bi select radio jer mu je navodno
+//trebalo još nešto malo jQuerya da select radi sa materialize stylesheet. uglavnom još pogledati i naučiti detalji o change eventu
+
+
+// function runEvent2 (e) {
+//   console.log(`EVENT TYPE: ${e.type}`)  
+ 
+  /*Za submit event */
+
+//  e.preventDefault();  //pogledaj trevesty objasnit će zašto ga koristimo za submit, ja nisam dodao action atribut u form, 
+ //oprez sa prevent dufalut, kad je bio ostao uključen za keydown, keydwon je radio u konzoli, ali nismo ništa mogli upisati i ugrabit vrijednost
+ //  console.log(taskInput.value);    //ovo je taskInput varijabla koji predstvlja <input> tag, a value će biti ono što napišemo u form, ovo je bilo pokazano kad i subimit event. OVO JE ZA SUBMIT
+//  console.log('ovo je task input odakle uzimamo .value koji upišemo u input field',taskInput);
+//  console.log('ovo je target',e.target);
+ 
+// Za ostale
+//  console.log(e.target.value); //ovo smo koristili kad smo gledali 'keydown' event i još kasnije na svim drugim elementima. OVO NIJE ZA SUBMIT EVENT I FORM
+
+
+// }
+
+
+
+
+
+
+</script>
+
+</html>

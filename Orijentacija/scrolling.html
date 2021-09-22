@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        
+        .drugi{
+              border: red 5px solid;
+              width: 500px;
+              height: 700px;
+              overflow-y: scroll;
+              margin: 10px 0;
+              position: relative;
+              display: block;
+              margin: 0 auto;
+            }
+
+            .unutarDrugog{
+              border: 1px solid blue;
+              width: 60%;
+              height: 2500px;
+              position: relative;
+            }
+
+            .unutarDrugog li{
+              margin: 13.5px 0;
+              border: chartreuse 1px solid;
+            }
+
+            .mjera{
+              width: 20px;
+              background-color: blueviolet;
+              /*Mjera, u ovoja verziji se najbolje vidi što je scrollTop*/
+              /* height: 828px;
+              position: absolute;
+              top:0; 
+              left: 0; */
+              
+              position: sticky;
+              height:100px;
+              bottom: 0px;
+              left: 0; 
+            }
+
+
+         .absoluteNaNegdje{
+           background-color: cadetblue ;
+           width: 200px;
+           height: 30px;
+           position: absolute;
+           bottom: 800px;
+           left: 0;
+         }
+
+      
+
+    </style>
+</head>
+<body>
+    <div class="drugi">Ovo je drugi tekst content,ovo je drugi teks content, 
+
+        <div class="unutarDrugog">
+          <li>1</li>
+          <li>2</li>
+          <li>3</li>
+          <li>4</li>
+          <li>5</li>
+          <li>6</li>
+          <li>7</li>
+          <li>8</li>
+          <li>9</li>
+          <li>10</li>
+          <li>11</li>
+          <li>12</li>
+          <li>13</li>
+          <li>14</li>
+          <li>15</li>
+          <li>16</li>
+          <li>17</li>
+          <li>18</li>
+          <li>19</li>
+          <li>20</li>
+          <div class="absoluteNaNegdje">Unutar plavog absoluteNegdje</div>
+        </div>
+       
+         <div class="mjera"></div>
+       </div>
+      
+</body>
+<script>
+
+  
+function vidi(e){
+      let staniQuary=document.querySelector('.drugi')
+    let stani=window.getComputedStyle(staniQuary)
+      
+      //NOTE: ne postoji .height na nekom dom objektu(jedino na img elementima), ovo je getComputedStyle return .height
+      console.log(' computed css height',stani.height);
+      console.log(' offSetHeight', staniQuary.offsetHeight);
+      console.log(' clientHeight', staniQuary.clientHeight);
+      console.log(' scrollHeight',staniQuary.scrollHeight);
+      console.log('ovo je window.innerHeight tj. viewport height', window.innerHeight);
+    }
+
+    document.addEventListener('DOMContentLoaded',vidi)
+
+     
+     
+     //window.scrollY udaljenost vrha viewporta do vrha dokumenta
+     //window.scrollX udaljenost lijeve strane viewporta do lijeve strane dokumenta(za standardni css direction)
+     //window.pageYOffset je ista stvar kao i window.scrollY
+     //window.pageXOffset je isto stvar ako  i window.scrollX
+
+   let mjera=document.querySelector('.mjera')
+     mjera.addEventListener('click',function(e){
+     
+      
+
+         
+       //VAŽNO: element.scrollTop je obični dom element verzija window.scrollY. Znači udaljenost vrha viewporta(tj. vidljivog dijela elemnta) do vrha elementa koji ima scroll bar. 
+     //  console.log(e.target.parentNode.scrollTop)
+     //VAŽNO: za razliko od window.scrollY nije read only i može se postaviti. Na ovaj način:
+      //  e.target.parentNode.scrollTop=100
+       //VAŽNO: jedina od osobina scrollTop je da ako stavimo ovdje neki broj koji bi bio veći od stvarnog maksimalnog broja koji reflektira veličinu scrollTop-a 
+       //onda će automatski biti postavlja ta maksimalna vrijednost i kad pogledamo što je scrollTop vidjet ćemo tu vrijednost. To je jako korisno kad radimo
+       //svoj custom scroll-bar tako da sakrijemo stvarni scrollbar ili kad radimo custom smooth animaciju.
+       //VAŽNO:Također ako stavimo negativni broj onda će automatski vrijednost biti broj 0.
+      //  console.log( e.target.parentNode.scrollTop);
+
+      //VAŽNO: element.scrollLeft je element verzija window.scrollX. Ako je css direction u smjere desno prema lijevo(arapski i heberjski) onda počinje na desnoj strani, ali
+      //se još uvijek zove scrollLeft. Može se postaviti, nije ready only. 
+
+      //VAŽNO: ne postoji scrolRight i scrollBototm naravno.
+     
+       //VAŽNO: scrollTo metoda miče element na one koridanate koji se refeiraju na lijevu i gornju stranicu tj. x-axsis i y-axsis elementa na kojem je scroll-bar.
+       //PAZI: ako staviš malu vrijednost na top: recimo 50 učiniti će se da ova metoda jedino radi kad skrolamo već dole i želimo se vratiti nazad.
+       //Ali pošto se radi o 'absolutnim' refernecima na top i left element gdje je scroll bar onda to samo znači da je da koridanta već aktivna. 
+       //Znači stavi veliki broj da vidš kako ide i prema dole, stavi i manji broj kad si dole da vidš kako ide prema gore.
+       //VAŽN0: ako se želi otići na samo dno web stranice i korisiti se na window objekut ova metoda onda kao
+       // vrijednost za top tj. y-axsis treba staviti document.body.scrollHegiht 
+       //ima i window.scrollTo verzija, praktili je ista kao window.scroll, ovo metoda nas miče na određene kordinate.
+       //VAŽNO: window.scrollTo() i window.scroll() su prakitčki iste metode(vidi mdn notes sekciju za window.scroll). Mislim da to vijredi i za element.scrollTo i element.scroll
+      //  e.target.parentNode.scrollTo({
+      //    top: 100,
+      //    left: 0,
+      //    behavior: "smooth"
+      //  })
+       
+       //VAŽNO: ova metoda služi da nas spusi dole ako korisimo pozivni broj kao vrijedonost. Ali ako korismo negativni broj onda se pomičemo
+       //prema gore za onoliko koliko navedemo unutar top.
+       //Također je se može korisiti i na window objektu.
+       //VAŽNO: ova metoda je relativna, miče nas od trenutne pozicje onolike koliko navedemo za razliko od scrollTo gdje se vrijednosi odnose na element gdje je scroll-bar.
+       //Također, pošto je ovo relativna, možemo više puta pozvati ovaj scrollBy bez da mijanjam vrijednost top i left i vijdeti ćemo pomak scroll-bar, dok scrollTo odmah odredi 
+       //koradianted u odnosu na element gdje je scroll-bar i ako se top,left value ne promjeni nema pomaka kad više puta pozovemo tu metodu.
+      //  e.target.parentNode.scrollBy({
+      //  top: -100,
+      //  left: 0,
+      //  behavior: 'smooth'
+      //     });
+
+    //VAŽNO: pazi, ovdje biramo deset li element tj. broj deset jer array index počinje sa nula.
+    //Ova metoda mogućuje da se pojavi unutar view-a element na kojem je pozovemo
+    // document.querySelector('.unutarDrugog').children[9].scrollIntoView(true)
+    
+    //Zanimalo me kako izgleda lprema doli...
+    // document.querySelector('.absoluteNaDnu').scrollIntoView(true)
+    //VAŽNO: block definira na y vertiklanoj axisis što će se vidjeti od elemena na kojem zovemo scrollIntoView tj. hoće li se view zaustaviti recimo na samom dnu toga
+    //elementa. Vidi na mdn stranici što je default i koje su opcije.
+    //VAŽNO: treba imati prostora da bi se vidjela razlogak između vrijednost na block properties. start znači postavi element na vrh vidljevih područaja u parent el. gdje
+    //je scroll bar, centar znači na centar trentuno vidiljvog područja(nazvimo unutarnjeg vieporta elementa gdje je scrolbar), end na kraj trento vidljvog područja.
+    //Inline definira na horizontalnoj axsis.
+    //JAKO VAŽNO: safari, edge i IE ne podržavaju ove options objekte još na svim ovim scroll metodama.
+    //VAŽNO: za ovo doli gledaj elemt gdje je tekst: "plavi element unutarPlavog absoluteNegdje"
+    // document.querySelector('.absoluteNaNegdje').scrollIntoView({
+    //   behavior: "smooth",
+    //   block: 'start',
+    //   inline: 'nearest'
+    // })
+   
+   
+  
+  
+  })
+
+</script>
+</html>

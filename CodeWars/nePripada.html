@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    vidi kontolu
+</body>
+<script>
+ //Kata imena:  What doesn't belong to these?
+ 
+ 
+//  describe("Solution", function(){
+//   it("exampleTests", function(){
+//     Test.assertEquals(findTheNotFittingElement([ 1, 2, 2, 2, 2 ]),1 );
+//     Test.assertEquals(findTheNotFittingElement([ true, true, true, false, true ]), false);
+//     Test.assertEquals(findTheNotFittingElement([ 'a', 'a', 'b', 'a', 'a', 'a', 'a' ]), 'b');
+//     Test.assertEquals(findTheNotFittingElement([ '1', 2, '4', '6', '8' ]), 2);
+//     Test.assertEquals(findTheNotFittingElement([ 2, 2, 2, 2, 2, '2' ]), '2');
+//     Test.assertEquals(findTheNotFittingElement([ 1, 2, 4, 6, true ]), true);
+//     Test.assertEquals(findTheNotFittingElement([ 1, 2, 4, 6, 10 ]), 1); //neparni je ovdje 'ne pripada'
+//     Test.assertEquals(findTheNotFittingElement([ 2, 2, -2, 6, 10 ]), -2); //negativni ovdje 'ne pripada'
+//     Test.assertEquals(findTheNotFittingElement([ 'Z', 'L', 'P', 't', 'G' ]), 't'); // lowercase string ne pripada.
+//     Test.assertEquals(findTheNotFittingElement([ 'Z', 'L', '3', 't', 'G' ]), '3');// Autor definira 'ne pripada' za ovaj slučaj kao onaj string koji se može pretvorit u broj. 
+//     Test.assertEquals(findTheNotFittingElement([ 'Z', 'L', '3', 't', 4 ]), 4);
+//     Test.assertEquals(findTheNotFittingElement([ 'Z', 'e', '.', 'a', 'G' ]), '.'); //ovdje ne pripada onaj karakter koji nije alfanumerički.   
+//   });
+// });
+
+//Moj pokušaj, nisam završio, pogledao sam rješenja.
+
+// function findTheNotFittingElement(series){
+//            let obj={
+//            elementTypeOffCheck: '',
+//            typeOfCount: {
+//             stringsCount: 0,
+//             booleanCount: 0,
+//             numberCount: 0 
+//            },
+//            elementNotLikeAllOthers: ''
+           
+//            }
+           
+//         return  series.reduce(function (acc,cur,index,arr){
+//               typeof cur ==='string'? acc.typeOfCount.stringsCount++:'' 
+//               typeof cur ==='boolean'? acc.typeOfCount.booleanCount++:''
+//               typeof cur=== 'number' ? acc.typeOfCount.numberCount++:''
+//               if((acc.typeOfCount.stringsCount >0 && acc.typeOfCount.numberCount >0) || 
+//               (acc.typeOfCount.stringsCount >0 && acc.typeOfCount.booleanCount >0) ||
+//               (acc.typeOfCount.numberCount >0 && acc.typeOfCount.booleanCount >0)){
+//                   if(acc.element==='') acc.TypeOffCheck=cur
+//             }
+//             for(let i=0; i<arr.length; i++){
+//                 if(cur!==arr[i] && cur !==arr[arr.length-1]) acc.elementNotLikeAllOthers=cur;
+//                 else if(acc[acc.length-1] && acc.elementNotLikeAllOthers===''){
+//                     acc.elementNotLikeAllOthers=cur
+//                 }
+//                  }
+
+//                 return acc       
+//           },obj) 
+    
+//     }
+
+// // let a=findTheNotFittingElement([5,'odd',15])
+// // let a=findTheNotFittingElement(['a','b','a'])
+// let a=findTheNotFittingElement(['a','a','b'])
+// // let a=findTheNotFittingElement(['b','a','a'])
+// console.log(a)
+
+
+//-----------------------------------------------------------------------------------------------------------------------
+//najbolja rješenja ostalih krosnika
+
+
+function findTheNotFittingElement(series){
+  let arrOut = [];
+  let arrChecks = [checkValue,checkType,checkEven,checkSign,checkStrVal,checkCase,checkAlphaNum]
+  
+  // Filter the array using various functions in arrChecks applied to the series. Looking for a single element to provide distinct response to filter.
+  for(let j = 0; j < arrChecks.length; j++){
+    arrOut.push(series.filter(function(element,i){
+        console.log(arrOut)
+      if(i === 0){
+        return arrChecks[j](element) !== arrChecks[j](series[1]) && arrChecks[j](element) !== arrChecks[j](series[2]);
+      } else if(i === 1){
+        return arrChecks[j](element) !== arrChecks[j](series[0]) && arrChecks[j](element) !== arrChecks[j](series[2]);
+      } else {
+        return arrChecks[j](element) !== arrChecks[j](series[i-2]) && arrChecks[j](element) !== arrChecks[j](series[i-1]);
+      }
+    }));
+  }
+
+  function checkValue(x){
+      //Ovo je provjera za slučaj ['a','b','a']
+    return x;
+  }
+  
+  function checkType(x){
+    return typeof x;
+  }
+  //kad imamo stuacija [5,-10,20] onda će 5 biti rezultat je autor očito to defnira kao 'ne pripada' u slučaju da su brojevi djeljivi, nije bitno jel negativan.
+  //vidi doli doli obješnjenje zašto je raspored ovih funkcija bitan i za ovaj slučaj to vrijedi.
+  function checkEven(x){
+    return x%2;
+  }
+  
+  function checkSign(x){
+      //Mislim da mu je ovo provjera za slučaj kad je jedan negativan među brojevima koji su svi djeljiv ili ne djeljivi.
+    //Ovo također radi: return x<0
+    // return x/Math.sqrt(x*x)
+  }
+  
+  //VAŽNO: bitan je raspored, da ovaj checkStrVal bude iznad checkCase u slučajvima kad je input poput: [ 'Z', 'L', '3', 't', 'G' ] gdje je autor 'kate' naglasio da u ovom slučaju
+  // definira element koji ne pripada onaj string karakter koji je može promejnit u broj. Zato služi ova isNaN provjera
+  // A raspored je bitan u slučaku da i checkCase nađe samo jedan element, vidi doli da je findIndex, returanmo samo jedan element i zato što je ovaj checkStrVal iznad
+  //checkCase radi toga će findIndex returnao taj '3', a ne 't' kao u ovom našem hipotetskom primjeru.
+  function checkStrVal(x){
+      //Ovo je za slučaj [ 'Z', 'L', '3', 't', 'G' ] gdje trebao dobiti onaj string koji se može pretovirit u broj.
+    return isNaN(x);
+  }
+  
+  function checkCase(x){
+      //ovo je slučaj kad onaj jedan koji ne pripada je lowercase.Znači ovdje će return biti ona match array samo za onaj jedan lowercase dok za ostale koji nisu
+      //lowercase return će biti null. PAZI: neće taj mathc array završiti unutar array koji filer returna nego će rezultat 'match array'!==null biti true i onda će 
+      //current unutar array koja se filtrira završiti unutar array koju filter returna.
+       return x.toString().match(/[a-z]+/);
+  }
+  
+  function checkAlphaNum(x){
+    //Bilo koji koji nije alfanumrički je match
+    return x.toString().match(/[^a-z0-9]/i);
+  }
+  console.log(arrOut)
+  // Returning the first array where only one element is differentiated by a test filter.
+  return arrOut[arrOut.findIndex(function(element){return element.length === 1})][0];
+}
+
+// // let a=findTheNotFittingElement([5,'odd',15])
+// let a=findTheNotFittingElement(['a','a','b'])
+// let a=findTheNotFittingElement([ 'Z', 'L', '3', 't', 'G' ])
+// let a=findTheNotFittingElement([5,-10,20])// returnat će biti broj 5 jer je djeljiv, nije bitno što je jedan negativan.
+// let a=findTheNotFittingElement([3,-5, 9]) // sad nije niti jedan djeljiv.
+let a=findTheNotFittingElement(['A', 'Z', 'c'])
+console.log('ovo je a',a)
+
+//...................................
+//Izvukao sam ovdje pojednsotvnio sam logiku, zanimalo me kako funkcuonira logika kad imamo ['a','b','a'], kako izvući 'b'.
+//PAZI: ako se radi o različtim string elementima i jednom broju onda ovo neće raditi. Znači treba biti ['a',5,'a'], ne smije biti ['a',5,'b'].
+//VAŽNO: Ali ova logika primarno služi za slučajve kad imamo ['a','b','a'] tj. sve elemente istog tipa i onda treba dobitit taj jedan različit elemente.
+//Znači ovo služi za slučjeve kad je samo jedan element različit. Znači kada smo na prvom indexu, ako cur element tj. prvi element u array nije jednak, drugom i trećem onda
+//to znači da je to taj jedan elemet koji je drugačiji od ostalih i onda cijeli izraz reutran true i onda taj element završi u filtriranoj array.
+//Kad je cr drugi element u array onda returano true ako taj drugi element nije jednak prvom i trećem elemntu. Ako je cur treći elementu u array tj. bilo koji koji nije prvi
+//i drugi onda gledamo jel taj elemet različlit u odnosu na jedan element ispred cur i durgi ispred cur. Znači ako je cur treći element logika je postvljena da se provjeri jel
+//cur nije jednaku o odnosu na drugi i prvi element. Ta logika je najbitniji dio jel se može dogoditi da element koji ne pripada bude na zadnjem mjestu u array i onda
+//znamo da element 'ne pripada' ako je različit u odnosu na element ispred njega i i još jedan element ispred njega.
+// let arr=['a',5,'a'].filter(function(cur,index,arr){
+//       if(index === 0){
+//         return cur !== arr[1] && cur !== arr[2];
+//       } else if(index === 1){
+//         return cur !== arr[0] && cur!== arr[2];
+//      } else {
+//         return cur !== arr[index-2] && cur !== arr[index-1];
+//       }
+//     });
+
+//-----------------------------------------------------------------------------------------------------------------------
+//Još jedno dobro rješenje
+
+// function findTheNotFittingElement(series) {
+//   let types = { 'number': 0, 'boolean': 0, 'string': 0 };
+//   for (let i of series) {
+//     types[typeof i]++;
+//   }
+  
+//   // difference in typeof
+//   for (let i in types) {
+//     if (types[i] === 1) {
+//       return series.filter(v => typeof v === i)[0];
+//     }
+//   }
+  
+//   // difference in odd/even/positive/negative
+//   if (types['number']) {
+//     let n = distinct(series, v => v % 2 !== 0)
+//       || distinct(series, v => v % 2 === 0)
+//       || distinct(series, v => v < 0)
+//       || distinct(series, v => v >= 0);
+//     if (n) {
+//       return n;
+//     }
+//   }
+  
+//   if (types['boolean']) {
+//     return distinct(series, v => v) || distinct(series, v => !v);
+//   }
+  
+//   // difference in number/upper/lower/punctuation
+//   if (types['string']) {
+//     let s = distinct(series, v => !isNaN(v))
+//       || distinct(series, v => /[a-z]/.test(v))
+//       || distinct(series, v => /[A-Z]/.test(v))
+//       || distinct(series, v => /[^a-zA-Z]/.test(v));
+//     if (s) {
+//       return s;
+//     }
+//   }
+  
+  
+//   // distinct value
+//   for (let i of series) {
+//     let j = distinct(series, v => v === i);
+//     if (j) {
+//       return j;
+//     }
+//   }
+// }
+
+// function distinct(series, condition) {
+//   let f = series.filter(condition);
+//   return f.length === 1 ? f[0] : null;
+// }
+
+//..........................
+//VAŽNO: odlična tehnika kada želimo izbrojit nešto unutar nekog iterable i želimo saznati na kojim index mjestima se to nalazi
+//Bitan je ovaj drugi indexOf argument, to nam omogući da dobijemo index od svakoga elementa, ne samo prvi index  tražene vrijednosti.
+// let arr=[5,'ante',10,true,'mate']
+
+// let types = { 'number': {count: 0 , indexNums:[]}, 'boolean': {count: 0 , indexNums:[]}, 'string': {count: 0 , indexNums:[]} };
+
+// for(let i=0; i<arr.length; i++){
+//    let cur=arr[i]
+//    types[typeof cur].count++
+//    types[typeof cur].indexNums.push(arr.indexOf(cur,i))
+// }
+
+//--------------------------------------------------------------------------------------------------------------------------
+
+//Još jedno zanimljvo rješenje:
+
+//Ovo su arrow funkcije unutar tests array. U njim se nalaze filter metode.
+// function findTheNotFittingElement(series) {
+//   const tests = [
+//     //VAŽNO: odlično rješnje za slučaj ['a','b','a']. Kad 'a' bude current t. ovaj 'v' unutar filter funkcije onda će njegov indexOf(v) i lastIndex() returnat različite brojve
+//     //pa samim time ovaj filter uvjet neće biti točan i 'a' neće završiti unutar filtirane zagrade. Ali kad je samo jedan element unutar array onda će njegov početni indexOf i
+//     //lastIndexOf biti jednaki te će u našem slučaju 'b' zavrišut unutar array kpoju filter returna.
+//     s=>s.filter((v, i, s) => s.indexOf(v) === s.lastIndexOf(v)),
+//     s=>s.filter((v, i, s) => typeof v === 'number'),
+//     s=>s.filter((v, i, s) => v < 0),
+//     s=>s.filter((v, i, s) => v % 2),
+//     s=>s.filter((v, i, s) => /[a-zA-Z]/.test(v)),
+//     s=>s.filter((v, i, s) => !/[a-zA-Z]/.test(v)),
+//     s=>s.filter((v, i, s) => v === (v+'').toLowerCase())
+//   ]
+//   for (let test of tests) {
+//     let attampt = test(series);
+//     if (attampt.length === 1) return attampt[0];
+//   }
+// }
+
+// let a=findTheNotFittingElement(['a','b','a'])
+// console.log(a)
+
+//---------------------------------------------------------------------------------------------
+
+//Isti autor kao prvo rješnje, re-factor.
+// function findTheNotFittingElement(series){
+//   let arrOut = [];
+//   let arrChecks = [
+//     x => x,
+//     x => typeof x,
+//     x => x%2,
+//     x => x/Math.sqrt(x*x),
+//     x => isNaN(x),
+//     x => x.toString().match(/[a-z]+/),
+//     x => x.toString().match(/[^a-z0-9]/i)
+//     ];
+  
+//   // Filter the array using various functions in arrChecks applied to the series. Looking for a single element to provide distinct response to filter.
+//   for(let j = 0; j < arrChecks.length; j++){
+//     arrOut.push(series.filter(function(element,i){
+//       if(i === 0){
+//         return arrChecks[j](element) !== arrChecks[j](series[1]) && arrChecks[j](element) !== arrChecks[j](series[2]);
+//       } else if(i === 1){
+//         return arrChecks[j](element) !== arrChecks[j](series[0]) && arrChecks[j](element) !== arrChecks[j](series[2]);
+//       } else {
+//         return arrChecks[j](element) !== arrChecks[j](series[i-2]) && arrChecks[j](element) !== arrChecks[j](series[i-1]);
+//       }
+//     }));
+//   }
+
+//   // Returning the first array where only one element is differentiated by a test filter (i.e. has length === 1).
+//   return arrOut[arrOut.findIndex(function(element){return element.length === 1})][0];
+// }
+
+</script>
+</html>

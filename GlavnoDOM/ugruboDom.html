@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+    crossorigin="anonymous">
+  <title>Task List</title>
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col s12">
+        <div id="main" class="card">
+          <div class="card-content">
+            <span class="card-title">Task List</span>
+            <div class="row">
+              <form id="task-form">
+                <div class="input-field col s12">
+                  <input type="text" name="task" id="task" value="Walk the dog">
+                  <label for="task">New Task</label>
+                </div>
+            </div>
+            <input type="submit" value="Add Task" class="btn">
+            </form>
+          </div>
+          <div class="card-action">
+            <h5 id="task-title">Tasks</span></h5>
+            <div class='collection-item'>Ja sam dodoa ovaj div da testiram hoće li navezani getElemetsByClassName ovo izbrati jer sam izvan ul-neće</div>
+            <ul class="collection">
+               <li class="collection-item">
+                List Item
+                <a href="#" class="delete-item secondary-content">
+                  <i class="fa fa-remove"></i>
+                </a>
+              </li> 
+              <li class="collection-item">
+                List Item
+                <a href="#" class="delete-item secondary-content">
+                  <i class="fa fa-remove"></i>
+                </a>
+              </li> 
+              <li class="collection-item">
+                List Item
+                <a href="#" class="delete-item secondary-content">
+                  <i class="fa fa-remove"></i>
+                </a>
+              </li>
+              <li class="collection-item">
+                List Item
+                <a href="#" class="delete-item secondary-content">
+                  <i class="fa fa-remove"></i>
+                </a>
+              </li>
+              <li class="collection-item">
+                List Item
+                <a href="#" class="delete-item secondary-content">
+                  <i class="fa fa-remove"></i>
+                </a>
+              </li>
+            </ul>
+            <a class="clear-tasks btn black" href="">Clear Tasks</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+
+</body>
+ <script type="text/javascript"> 
+
+  //SINGLE HTML ELEMENT SELECTORS
+// document.getElementById()
+
+// let a=document.getElementById('task-title')
+// console.dir(a) //kad stavimo console.dir() dobijemo onaj ogroman objekt
+// console.log(typeof a)
+
+// console.log(document.getElementById('task-title'));
+// console.log(document.getElementById('task-title').id); //ovdje pristupamo id property toga objekta koji na getElemetnbyId returna i ovo je id 'task-title'
+// console.log(document.getElementById('task-title').className); // .className je "" prazno kad pogledmo objekt sa c.dir jer je id, trevesty je to on the fly dodao class html el
+
+// const taskTitle = document.getElementById('task-title');
+
+//  taskTitle.style.background = '#333';  //ovdje biramo određeni html element i mamipuliramo nekim vrijednostima 
+//  taskTitle.style.color = '#fff';
+//  taskTitle.style.padding = '5px';
+// // taskTitle.style.display = 'none';
+
+
+// taskTitle.textContent = 'Task List';
+// taskTitle.innerText = 'My Tasks'; //pogleda mdn i ostalo za razliku izemđu innerText i textConetnt
+// taskTitle.innerHTML = '<span style="color:red">Task List</span>'; // kao da smo dodali tj.kopirali ovaj html unutar html elment koji predstvlja taskTile varijabla
+
+// document.querySelector()
+
+// console.log(document.querySelector('#task-title')); //isto dobijemo objekt, kao getElementById
+// console.dir(document.querySelector('#task-title'))
+// console.log(document.querySelector('.card-title'));
+// console.log(document.querySelector('h5')); //ako ima više h5 elementa onda izabere samo prvi
+
+// document.querySelector('li').style.color = 'red';
+// document.querySelector('ul li').style.color = 'blue';
+
+// document.querySelector('li:last-child').style.color = 'red';  //ovo su css pseudo selektori
+// document.querySelector('li:nth-child(3)').style.color = 'yellow';
+// document.querySelector('li:nth-child(4)').textContent = 'Hello World';
+// document.querySelector('li:nth-child(odd)').style.background = '#ccc';
+// document.querySelector('li:nth-child(even)').style.background = '#f4f4f4';
+
+// SELECTORS FOR MULTIPLE DOM ELEMENTS
+
+// const items=document.getElementsByClassName('collection-item');  //returna html colletion
+// console.log(items);
+// console.dir(items);
+// console.dir(typeof items);  //bude iz nekog razloga objekt kad koristimo typeof
+
+// items[0].style.color='red'; // html colletion možemo pristupati kao da je array
+
+// const listItems=document.querySelector('ul').getElementsByClassName('collection-item') // VAŽNO-kad navežemo na qSelector onda samo bira 'collection-item' elmente koji su 
+// console.log(listItems)                                                        //unutar 'ul' elementa dok prvi .getElementsByCallsName bira sve koji imaju 'collection-item' 
+
+// const lis=document.getElementsByTagName('li') //isto returna html colletion
+// console.log(lis)
+
+// const items2=document.querySelectorAll('ul.collection li.collection-item') //kaže Trevesty da je izbrao ove elemente ovako da pokaže da se može više,uglevnom treba css naučit
+
+//                                                                             //returna nodelist, ne znam jer to nešto nove ali za razliku od htmlcolletion na nodelist moožemo
+//                                                                            //korisiti forEach bez konvtiranja u array
+//   items2.forEach((cur,index)=>{
+//     cur.textContent=`${index}: Ovo je forEach izmjenio` })                                     
+
+//  console.dir(items2)
+
+ //TRAVERSING THE DOM-lekcija
+
+  // const list1=document.querySelector('ul.collection') //querySelkctor bira samo jedan element
+  
+  // console.log(list1)  //ovdje samo izabrali samo jedan element tj. ul element. kad izabermo više elementa onda treba prov prstupiti sa [] nekom elmento pa onda childNodes
+  // console.dir(list1)
+  // console.log(list1.childNodes)  //pristp ovoj property vrati nodelist. unutar te nodelist elementi sa value text predstvaljau linebreaks
+  // console.dir(list1.childNodes)  //childNodes nam daje sve one različite vrste Nodes, dok .childern nam daje samo Element nodes
+// console.log(typeof list1.childNodes[0])
+//  console.log(list1.childNodes[0].nodeName)
+//  console.log(list1.childNodes[0].nodeType)   //treba paziti da ne stavimo samo type umjesto nodeType jer ne izabaci error samo bede prazno
+
+// let a=document.querySelector('ul.collection').childNodes[0].nodeType //i ovaj sytax radi
+// console.log(a)
+
+// console.log(list1.children)  // pristup ovoj property vrati html colletion. dobijemo bez tih text elementa tj. dobijemo samo Element nodes
+// list1.children[3].children[0].id='test-link'  //.id je jednostvno prazan default proeprty na tom objekut kojeg smo mi sad postvili na test link.
+// let val=list1.children[3].children[0]
+// console.log(val)  
+// console.dir(val)  //sa console.dir možemo naći taj. id property kojeg samo mi postavili
+
+// let n2=list1.firstChild;              //ovdje ćemo dobiti onaj text value jer je to na prvom mjestu u našoj nodeList koju smo izabrali
+// let n3=list1.firstElementChild;       //sa ovim selektorom biramo samo prvi Node Element  
+// console.log(n2)   
+// console.log(n3)
+
+// let n4=list1.lastChild;             //sve isto kao firstChild         
+// let n5=list1.lastElementChild; 
+// console.log(n4)   
+// console.log(n5)
+
+// let val2=list1.childElementCount  //dobijemo broj ekvivaletan broju Element nodes kada koristmo .children tj.broje samo NodeElements
+//  console.log(val2)
+
+//ovo je objekt property koji 'prati' što je parent Node tj. parentElement baš kao što smo prije imali objekt properties koji 'prate' što je child nekog elementa
+//   let s1=list1.parentNode     //još treba saznati koja je točno razlika izmežu ovo dvoje. na konkretnom primjeru nema razlike , ali je različito
+//   let s2=list1.parentElement   // gotovo uvijek ovo dvoje će biti isto, vidi stackoverflow odgovor koji je u bookmarksim u dom folderu
+//   console.log(s1)
+//   console.log(s2)
+
+// let s3=list1.nextSibling           //ovaj nam vrati bilo koji node element, u našem slučaju onaj text value koji predstvlja line break
+// let s4=list1.nextElementSibling  //ovaj nam vrati Element node
+// console.log(s3)
+// console.log(s4)
+
+// let s5=list1.previousSibling           //ovaj mi vrati text kao i kod Trevestya, ista razlika između ova dva kao i na prošlom nextSebling i nextElementSibling        
+// let s6=list1.previousElementSibling  //ja nisam izbrisao onaj "ja sam dodoa test" pa mu to vrati iako kod Trevesty vrati null  
+// console.log(s5)
+// console.log(s6)
+
+//CREATING ELEMENTS LEKCIJA
+
+const li=document.createElement('li')
+  li.className='collection-item'      //jednostvno dodvavanje property na objekt
+  li.id='new-item'
+  li.setAttribute('title','New Item')
+  let z=li.appendChild(document.createTextNode('Hello World'))  //sa ovim samo ubacili Hello World između <li> </li> , kad sam experi. textContent i innerText su napravili isto
+  console.dir(z)                                                //ali još ništa nije ubačeno u dom jer li još nije ubačen u dom
+ console.log(li)
+console.dir(li)
+
+//  let a=document.createTextNode('ante')  //pitanje: ok kreirali samo text Node, ali gdje taj text node završi kad ga nismo ubaicli u niti jedan drugi element
+//  console.log(a.nodeType) //vrati nam 3 tj. actual text inside element https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeType
+//  console.dir(a)
+//  console.log(a)
+
+
+
+
+  </script>
+</html>

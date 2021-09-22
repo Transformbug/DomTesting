@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+   <div>vidi konzolu</div> 
+</body>
+<script>
+
+//Ova funkcija maskira sve osim zadnja četri znamenke, a ako ima manje od četri znamke onda samo returna bez da išta maskira. TAkođer trim služi da maknemo prazni string proster
+//lijevo i desno jer to ne želimo maskirati.
+//Očekuje string.
+
+//Moje rješenje.
+//  function maskify(cc) {
+//  let str=cc.trim()
+//  if(str.length<4) return str;
+//  let a=str.length-4
+//  let toBeMasked=str.slice(0,a)
+//  let notMasked=str.slice(a,cc.length)
+//  let regEx=new RegExp(toBeMasked)
+//  let maskingChar='#'.repeat(toBeMasked.length)
+//  let masked=toBeMasked.replace(regEx,maskingChar)
+//  let finalOutput=masked.concat(notMasked)
+//  return finalOutput
+// }
+
+// maskify("24685555")
+
+//Najbolje rješnje ostalih korisnika:
+
+//Nije morao koristti ovo rješenje sa repeat kao ja jer je imao bolji RegExp sa global flag gdje mijenja bilo koji karakter ('.') koliko god puta nađe taj krakter sa '#'.
+//Ovo rješenje implicira da moj trim nije bio potreban jer '#' mijenaj i empty spaces. Također ovaj slice.(-4) radi čak u slučaju da string koji to zove ima imanje od 4 karaktera
+//To samo znači da će cijeli string slice kopirati.Taj -4 na prvaom argument predstvlja gdje će početi kopirati string po formuli array.length-4 pa tako iako to razultira se negativnim indexom
+//kad je array lenght manji od četri to samo znači da kopira cijeli array.
+// function maskify(cc) {
+//   return cc.slice(0, -4).replace(/./g, '#') + cc.slice(-4);
+// }
+
+//-----------------------------------------------------------------------
+
+//moj nered of koda. Trebalo je primit string poput poput order('ante6 mate3 ivana8') gdje svaka string riječ ima neki string broj između 1-9(uključujući njih dvoje) i onda 
+//to poredat od najamnjeg do najvećeg.
+//također trebalo je returnti stringa ako bude prazan string.
+
+// function order(words){
+//    if(words==="") return words
+//   let arrayWords=words.split(' ')
+//   let arrayLetters=[]
+//    for (let i=0; i<arrayWords.length; i++){
+//         arrayLetters[i]=[]  
+//         arrayLetters[i].push(...arrayWords[i].split(''))
+//  } 
+//  let numbers=[]
+//    for (let i=0; i<arrayLetters.length; i++){
+//         for(cur of arrayLetters[i]){
+//          if(parseInt(cur,10)>0 && parseInt(cur,10)<10){
+//                   numbers.push(parseInt(cur,10)) 
+//               }else{
+//                continue
+//             }
+             
+//      }
+//    }
+//   let arrayWordsWithNumberId=[]
+  
+//   for(let i=0; i<numbers.length; i++){
+//         arrayWordsWithNumberId[i]=[]
+//         arrayWordsWithNumberId[i].push(arrayWords[i],numbers[i])
+//  }  
+  
+//   let swap;
+//    do{ 
+//        swap=false;
+//        for(let i=0; i<arrayWordsWithNumberId.length-1; i++){
+//          if(arrayWordsWithNumberId[i][1]>arrayWordsWithNumberId[i+1][1]){
+//                let temp=arrayWordsWithNumberId[i];
+//                arrayWordsWithNumberId[i]=arrayWordsWithNumberId[i+1]
+//                arrayWordsWithNumberId[i+1]=temp
+//                swap=true
+               
+//          }
+//        }
+     
+     
+//    }while(swap)
+   
+//    let finalOutput=arrayWordsWithNumberId.reduce(function(acc,cur){
+//        return acc.concat(cur)
+//    }).filter(function(cur){
+//        return typeof cur!=='number'
+//    }).join(' ')
+
+
+//     return finalOutput
+// }
+
+// let a=order('ante9 mate2 ivana6')
+
+//Rješenje jednog drugog korisnika bez regExa:
+// function order(words) {
+//   if (!words) return '';
+  
+//   var result = words.split(' ').map(word => {
+//     //ovaj isNaN('5') recimo retruna false jer se string '5' može pretvorit u broj. Zato ovaj !isNaN() ovaj suprotni !isNaN. Također [0] iza filtera je jer filer retuerny array broja, a
+//     //mi želimo string broja kopji je dio neke riječi. 
+//     var orderAsString = word.split('').filter(c => !isNaN(c))[0];
+//     console.log(orderAsString)
+//     var order = Number(orderAsString);
+    
+//     return {
+//       "order": order,
+//       "word": word
+//     };
+//   });
+//   //ovdje sortira objekte unutar arraya s obzirom na vrijednsot order propertya.
+//   result.sort((a, b) => a.order - b.order);
+//   //ovdje sa map praktički filtriramo onaj array gdje su objekti i uzimamo samo virjednosti word i onda taj array koji map returna samo join-amo u string.
+//   return result.map(x => x.word).join(' ');
+// }
+
+//Najbolje rješenje ostalih korsnika:
+//Znači opet me regEx, moje nevježbanje regEx-a zeznlu i uzrokovalo da pišem duži code.
+
+// function order(words){
+  
+//   return words.split(' ').sort(function(a, b){
+//     //Ovaj a.match predstvlja cijeli onaj array returna kad match returna bez globlane flag.
+//     //Treba se sjetit da one podaci u tome array su posebni, oni index: value, gorup: undefined nisu dio array length. Samo ono što je u array i ima index utječe na length.
+//     //Zato praktički imamo situaciju ['10']-['5'] što se uspije konvetirati u broj.
+//       return a.match(/\d/) - b.match(/\d/);
+//    }).join(' ');
+
+//    }    
+
+//----------------------------------------------------------------------------------------------------------
+
+//Moje rješenje:
+//Mislim da je ovo prvi put da imam bolje rješenja od najboljeg rješnje ostalih korsnika.
+//Trebalo je maknuti sve array iteme unutar array 'a' koji postoje unutar array 'b'. Znači array_diff([1,2,2,2,3],[2]) treba rezultiratia sa [1,3]
+// function array_diff(a, b) {
+//    return a.filter(cur=> !b.includes(cur))
+//   }
+
+//---------------------------------------------------------------------------------------------------------- 
+//Ovo mi je prošlo sve sample testove, nije prošlo kada sam kliknuo na attempt.Ovo primjer mi je u codewars coleltions.
+//Znači ovdje je bio cilj vidjeti ima li prva riječ tj. argument sva slova koja postoje u drugom argumentu i returan boolean. 
+// function scramble(str1, str2) {
+//   let str1Splited=str1.split('')
+//   let str2Splited=str2.split('')
+//  return str2Splited.every(cur=> str1Splited.includes(cur))
+// }
+
+
+// scramble('katas','steak')
+
+//---------------------------------------------------------------------------------------------------------- 
+//Moja camelCase funkcija inspiriran zadatkom na codewars. jedina je razlika bila u tome što su oni htjeli da i ovo prvo slove ukupne output riječi bude velikm slovom.
+// function camelCase(wordsString){
+//  return wordsString.toLowerCase().split(' ').map(function(curWord,index){
+//            if (index===0) return curWord;
+//            return curWord.charAt(0).toUpperCase()+ curWord.slice(1)
+//    }).join('')
+
+// }
+
+// camelCase('Ante mate branko')
+//---------------------------------------------------------------------------------------------------------- 
+let economicDataCarter=[{unemploymentRate: '6.4%',gdpGrowth: '4.6%' ,inflation:'6.7%', year:1977},{unemploymentRate: '6.0%',gdpGrowth: '5.5%' ,inflation:'9%', year:1978},
+{unemploymentRate: '6.0%',gdpGrowth: '3.2%' ,inflation:'13.3%', year:1979},{unemploymentRate: '7.2%',gdpGrowth: '-0.3%' ,inflation:'12.5%', year:1980}
+]
+
+let economicDataRegan= [{unemploymentRate: '8.5%',gdpGrowth: '2.5%' ,inflation:'8.9%', year:1981},{unemploymentRate: '10.8%',gdpGrowth: '-1.8%' ,inflation:'3.8%', year:1982},
+{unemploymentRate: '8.3%',gdpGrowth: '4.6%' ,inflation:'3.8%', year:1983},{unemploymentRate: '7.3%',gdpGrowth: '7.2%' ,inflation:'3.9%', year:1984},
+{unemploymentRate: '7.0%',gdpGrowth: '4.2%' ,inflation:'3.8%', year:1985},{unemploymentRate: '6.6%',gdpGrowth: '3.5%' ,inflation:'1.1%', year:1986},
+{unemploymentRate: '5.7%',gdpGrowth: '3.5%' ,inflation:'4.4%', year:1987},{unemploymentRate: '5.3%',gdpGrowth: '4.2%' ,inflation:'4.4%', year:1988}]
+
+let ecmicDataBushStariji=[{unemploymentRate: '5.4%',gdpGrowth: '3.7%' ,inflation:'4.6%', year:1989},{unemploymentRate: '6.3%',gdpGrowth: '1.9%' ,inflation:'6.1%', year:1990},
+{unemploymentRate: '7.3%',gdpGrowth: '-0.1%' ,inflation:'3.1%', year:1991},{unemploymentRate: '7.4%',gdpGrowth: '3.5%' ,inflation:'2.9%', year:1992}]
+
+let clintonEcon=[{unemploymentRate: '6.5%',gdpGrowth: '2.8%' ,inflation:'2.7%', year:1993},{unemploymentRate: '5.5%',gdpGrowth: '4.0%' ,inflation:'2.7%', year:1994},
+{unemploymentRate: '5.6%',gdpGrowth: '2.7%' ,inflation:'2.5%', year:1995},{unemploymentRate: '5.6%',gdpGrowth: '2.7%' ,inflation:'2.5%', year:1995},
+{unemploymentRate: '5.4%',gdpGrowth: '3.8%' ,inflation:'3.3%', year:1996},{unemploymentRate: '4.7%',gdpGrowth: '4.4%' ,inflation:'1.7%', year:1997},
+{unemploymentRate: '4.4%',gdpGrowth: '4.5%' ,inflation:'1.6%', year:1998},{unemploymentRate: '4.0%',gdpGrowth: '4.8%' ,inflation:'2.7%', year:1999},
+{unemploymentRate: '3.9%',gdpGrowth: '4.1%' ,inflation:'3.4%', year:2000}] 
+
+let bushjrecon=[{unemploymentRate: '5.7%',gdpGrowth: '1.0%' ,inflation:'1.6%', year:2001},{unemploymentRate: '6.0%',gdpGrowth: '1.7%' ,inflation:'2.4%', year:2002},
+{unemploymentRate: '5.7%',gdpGrowth: '2.9%' ,inflation:'1.9%', year:2003},{unemploymentRate: '5.4%',gdpGrowth: '3.8%' ,inflation:'3.3%', year:2004},
+{unemploymentRate: '4.9%',gdpGrowth: '3.5%' ,inflation:'3.4%', year:2005}, {unemploymentRate: '4.4%',gdpGrowth: '2.9%' ,inflation:'2.5%', year:2006},
+{unemploymentRate: '5.0%',gdpGrowth: '1.9%' ,inflation:'4.1%', year:2007},{unemploymentRate: '4.4%',gdpGrowth: '2.9%' ,inflation:'2.5%', year:2006},
+{unemploymentRate: '7.3%',gdpGrowth: '-0.1%' ,inflation:'0.1%', year:2008}]
+
+let obamaecon=[{unemploymentRate: '9.9%',gdpGrowth: '-2.5%' ,inflation:'2.7%', year:2009},{unemploymentRate: '9.3%',gdpGrowth: '2.6%' ,inflation:'1.5%', year:2010},
+{unemploymentRate: '8.5%',gdpGrowth: '1.6%' ,inflation:'3.0%', year:2011},{unemploymentRate: '7.9%',gdpGrowth: '2.3%' ,inflation:'1.7%', year:2012},
+{unemploymentRate: '6.7%',gdpGrowth: '1.8%' ,inflation:'1.5%', year:2013},{unemploymentRate: '5.6%',gdpGrowth: '2.5%' ,inflation:'0.8%', year:2014},
+{unemploymentRate: '5.0%',gdpGrowth: '2.9%' ,inflation:'0.7%', year:2015},{unemploymentRate: '4.7%',gdpGrowth: '1.6%' ,inflation:'2.1%', year:2016}]
+
+let trumpecon=[{unemploymentRate: '4.1%',gdpGrowth: '2.2%' ,inflation:'2.1%', year:2017},{unemploymentRate: '3.9%',gdpGrowth: '2.9%' ,inflation:'1.9%', year:2018},
+{unemploymentRate: '0.0%',gdpGrowth: '0.0%' ,inflation:'0.0%', year:2019},{unemploymentRate: '0.0%',gdpGrowth: '0.0%' ,inflation:'0.0%', year:2020}]
+
+ </script>
+</html>
