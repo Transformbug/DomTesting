@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body style="background-color: aqua">
+    DateAndTimeJS, u kometraima odkomentraj jedan po jedan console.log, tj. primjer po primjer
+  </body>
+  <script>
+    //VAŽNO: UTC ili coordinated universal time predstvlja vrijeme nulte tj. početne vremenske zone, univerzalno standardno vrijeme
+    //i sva druga "lokalna" vremena se definiraju kao odmak tj. offeset(vidi def. doli) u odnosu na UTC. To je nasljednik GTM, ali jako ugrubo rečenu
+    //London tj. Greenwich time kada nije u ljetnom rasporedu(gdje je sat unapred u odnosu na UTC) predstvlja vremensku zonu koja
+    //je standard i sve lokalna vremena istočno su unaprijed u odnosu na UTC dok se sva vremena zapadno iza UTC vremena.
+    //Note that UTC and GMT are not the same thing—GMT, for example, might imply a switch to BST during the summer, whereas UTC never will.
+    //https://www.timeanddate.com/time/gmt-utc-time.html
+
+    //VAŽNO:UTC oznaka u ISO formatu je slovo Z, može se staviti i +00:00 ili -00:00 da ozačimo da je neko vrijeme UTC. Drugi formati koristi
+    //oznake poput GTM ili UTC uz Z.
+    //VAŽNO: često ću spominjati "navesti offeset ili utc" kada budemo govorio o string syntax, pod time mislim naravno na utc oznaku.
+
+    //VAŽNO: Offset predstavlja podatak o navedenom datumu i vremena koji nam govori koliko je neko vrijeme unaprijed/unazad u odnosu
+    //na UTC. Različiti string formati imaju različit syntax za offeset, no ovdje ćemo spomenuti ISO extended standard koji je najvažniji.
+    //Pozitivni offeset tj. vrijeme za koje je ispred UTC ćemo u ISO sytnaxu izrazit npr. +02:00(dva sata veće vrijeme od UTC ) ili +05:30(pet sati i 30 min veće vrijme od UTC)
+    //Negativni offeset tj. vrijeme za koje je iza UTC ćemo u ISO syntax izraziti sa npr. -04:00 ili -02:00 ili -10:00 itd.
+    //Kreću se od +14:00 kao najistočnije do -12:00 kao najzapadnije u odnosu na UTC. Kao što smo vidjeli može offeset imati broj minuta koji nije nula uz neki sat.
+    //Možemo u ISO formati staviti +00:00 ili -00:00 offeset koji je zapravo UTC vrijeme i samo je syntax alternativa Z ozanci i govori
+    //nam da je neko vrijeme ekvivalntno UTC.
+    //Note: nekad će koristiti riječ timezone da umjesto offeset.
+
+    //Timezone ili vremenska zona je popis pravila za određenu geofrafsku lokaciju koja određuje koliki je loklni offeset o određenom periodu godine.
+    //Ta pravila donose svaka dražava zasebno.Tako u europi u americi postoji ljetno račnunanje vremana dok u mnogim zemlja svijeta ne postoji.
+    //To znači da je hrvatski offeset u zimskom perodu +01:00 dok je ljeti +02:00 u odnosu na UTC.
+    //VAŽNO:Najrelevatniji popis timezone je od internet assigend number authoiry tj. IANA, koje se još zove i tz database.
+    //https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+    //https://www.iana.org/time-zones
+    //Možemo saznati koji je timezone određenog korisnika tako da upišemo: Intl.DateTimeFormat().resolvedOptions().timeZone
+    //U mome slučaju ja ću dobite "Europe/Zagreb". Note: piše na wiki da je to depracated timezone, ali da radi kompatiabilnist je
+    //još u IANA tj. tz databazi. U budućnosti bi trebala biti "Europe/Belegrade".
+    //Svako vrijeme unutar Date objekta na browser će biti loklano tako da je ubačeno lokalno vrijeme u konstruktor ili je konvertiranu u lokalno.
+    //Stoga neće nam clientside nikad trebat ta infromacija, na server ćemo slati UTC vrijeme jer je to dobra praksa, ali ako iz nekoga
+    //razloga na serveru želimo znati koji je timezone korisinka onda mu pošaljemo to što smo dobili u Intl.DateTimeFormat().resolvedOptions.timezone
+    //i onda koristeći luxon metodu .fromISO("nekiISOStringUTC",{zone: "America/New_York"}) dobijemo loklano vrijeme toga korisnka.
+    //Skrećenice poput CET ili zapravo cijeli opisi poput centralan europen time nisu praktični niti se trebaju koristiti.
+
+    //Vremeski period, doba godina, izrazi koji će upotrebiti često ili ljeto/zima. Mislim na zimsko računanje vremena ili ljetno računanje vremena.
+    //Ljetno počinje krajm trećg mejseca i završava krajem desetog.(za zemlje koje ga korisite)
+
+    //VAŽNO: Konverzija/trasformacija će biti riječi koje će se često spominjati. Ukoliko ubacimo neki string gdje smo naveli 16 sati
+    //i 30 minuta u new Date() konstruktor i kada pogledamo unutar dateObjekte koliko je sati i vidimo neko drugi sat(ili minute) onda se
+    //dogodila konverzija/trasfromracija. Kada new Date() konstruktor odlučuje hoće li raditi konverziju ili ne sam detaljno opisano u nastavku
+    //sa time da je najbolje vidjeti SAŽETAK PONAŠANJA DATA KONSTRUKTORA SA RAZLČITIM INPUTIMA.
+    //Konverzija/trasformaciju mogu obavljeti i neke metode na samom date objektu poput .toISOString() koje ne returna samo date objekt
+    //u validnom ISO exteded formatu nego napravi i konveriju u UTC vrijeme(na browseru gdje je lokalno).
+
+    //VAŽNO: pogledaj i dateObjHowTo za razlike klkaulacije sa vremenom i trikove.
+    //Note: unix timestamp opisujem u PONAŠANJE DATE KONSTRUKTORA KADA UNOSEMO UNIX TIMESTAMP dok računaje sa njim je u dateObjHowTo na samom početku.
+
+    //VAŽNO:koliko god new Date() i date objekt imali svoih mana, koristšenje vanjkih date librarys mi se ne čini nužno,najkorisnija stvar
+    //koju ti luxon može pomoći je da automski konvertirat vrijeme u neki timezone po tvome izboru, to je ono što sam gore u timezone sekciji govorio
+    //i tamo na serveru sigurno neće biti bitna velična tih libraries.
+
+    //RANDOM NOTE: leap year nije nužno svake četri godine, vidi dateObjhowTo kako sazntait je li neka godina leap year sa date objekotm.
+    //In the Gregorian calendar, three criteria must be taken into account to identify leap years:
+    //Dijeljiva sa četri treba biti i mora biti još dijeljiva sa 100 ili 400.
+
+    //-------------------------------------------------DATE OBJECT I DATE KONSTRUKTOR INTRO-----------------------------------------------------------
+
+    //Date()
+    //Uobičajno internu javascript funckiju Date zvati sa keyword new ispred tj. korisitit kao konsturktora za date objekt međutim
+    //može se zvati bez keyworda new i onda samo dobijemo string koji čiji datuma i vrijeme predstvlja trenuka kada je Date() bio pozvan izražen u loklnaom vremenu.
+
+    //*******************************Date kontruktor sytax opcije*****************************************************
+
+    //new Date()
+    //Ovo je stadardni date konsturktora i returnati će date objekt čije vrijeme i datume će predstvljati trenutak kada je taj konstkruktora
+    //pozvan izražen u lokalnom vremenu ukoliko ne ubacimo niti jedan argument unutar toga konstruktora.
+
+    //VAŽNO: napisao sam vrlo dataljni opis kako se new Date() konstukrora ponaša ovisno što ubacimo u njega, koji tip string, jel ubacijemo
+    //više argumenta,jel ubacuemo unix timestamp. Vidi SAŽETAK PONAŠANJA DATE OBJEKTA SA različim inputima gdje.
+    //Svaki new Date(nešto) će vratiti date objekt koji predstvaljta lokalno vrijeme i datum u browserim(Node UTC), ali je li vrijeme koje smo mi unijeli
+    //konvertirao u lokalno(brwoseri,node kovertira u UTC) ili je konstruktora smatrao da je lokalno pa nije konvertirao recimo moj unos 10 sati u 11 sati će ovisi
+    //o tome što su unijeli u konstruktor.
+    //Samo ću ukratko napisati ovdje koje su moguće syntax mogućuosti kada ucujemo nešto:
+
+    //new Date(samoJedanArgumentKojiJeBroj)
+    //Kada ubacimo samo jedan argument koji je broj onda će Date konsturktora smatrati da samo unijeli unix timestamp.
+
+    //new Date(year, monthIndex, day, hours, minutes, seconds, milliseconds)
+    //Ovo gore je najduži mogući syntax više argumenta unos, ako ne stavimo nešto od ovoga default bude prvi dan u mjesecu, 00 sati,00 minuta itd.
+    //Vrijednosti za taj unos više argumenta mogu biti brojevi ili "string brojevi". Drugi arugment je monthIndex pa će broj 0 predstavljati prvi mjesec.
+    //VAŽNO: ako uneseš neki broj koji ne može biti validan poput 56 dan u nekom mjesecu dogoditi će se automatska autokorekcija na zadnji dan u mjesecu.
+    // Vidi dateObjHowTo za čudne efekte toga na primjeru "Saznaj koliko neki mjesec ima dana.
+
+    //new Date("samoJedanDateTimeString")
+    //Ovaj samostalni, jedan string arugment može biti u više razčitih formata, najvažniji je ISO 8601 extended format, ostali su legacy.
+
+    //STATIC metode Date fn:
+    //Jasno, to znači da ih ne zovemo sa nekiDateObj.paNekaMetoda() nego ih zovemo na samoj Date fn i svaka returan unix timestamp. To su:
+
+    //Date.now()
+    //Ovo gore returna typeof number koji predstvlja unix timestam trentuka kada je pozvan tj. "sada" i ne prima nikakva argument.
+
+    //Date.parse("jedanString")
+    //Ovo gore prima datatime string, samo za razlike od new Date() će returanti unix timestamp od toga datauma i vremena koje je navedeni u string.
+    //Proces obrade tj. intperatacije string arugmenta je ista kao i kod new Date() samo neće returnati date objekt nego unix timesamp.
+
+    //Date.UTC(year, monthIndex, day, hours, minutes, seconds, milliseconds)
+    //Ovo gore je najduži mogući syntax više argumenta unos, ako ne stavimo nešto od ovoga default bude prvi dan u mjesecu, 00 sati,00 minuta itd.
+    //Vrijednosti za taj unos više argumenta mogu biti brojevi ili "string brojevi". Drugi arugment je monthIndex pa će broj 0 predstavljati prvi mjesec.
+    //Razlikuje se u odnosu kada ubacimo više arugumenta u newDate() sa time što će returnati unix timestamp i što vremena i datume koje unesome unutar
+    //će smatrati da su UTC pa ako recimo unesemo u zimskom periodu 21 sat u Date.UTC() onda kada ubaciš unix timestamp koji Date.UTC() returan
+    //u neki Date konstkurkora da će to vrijeme biti 22 sati po hrvatskom vremenu dok inače new Date() kada imamo više argumenta ne bi konvertirao taj
+    //unos od 21 u 22 na brwoseru. Ali, već sam reako za takava ponašnje detalje ima detaljan opis.
+
+    //*********************************************Date objekt i njegove metode***************************
+
+    //Date objekt je poseban objekt u javascript čija vizualna prezentacija izgleda poput stringa(a nije zapravo string) koji nam govori datum i vrijeme nekog date objekta.
+    //U njemu su podatci o određenom tentuku u vremenu tj. neki datum i vrijeme.
+
+    //Možemo njegovoe metode podijelitit u tri glavne skupine. Imamo getNešto(), setNešto(), toNešto(). Jedina iznimka
+    //je metoda dateObj.valueOf() koja returan unix timestamp i praktički je ista kao dateObj.getTime()
+
+    //*******Prva skupina su getNeštoMetode() koje nam samo daju podatke o invidualnom vrijednostima Date objekt properties. Te getNešto() metode*******
+    // se mogu pak podjeilit na getNeštoObične() metode koje returanju lokalne datume i vremena(ne browseru) koja su navedeom na nekom date objektu
+    //dok se getNeštUTCmetode() konveritraju ta lokalana vremena i datume u UTC (ali bez da modiriciraju originali objekt).
+
+    //Obične,local time(na brwseru) getNešto() metode:
+    //dateObj.getFullYear()
+    //Ta gornja metoda će vratit "number" js type neke godine koja vrijedi za određeni date objekt.
+    //PAZI: treba koristiti tu .getFullYear() metode, ne treba koristiti .getYear() koje je deprecated.
+    //dateObj.getMonth()
+    //Ta gornja metoda će vratiti "number" js nekeo monthIndexa koji vrijedi za neki date objekt pa će tako vraitit 0 za prvi mjesec.
+    //dateObj.getDate()
+    //Vjerovali ili ne .getDate() returan "number" js nekog dana u mjesecu, poput 29.
+    //Vremeske metode su getHours, getMinutes(), getSeconds(), getMilliseconds() koje sve returano number tih vremenskih jedinica.
+
+    //VAŽNO: dateObj.getTime()
+    //Gornja metoda returan unix timestamp za vrijeme i datum koji je u dateobjektu, nema .getUTCTime ekvivalnet. Zove se automatksi
+    //kada se obavlja operacija poput oduzimanja date objekta od drugog date objekta. Za više vidi dateObjHOwTo. Jako bitna metoda.
+
+    //dateObj.getTimeZoneOffest()
+    //Ta gornja metoda returna broj minuta koliko je neko lokalno vrijme u date objektu(browesr)udaljeno od UTC vremena. Dosta je čudna metoda
+    //jer returna -60(jedan sat) kada je hrvatski offeset +01:00. Ne treba je nikad korisitit, ako iz nekog razloga nekom serveru treba znati koje je lokalno vrijeme
+    //samo mu pošaljemo Intl.DateTimeFormat().resolvedOptions().timeZone gdje će biti neka vrijedpost poput "Europe/Zagreb". Nema UTC ekvivalnet.
+
+    //UTC time, getUTCNešto metode:
+    //Ove metode kada ih pozvemo konvertiraju loklanoj vrijeme u UTC. Imaju ekvivalnet svim getObične() osim getTime() i getTimeZoneOffeset().
+    //To su:
+    // .getUTCFullYear, .getUTCMonth(), .getUTCDate(), .getUTCHours, .getUTCMinutes(), .getUTCSeconds, .getUTCMilliseconds()
+    //Note: promjeni u windowss timezone na kompujture u neku minus poput -05:00 new york zimi pa kreiraj new Date(2019,11,31,22) gdje konsturkor neće mijanjti vrijeme
+    //i stvoreni date objekt će biti u 22 sata 31.12.2019 pa onda zovi .getUTCFullYear() pa ćeš vidjetiti kako ćeš dobiti 2020 jer UTC
+    //nova godina bude prije new york godine 5 sati.
+
+    //*******Druga skupina su setNešto() metode, koje se opet mogu podijelit na setObičnoLokalno(na browseru) i setUTCVrijeme*******
+    //VAŽNO: ove set metode(obična i UTC verzija) modificraju date objekt koji ih zove i ako se iz nekog baznog date objekte želi kreirati neki drugi
+    //onda se prvo treba kopirati taj objekt. Vidi dateObjHowTo za operacije sa ovim metodama.
+
+    //Obične, local time(na browser) setNešto() metode:
+    //.setFullYear(), .setMonth(), .setDate(), .getHours(), .getMinues(), .getSeconds(), .getMIlliseconds()
+    //.setTime() ovo metoda je ekvialnet .getTime() tj. umejsto da vreaća unix timestamp će postaviti vrijeme i datum u date objektu
+    //na datum i vrijeme koje predstvlja neki unix timestamp.
+    //NE POSTOJI setTimeZOneOffeset()
+
+    //utc time, setUTCNešto metode:
+    //.setUTCFullYear(), .setUTCMonth(), .setUTCDate(), .setUTCHours(), .setUTCMinutes, .setUTCSeconds(), setUTCMilliseconds()
+    //Kao što getTime() nema getUTCTime ekvivalnet tako i .setTime() nema setUTCTime ekvivalnet.
+
+    //**********************************Treća skupina su toNešto metode********************************************
+
+    //VAŽNO: dateObj.toISOString()
+    //Ta gornja metoda konvertira date objekt u string koji je validnom ISO formatu i KONVERTIRA LOKALNO VRIJEME u UTC. Obično se taj
+    //string šalje na server ili obični unix timestmap koji možemo dobiti sa Date.now() izravno bez da kreiramo date objekt ili kada kreiramo date objket sa nekiDateObj.getTime().
+    //ako ubacimo u JSON.strigify() date objekt kao value onda će automski biti konvertiran(u js type,formatu i vremenu), tj. na njemu će se pozvati nekiDateObj.toISOString()
+    //Ovo je jako bitna metoda i njezin output ili unix timestamp ćemo obično slati na server.
+
+    //dateObj.toJSON() praktaiči ima isti output kao .toISOString() nema razlike među njima. Bude returan taj konvertirani ISO string koji je ujedno validan JSON.
+
+    //VAŽNO: dateObj.toLocaleString()
+    //Detaljno sam je opisao u sekciji OPISA ALATA ZA PRIKAZ DATE OBJEKT PODATAKA KRAJNJEM KORISNKU. Jako bitna metoda. Postoje slične metode
+    //poput .toLocaleDateString() koja se bavi samo datum dijelom date objekta i .toLocaleTimeString() koja se bavi vremskim dijelom date objekta
+
+    //dateObj.toString() metoda returna string sa time da NE mijenja loklano vrijeme(browseri). Nema velike koristi od nje kao i od sličnih
+    //metoda poput dateOjb.toDateString() koje returanju samo datum dio i dateObj.toTimeString() koje returan samo vremneski dio objekta.
+
+    //-------------------------------------------------ISO 8601 string formati, SYNTAX----------------------------------------------------------------------------------------------
+
+    //PAZI-VAŽNO: Zašto se neki unosi konvertiraju tj. postanu drugačije vrijme ili čak datum od onoga što smo unijeli ili se uopće ne kovertiraju će
+    //biti obješenjno u PONAŠANJE DATE KONSTRUKTORA KADA UNOSIMO ISO 8601 STRING i ako se želi vidjeti dio koji se pokaže u c.logu poput millisekuda
+    // kada ih stavimo onda to možemo vidjeti sa .getNešto() metodama date objekta. Ovo je smo syntax.
+
+    //Za početak, validni ISO stringovi u formatu koje new Date() prihvaća od najmanjeg do najvećeg bez postavljenog offesta ili utc oznake(Z)
+    //VAŽNO: vidjeti ćeš kasnije zašto iako se dolje navdeni formati bez offesta ili utc ISO format oznake(Z) validni tehnički nikad ih ne bi trebalo korisiti
+    //te uvijek treba eksplicitno navesti timezone offest u ISO stringa.
+
+    //Godina mora biti u YYYY formatu, mjesec u MM i dan u mjesecu u DD. Jasno, raspored je godina-mjesec-danUMjesecu.
+    //VAŽNO:Default vrijednost će uvijek ako ih ne navdemo za mjesec su Jan 01,za prvi dan u mjesecu 01, 00 sati,00 minuta,00 sekundi.Ako ne navedeš te vrijednosti
+    //te primjetiš da nisu te vrijednost nakon što se konstruira date objekt to znači da se dogodli konverzija, čija pravilia
+    //objašnjavam u "PONAŠANJA DATE KONSTRKORA KADA UBACIJEMO VALIDAN ISO STRING"
+    // console.log(new Date("2016"));
+    // console.log(new Date("2018-05"));
+    // console.log(new Date("2019-03-25"));
+    //Moramo minimalno navesti sat i minute kada stavimo T tj. navedemo seprator za vremensku porciju ISO stringa i to u obliku HH:MM
+    // console.log(new Date("2012-06-01T18:30"));
+    //Dodali smo sekunde
+    // console.log(new Date("2014-11-22T13:55:35"));
+    //Dodali smo millisekunde doli, mogu biti kao što vidimo dolje na tri primjeru sa jednom,dvije ili tri znamenke sa time da su odvojene sa točkom od ostatka sekudne
+    //te moramo navesti sekunde prije nego što postavimo ms.
+    // console.log(new Date("2017-03-16T21:20:45.7"));
+    // console.log(new Date("2018-07-03T11:30:59.83"));
+    // console.log(new Date("2013-01-25T16:44:23.946"));
+
+    //Kada stavimo offest u ISO string mogući formati koje new Date() prihvaća:
+
+    //Tehnički validan samo datum i Z, ali besmislno jer se ovaj string bez vremenske porcije i offesta ionako smatra UTC(Z predstvlj UTC vrijeme)
+    //Bilo koji drugi offest tipa +01:00 ili -05:00 ili čak i drugačiji izraz za Z poput +00:00 ili -00:00 neće biti validan samo sa datum porcijom.
+    // console.log(new Date("2016-12-05Z"));
+    //Kada imamo minimlanu vremensku porciju(20:25) i navden UTC(Z) ili neki random offset(koliko je lokalno vrijme unprijed/iza UTC) koji može biti pozitivan i negativan
+    //te je uvijek u formatu HH:MM te ovisno je li pozitivni/negativan će ispred HH:MM biti +/-
+    // console.log(new Date("2016-12-05T20:25Z"));
+    // console.log(new Date("2016-12-05T20:25+05:30"));
+    // console.log(new Date("2016-12-05T20:25-05:00"));
+    //Dodali smo sekudne vremenskoj porciji u verziji koja ima random offest ili utc
+    // console.log(new Date("2016-12-05T20:25:59-05:00"));
+    //Dodali smo ms vermenskoj porciji sa jednom,dvije ili tri zanmake u verziji koja ima neki offest ili utc u tri primjera doli.
+    // console.log(new Date("2016-12-05T20:25:59.4-04:00"));
+    // console.log(new Date("2016-12-05T20:25:59.74+02:00"));
+    // console.log(new Date("2016-12-05T20:25:59.338Z"));
+
+    //VAŽNO: uz ova gornja pravila, jasno je da ne možemo postaviti 74 sekunde ili postavti 56 dana u mjesecu.
+    //VAŽNO: slika ISO formata
+    //https://www.toptal.com/software/definitive-guide-to-datetime-manipulation
+
+    //VAŽNO: ovo doli je basic ISO 8601 string:
+    //20200930T000000.000Z
+    //VAŽNO: ovo doli ekvivalnet u extended verziji(koju ja inače koristim ovako ili još djelomičniju verziju jer jedino to new Date prihvaća):
+    //2020-09-30T00:00:00.000Z
+    //VAŽNO: new Date() konsturktor NE prihvaća ISO string u basic verziji, datum dio stringa može biti samo godina navedena, ako želimo nevesti
+    //mjesec i evenetalno dan u mjesec onda ih treba odvojiti sa - i staviti ih u formatu dvije znamenke tj. MM i DD odnosano pa
+    //možemo imati YEAR ILI YEAR-MM ILI YEAR-MM-DD u najednostvnijoj verziji koju new Date() prihvaća.
+    //Ako ne stavimo slovo T i želimo kraj datuma staviti UTC oznaku(slovo Z) ili  neki offeset poput +01:00 onda će jedino validno biti
+    //ako stavimo samo slovo Z pa imamo recimo 2016-01-05Z, ali to nema puno smisla jer je ionako pretpostavka date konsturktora da ISO string
+    //koji nama navdedno vrijeme je u UTC pa nam ne treba ta oznaka.
+
+    //VAŽNO: Slovo T unutar ISO stringa predstvlja separtora tj. označava da sve desno od toga slova, a koje je lijevo u odnosu na oznaku timezona
+    //tj. offeset(poput Z ili +01:00 ili -05:00) ako je naveden offest vremenski dio string tj. sati,minute,sekunde, milliskenude ako smo sve to odlučimo navesti.
+    //Da bi new Date() prihvatio vremenski dio isto stringa sat,minute i sekunde trebaju biti izražene sa dvije znamenke i moraju
+    //se odvojtiti sa dvije točke tj HH:MM:SS. Da bi string bi validan kada stavimo T da oznčimo da slijedi vremenski dio
+    //onda moramo minimlno staviti sat i minute tj. HH:MM tj. imati recimo 2016-01-05T21:30
+    //Sekudne su opcionalne kada stavimo T, millisekunde opcionale sa time da millisekunde nisu odvojene sa : nego sa .
+    //od ostatke vremenske porcije te NE možemo staviti millisekunde bez da smo stavili sekunde prije pa moramo
+    //imate 2016-01-05T21:30:45 da bi dodali dio sa millisekundama koji može imati jednu,dvije ili tri znamenke
+    //pa kada dodamo millisekunde možemo imati recimo 2016-01-05T21:30:45.8 ili 2016-01-05T21:30:45.47 ili 2016-01-05T21:30:45.764
+    //Slovo Z kao što smo već rekli označava UTC vrijeme, možemo umjesto njega staviti +00:00 ili -00:00
+    //Offesti mogu biti pozivitni i negativni poput +01:00 ili -04:00, moraju biti u formatu HH:MM tj. dvije znamenke
+    //koje predstvlja sat odvojene sa : od dvije znamke koje predstvljaju minute(nije svaki offest točno sat, mumbai recimo)
+    //Naravno, offeset predstavljaju koliko je vrijeme unapredjed u odnosue na UTC ako su pozivini ili unazada na UTC kada su negativni.
+    //Offest ili utc oznaka(Z) će uvijek biti na samom kraju ISO stringa iza vremenske dijela(sekunde i ms u vremnskom dijelu su opcionalne)
+    //pa offest može biti odmah kraj minuta,sekudni ili millisekundi.
+    //VAŽNO: uz ova gornja pravila, jasno je da ne možemo postaviti 74 sekunde ili postavti 56 dana u mjesecu.
+
+    //VAŽNO: na linku doli možeš vidjeti što luxon smatra pod ISO string,prihvaća puno više stvari nego Date konstruktor.
+    //https://moment.github.io/luxon/#/parsing?id=iso-8601
+
+    //-------------------------------------RFC 2882 i http header string formati, SYNTAX--------------------------------------------------------------------------------------
+
+    //VAŽNO: RFC 2822 je standard za email formatiranja datuma.
+    //'25 Nov 2016 13:23:12 GMT' ili 'Fri, 25 Nov 2016 13:23:12 +0600' ili '25 Nov 2016 13:23 Z' su primjeri na luxon stranici
+    //kako izgleda taj RFC 2822 string. Piše da uvijek ima navedeni offeset iil UTC(za ovaj string GTM bude oznake za UTC, ne bude Z)
+
+    //VAŽNO: još jedan od oblika stinga sa kojim se relativn često možemo susuresti je http string i ovo su neki od primjera:
+    //'Sun, 06 Nov 1994 08:49:37 GMT ili 'Sunday, 06-Nov-94 08:49:37 GMT' ili 'Sun Nov  6 08:49:37 1994'.
+    //Nažalost, offest ili UTC oznaka nije obavezan pa će uvijek treba pogledaiti u domkutaciju od nekog API koje vrijeme nam šalju.
+
+    //-------------------------------------PONAŠANJE DATE KONSTURUKTORA BROWSER VS NODE------------------------------------------------------------------
+    //VAŽNO: Standardno ponašanje new Date() konsturkotra na brwoserima je da će svaki vrijeme za koje misli da nije lokalno konvertirati/trasformirati
+    //u lokalnoj vrijeme koje vrijedi za taj period godine.Node će pak konverirati svako vrijeme za koje misli da nije UTC koliko će oduzesti/dodati
+    //da dobije UTC vrijeme od lokalno ovisi koji offeset vrijedi za neki period godine.
+    //Stoga svako vrijeme nekog Date objekta koje imamo na browseru je lokalno jer ili je input bio lokalno vrijeme ili je konveritirano kao
+    //što je svako vrijeme Date objekta UTC na Node jer ili je bilo UTC ili je konvertirano u UTC.
+
+    //VAŽNO: pravila koja određuju misli(interpretira) li new Date() konstrkora da li je neko vrijeme lokalno/utc ili neko drugo
+    //kada se unese to u konstruktor pa onda odlučuje hoće li raditi konverziju ću opisati u nastavku.
+
+    //------------------------------------PONAŠANJE DATE KONSTRUKTORA KADA UNOSIMO ISO 8601 STRING---------------------------------------------------
+
+    //*************Kada unosimo ISO string koji ima samo datum porciju, bez da samo naveli vremenski dio i da samo naveli neki offeset.***********
+
+    //Default vrijednost za mjesec ako ih ne navedaš su prvi mjesec, za sat ako ga ne navedeš su 00, minute 00, sekunde 00. I doista
+    //new Date() je doista smatra da sam ja ubacio te vrijednostu u konstruktor. Međutim pravilo je da ako ne navedmo timezone
+    //offeset da se to vrijeme T0:00:00 koje je defualt ako ga ne stavimo smatra UTC, znači 00 UTC sati i te je također ponašanje svakog
+    //date konskrukora u browseru da svako vrijeme koje nije lokalno za taj period godine  konvertira u lokalno vrijeme
+    //pa zato dobijemo 01 sat jer je hrvatska je zimi +01:00 u odnosu na UTC. Jasno, Node bi isto mislio da je UTC, ali on se drugačije
+    //ponaša i baš zato što misli da je UTC vrijeme neće ga kovneriratit i vidili bi 00 sati.
+    //VAŽNO: zato nikad se treba unijeti ISO string u koji nema eksplicnot definiran offest ili UTC.
+    // console.log(new Date("2016"));
+    //Ljetni perodi tj. daylight saving tj. ljetno računanje vremena verzija. Primjeit kako vrijeme bude 02:00 jer ljeti je hrvatski
+    //offest u odnosu na UTC +02:00.
+    // console.log(new Date("2018-07"));
+    //Zimski period tj. zimsko/standarno računaje vremena verzija. Ovo sam čisto stavio da vidiš da će ovo opet biti zima 01:00 i kada imamo mjesec postavljen,to nije bitno.
+    // console.log(new Date("2019-02"));
+    //ljetni period, eto čisto da vidimo verziju kada dodamo dan, ali to opet nije bitno. Offest je opet ljeto +02:00
+    // console.log(new Date("2012-07-05"));
+
+    //***********Kada unosimo ISO string koji nema offeset, ali ima vremenski dio postavljen:**********************
+    //Kao što možemo vidjeti, neće se dogoditi konverzija na browserima, ostati će u oba dva slučaj 21:35 jer kada uneseš ovakv tip ISO string konstukotra će smatrati
+    //da si unio lokalno vrijeme.Naravno, Node bi isto mislio da je lokalno i baš zato bi ga konvertirao ljeti na 19:15, a zimi na 20:15.
+    //Ponavljam, ovo je čisto teoritski primjer i nikad se ne treba stavljit ISO string koji nema definiran offset.
+    //Ljetni period:
+    // console.log(new Date("2020-07-15T21:35"));
+    //Zimski period:
+    // console.log(new Date("2020-01-25T21:35"));
+
+    //********************Kada unosimo ISO string kako treba, ISO string koji ima jasno definiran offeset ili UTC oznako(Z)********************
+
+    //Stvari su vrlo jednostavne kada naveden offset ili Z. Ljeti će se svako vrijeme koje nije +02:00 na browserima konvertira  u +02:00
+    //tj. moje lokalno vrijeme za taj period godine. Zimi će ta konverzija biti u +01:00 na browserima za svako vrijme koje nije +01:00.
+    // Node će koveritirati neki offset u UTC koliko će iznosti taj offest ovisi o periodu godine(neke zemlje namju ljetno računajen vremena pa imaju uvijek isti offeset btw.)
+    //Naravno, za korisnke koji imaju drugačiji lokalni offeset konverzija će biti u trenutni njihov offeset.
+    //Također, jasno neće biti konverzije na browerima ako ubacimo taj offeset koji vrijedi za taj dio godine dok Node neće raditi
+    //konverziju ako je vrijeme UTC.
+    //VAŽNO: radi starijih browsera je osobiti važno unijeti ISO string koji ima timestamp jer se inače nepredviljivo ponašaju.
+
+    //Ljeto kada ubacimo UTC vrijeme, primjetiti kako ide konverzija dva sata unaprijed u browseru jer ljetni hrvatskie offset od UTC je +02:00
+    //Node, naravno ne bi radio konverziju jer je ovo UTC vrijeme.
+    // console.log(new Date("2020-07-15T16:45Z"));
+    //Zima kada ubacimo UTC vrijeme, primjetiti kako ide konverzija jedan sat unaprijed u browseru jer zimski hrvatski offset od UTC je +01:00
+    //Node, naravno ne bi radio konverziju jer je ovo UTC vrijeme.
+    // console.log(new Date("2020-01-25T16:45Z"));
+    //Ljeto kada ubacimo ljetni new york offeset. Primjeti kako konvertira browser ovo vrijeme u 15:35 jer newYork je ljetno -04:00 od UTC, hrvatska
+    //je ljeti +02:00 od UTC pa bude šest sati razlike između hrvatke i newyorka. Node bi konvrtirao ovo vrijeme u UTC tj. 13:35 naravno.
+    // console.log(new Date("2020-07-15T09:35-04:00"));
+    //Zimski turski offeset(jednak hrvatsom ljetnom) će biti konvertiran jasno u hrvastki zimski offset +01:00 pa ćemo dobiti 19:30, na browserima.
+    //Node bi naravno konvertirao u UTC tj. dobilo bi 18:30.
+    // console.log(new Date("2020-02-05T20:30+02:00"));
+    //Hrvatski ljetni offeset, jasno neće biti konverije u browserima na mojim uređajima, Node bi konveritirao u 14:45 tj. u UTC vrijeme.
+    // console.log(new Date("2021-08-13T16:45+02:00"));
+
+    //-------------------------PONAŠANJE DATE KONSTRUKTORA KADA UNOSIMO RFC 2882 string ili http header string----------------------------------
+
+    //*******Kada je riječ o RFC 2882 stringu offeset uvijek mora biti naveden i onda će stavri biti lake. Svaki offeset koji nije lokalni za neki period****
+    //će biti konveritira u lokalni na browiseirma dok će Node sve što nije UTC kovnerirtira u UTC.
+    //VAŽNO: umjesto Z, ovaj RFC koristi GTM oznaku za UTC vrijeme.
+
+    //Ljeto new york, jasno konverija u brwoserima ide u hrvatski ljetni +02:00 dok će Node koveritira u UTC.
+    // console.log(new Date("Fri, 15 Jul 2016 09:23:12 -0400"));
+    //Zima tursko vrijeme, konverzija u hrvastki +01:00 na browseirma, koverzija u UTC na Node.
+    // console.log(new Date("Fri, 15 Jan 2016 11:30:59 +0200"));
+
+    //*********Kada je riječ o http headerim ako nema offeset ili UTC oznaku onda će se smatraiti da je to vrijeme lokalno pa browseri****
+    //neće raditi konverziju dok će Node radtiti koverziju toga vremena u UTC. Kada stavimo offeset onda će narvno biti konverzija
+    //na loklano offeset u browserima(ako nije stavljen lokalni) dok će node koveritira u UTC(ako već nije utc).
+    //VAŽNO: http headeri koriste GTM umjesto Z kao oznaku za UTC vrijeme.
+
+    //Http hederima datetime string bez navednog offeseta ili UTC.Nema konverzije u brwoserima, node radi konverziju u utc.
+    // console.log(new Date("Sun Nov  6 08:49:37 1994"));
+    //Kada stavimo offeset ili UTC(GTM) onda na browserima će biti konverzija na trenutni lokalni offeset, ovo je zima pa će biti konverzija na +01:00 na mom uređaju.
+    // console.log(new Date("Sunday, 06-Nov-94 08:49:37 GMT"));
+
+    //-------------------------------PONAŠANJE DATE KONSTKRATA KADA IMAMO RANDOM STRING FORMAT KOJI JE VALIDAN---------------------------------------
+
+    //Nažalost, ovo će biti validan string. Kada uneses ovakva string bez timezone info pretpostvak je da unosiš loklano vrijeme i neće biti konverzije
+    //u browserima dok će Node ovo konvertirati u UTC.
+    // console.log(new Date("2019/12/15"));
+    //Jedino je moguće navesti timezone info u ovom fromati ako staviš Z, nije moguće staviti +02:00 itd. Sada će se smatratit da je vrijeme UTC
+    //i browseri će konveritati u lokalno dok Node neće diratit UTC vrijeme.
+    // console.log(new Date("2019/12/15Z"));
+
+    //Uglavnom, kada dobiješ ovakva string,gdje eventalno ne znaš što je šta, mjesec, dan u mjescu pogledaj dokumentaijcu od API i konvertiraj string
+    //u ISO format koji ima offeset prije nego što ga ubaciš u konstrurkor
+
+    //--------------------------------PONAŠANJE DATE KONSTRUKTORA KADA UNOSEMO UNIX TIMESTAMP-------------------------------------------------
+    //Unix timestamp predstavlja broj ms u javascriput od 1970-01-01T00:00.000Z ako želimo u  ISO string verziji izrazitit taj datum. U drugim
+    //programskim jezicim unix timestamp bude izražen u sekundama.
+    //Kada unesemo samo jedan argument u new Date() koji je typeof number onda će konstrukor smatrati da unosimo unix timestamp.
+    //Sam po sebi taj unix timestam je samo određeni broj ms, međutim Date konstkrora interralno radi kalulacije datuma od 1970-01-01T00:00.000Z
+    //kada mu damo timestamp i onda će neki finalni datum i vrijeme predstavljat UTC vrijeme. Stoga kada ubacimo neki unix timestamp
+    //i kalkualcija koje date konstrktora napravi(1970+ms) rezultirata sa recimo 1995-07-05T15:30.000Z onda će data konstrkukora konveritirat to
+    // u lokalnoj vrijeme pa ćemo na mome urađaju dobiti date objekt koji ima 17 sati i 30 minuta.
+    //To možeš provjeriti na ovaj način, koristećo Date.UTC() metodi koja će nam vratiti unix timestamp za datum i vrijeme koje navedomo.
+    //Note: mjesec je zapravo sedmi ovaj 6 je monthIndex, unosimo 15 sati i 30 minuta.
+    // const unixTimeStamp = Date.UTC(1995, 6, 5, 15, 30);
+    // const dateDevedesete = new Date(unixTimeStamp);
+    //Kao što vidimo konstruktor je u browseru konvertirao to vrijeme koje je smatra UTC u lokalni ljetni offeset +02:00 tj. 17:30
+    // console.log(dateDevedesete);
+    //Note: za računanje sa timestampom vidi dateObjHowTo
+
+    //------------------------------------PONAŠANJE DATE KONSTRUKTORA KADA UNESOMO VIŠE ARGUMENTA U KONSTRUKTOR------------------------------------------------
+
+    //Kao što vidimo kada unosimo više argumenta u konstruktora onda možemo unijetit typeof number ili se mogu staviti stringovi koji
+    //se mogu lako konveritirati u broj tj. "brojčani stringovi".
+    //Ovo je najduži mogući syntax više argumenta unos, ako ne stavimo nešto od ovoga default bude prvi dan u mjesecu, 00 sati,00 minuta itd.
+    //new Date(year, monthIndex, day, hours, minutes, seconds, milliseconds)
+    //Također primjećujemo da nije moguće definirati timezone tj. navesti offeset ili UTC oznaku.
+    //VAŽNO: kada imamo unos sa više argumeenta onda će konsturktora prepostaviti da unosimo lokalno vrijeme i neće raditi nikakvu konverziju
+    //u browserima dok će naravno u Node konveritirat to lokalno vrijeme u UTC.
+    //Note: drugi argumeet je monthIndex pa broj 0 predstavlja prvi mjesec.
+    // console.log(new Date(2018, 0, 25, 19, 35));
+    // console.log(new Date("2016", "0", "15", "15", "45"));
+
+    //----------------------------------------SAŽETAK PONAŠANJA DATA KONSTRUKTORA SA RAZLČITIM INPUTIMA-----------------------------------------------------
+
+    //Kada imamo samostalni string bilo ISO 8601,RFC 2882 string, http string ili random string slučaj. Recimo da dobili taj string od nekog API i nema u sebi
+    //navedni offset(RFC 2822 uvijek ima) onda pogledamo dokumataciju i prje nego što ubacimos u new Date() prvo kreirajmo string sa ispravnim offsetom.
+    //Srećom, moderni serveri i api će gotovo uvijek slati string koji ima navedeni offeset ili UTC oznaku tj. timezone info u ISO extened obliku.
+    //Nikad ne ubacuj stringove za koje ne znaš koji je timezone offeset da izbjegeneš sve žive komplikacije gdje za neke misli da je lokalno vrijme
+    //za neke misli da je UTC, da ne govorim o starijem broserima čije ponašanje je totalno nepredviljivo u slučaju kada nije naveden timezone info tj. offeset.
+    //Kada je naveden offset onda jednostavno znaš da će brwseri konvertirati svaki offeset ili UTC vrijeme u loklani offeset koji vrijedi za naveden period godine
+    //pa kada unosis npr. new Date("2016-02-05T16:00-05:00") ta zima newYork -05:00 offeset će biti konvertiran u +01:00 o pa ćemo dobiti
+    //šest sati unaprijed tj. hrvatskih 22 sata. Da smo unijeli new york ljetni offest -04:00 to bi vrijeme bilo konvertiranu u hrvastki ljetni +02:00
+    //tj. opet bi imali šest sati razlike.
+    //Osim naravno ako ne uneseš lokalni offset pa nema potrebe za konverzijom. Node će pak konvertirati sve što nije UTC u UTC pa
+    //bi tako konverirao taj newyork zima 16 sati u 21 sat, pet sati unaprijed na našem primjeru.
+
+    //Ako unosiš jedan argument typeof number onda će konstruktor smatrati da unosiš unix timestamp i ta kalkclacija koju interno npravi (1970+ms)
+    //će se smatrati da je dobivene datum i vrijeme UTC i browseri će konvertirati to vrijeme u lokalno za taj period godine dok Node neće kovneritiat to jer je UTC.
+
+    //Ako unosiš više argumenta unutar new Date() pa tada nije moguće odrediti offeset ili utc onda će se smatrati da unosiš lokalno vrijme i onda
+    //browseri neće raditi nikakvu konverziju dok će Node napraviti konverziju u UTC.
+
+    //Pa ću ponoviti ovo: stoga svako vrijeme nekog Date objekta koje imamo na browseru je lokalno jer ili je input bio lokalno vrijeme ili je
+    // konveritirano u lokalno kao što je svako vrijeme Date objekta UTC na Node jer ili je bilo UTC ili je konvertirano u UTC.
+
+    //--------------------OPISA ALATA ZA PRIKAZ DATE OBJEKT PODATAKA KRAJNJEM KORISNKU: Locale, toLocaleString(), Intl.DateTimeFormt tj.---------------------
+
+    //Locale je string koji navodi jezik i zemlju poput "en-us" ili može samo zemlju poput "hr". Različite zemlje imaju različite obrasce kako
+    //napisanit datum, imaju različtei jezike ili čak unutar sebe različite jezike. Korisnicu u browseru odrede koji "locale" za njih vrijedi.
+    //Koristimo ih kao prvi argumnet metoda dateObj.toLocaleString(),dateObj.toLocaleDateString(),dateObj.toLocaleTimeString() te kao prvi argument
+    //unutar Intl.DateTimeFormat(). Ako ne ubacimo ništa u te metode onda će defautl locale biti ono što je u browseru.
+
+    //Detektiranje koji je "locale" usera(praktički ovisi o browser language postavkama)
+    //new Intl.NumberFormat().resolvedOptions().locale
+    //window.navigator.language ili window.navigator.languages(da se dobije array sa svim postavljenim jezicima na brwoseru)
+    //https://stackoverflow.com/questions/55385129/javascripts-standard-api-to-get-the-runtimes-default-locale
+    //Currently the foolproof way to know that is to ask the user; let users select their preferred language and region settings in the webpage.
+    //btw. Detektiranje timezone se može obavisi sa Intl.DateTimeFormat().resolvedOptions().timeZone
+
+    //Onaj ogormni popis wih mogućih locale vrijednosti:
+    //https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
+    //VAŽNO: praktičniji popis čestih locales, vidi drugi odgovor doli:
+    //https://stackoverflow.com/questions/3191664/list-of-all-locales-and-their-short-codes
+
+    // nekiDateObj.toLocaleString() returna string koji će prikazitit datum i vrijeme u jeziku i formatu koji odogovra vrijednosti "locale" na korisničkom
+    //uređaju tj. jezičnim postavkma u browseru. Možemo pozvati tu metodu ako želimo sa argumentima, jednim ili dva argumenta. Prvi argument
+    //će biti taj "locale" string koji želimo, drugi argument će biti options objekt koji može imati neke sljedeći properties i vrijednosti:
+    //(ima ih još, ja sam ovdje dolje izdvojio najvažnije property names i njihove sve njhove moguće vrijednosti te zarezi služe sam da je lakše čitati
+    //te mi nije bila namjera napisait validan js objekt niti sugeriraiti da se sve ove propreties moraju navesti i options objektu, jasno je da možemo navesti
+    //samo neke od nabrojanih)
+    //Cijeli popis mogućih properties i primjer što određuje vrijednosti:
+    //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat
+    //  let options={
+    //    weekday: "narrow", "short", "long"
+    //    day: "number", "2-digit"
+    //    month:"numeric", "2-digit", "narrow", "short", "long"
+    //    year: "numeric", "2-digit"
+    //    hour: numeric", "2-digit"
+    //    minute: numeric", "2-digit
+    //    second: numeric", "2-digit
+    //    timeZone: "bilo koji string iz IANA timezone database"
+    //    hour12: false, true (default ovsi o "locale" vrijednosi)
+    //    timeZoneName: "long", "short", "shortOffset", longOffset", "shortGeneric", "longGeneric"
+    //  }
+    //VAŽNO: ako želimo korisiti options objekt, ali ne želimo mijanjati default "locale" onda u prvi argumnet ubacimo undefined dok u drugi argument
+    //ubacimo options objekt sa željenim properties.
+    //VAŽNO:kada ubacimo timeZone key i postavimo na to neku vrijednost u options objekt koji bude drugi arugment dateObj.toLocaleString() jedino
+    //u tom slučaju će dateObj.toLocaleString() metoda raditi konverziju vremena koje je date objekta u timezone koji je naveden kao vrijednost u options objektu.
+    //Standardi postupak je da se ne ubacuje {timeZone: "nekiIANATimezoneString"} u dateObj.toLocaleString()
+    //Inače new Date() konsturktor automaatski trasformira input u lokalno vrijeme te metoda dateObj.toLocaleString() samo ispiše taj datum
+    // u formatu i jeziku koji je prilagođen korisinku tj. prema njegovom "locale" u browseru.
+
+    //nekiDateObj.toLocaleDateString() razlika u odnosu je .toLocaleString() je što će ova metoda samo ispisati datum dio Date objekta. Sve
+    //ostalo što je napisao gore za .toLocaleString() vrijedi. Naravno, nema smisla ovdje novdiit property name "hour" u options objekut
+    //kada metoda neće ispritatit vrijeme nego samo datum.
+    //nekiDateObj.toLocaleTimeString() razlika u odnosu je .toLocaleString() je što će ova metoda samo ispisati vrijeme dio Date objekta. Sve
+    //ostalo što je napisao gore za .toLocaleString() vrijedi. Naravno, nema smisla ovdje novdiit property name "year" u options objekut
+    //kada metoda neće ispritatit datum nego samo vrijeme.
+
+    //Alternativa za dateObj.toLocaleString() metodu je: new Intl.DateTimeFormat(localeString,optionsObj).format(dateObj). Locale i options objekt moguće vrijednosti
+    //su poptuno iste kao i za toLocaleString()
+
+    //---------------------------------KORACI ZA DJELOVANJE KADA DOBIJEŠ INPUT OD KORISNIKA I KADA DOBIJEŠ OD API/SERVERA-----------------------
+
+    //Ako dobivaš input od korisnika idealno bi bilo da imaš jasno odvojena polja za godinu,mjeseca,dan i ako imaš vremenske postavke da jasno odvojiš sat,minutu etc.
+    //Ako pak dobivaš neki string iz input type date onda vidiš pattern kako je formatiran taj string i slicaš ga.
+    //To obradiš i ubaciš unutar new Date() pomoću onih odvojninih arugmneta gdje je prvi argumnet godina,drugi indexMjesec, treci argumnet dan u mjesec, četvrti sat itd.
+    //Nema nikakvih automatskih konverzija u tom slučaju u firexou i chormeu(mislim i u ostalim browserima), dobiješ kao uvijek objekt koji predstavlja loklni datum i vrijeme.
+    //Nakon toga zoveš nekiDateObj.toISOString() da dobiješ string i napraviš konverziju na UTC iz lokalnog vremenna i šalješ na server.
+    //Ako ti iz nekog razloga želiš znati koje je bilo lokalno vrijeme korisnika koji je upisao te podatke:
+    // “If you’re doing a marketing promotion and want to know which customers placed orders around lunchtime, an order that appears to have been placed at noon UTC isn’t very
+    // helpful when it was actually placed over breakfast in New York.”
+    //U tom slučaju NEMOJ korisiti nekiDateObj.getTimeZoneOffset() jer se komplicirano i neprecizno nego na server pošalji Intl.DateTimeFormat().resolvedOptions().timeZone
+    //Recimo da je Intl.DateTimeFormat().resolvedOptions().timeZone poslao "Europe/Zagreb" string uz naravno UTC konvertirani string koji je return dateObj.toISOString()
+    //Onda će se lako to UTC vrijeme konvertiranti u željno lokalno vrijeme na serveru koristeći luxon library metode poput .fromISO("nekiISOStringUTC",{zone: "Europe/Zagreb"})
+    //Obrada tih podataka na serveru se može raditi async i na serveru nas veličina te library sigurno neće smetati(a mislim da neće smatati ni na clieent side u većini slučaju.)
+    //Although Moment.js is packed with tons of great features and utilities, if you are working on a performance-sensitive web application, it can cause a significant
+    //performance overhead because of its complex APIs and large bundle size: 235K (66K gzipped) vs. 66K (20 gzipped) for Luxon.
+    //NAPOMENA: sva vremena na serveru trebaju biti UTC, vremena koja će se slati client side i putem API osim tih jasno naznačih i posebnih koji su za internu obradu.
+
+    //Kada dobivaš podatke o nekom datumu sa nekom API servisa ili sa vlastitog servera na clientside onda nakon što obaviš JSON trasfromaciju ćeš imati posla
+    //sa nekim tipom stringa, eventalno unix timestampom tj. brojem. Ako samo dobili unix timestamp onda samo to ubacimo u new Date() konstruktor i dobijemo
+    //to unix vrijeme koje se inpretirao kao UTC će biti trasformiranu u lokalno.
+    //Ako dobiješ neki string koji je http header date gdje unutar samoga string nije označen timezone poput:
+    //let httpHeader= new Date('Sun Nov  6 08:49:37 1994') onda ovo vrijeme neće biti trasfomirano na lokalno. Luxon metoda .fromHttp() će pak prepostaviti
+    //da je je ovo vrijeme UTC kada nema navednog timezone ako je http header pa će ga trasfomirati na lokalno. Kada bude označen timezone
+    //onda će javascript date objekt i luxon .fromHtttp konveritirati svaki taj http header stinrg u lokalno vrijeme osim ako offeset tj. timzone ne bude lokalno
+    //vrijeme u https stringa. Znači dobro pogledaj dokumentaciju o API-a i pobrini se da ako ne navedemo timezone offeset unutar toga http header string
+    //da znaš koji je i onda obradiš taj string i dodaš offeset prije nego što ga ubaciš u date objekt.
+    //Kada pak imamo posla sa RFC 2822 string iz email-a onda svi primjeri toga string koliko sam ja vidio sadrže timezone infromacije i piše čak
+    //da taj string uvijek sadrži timezone infromaciju. To je znači lako i uvijek će Date konsturkor napraviti trasformacij u lokalno osim ako
+    //nije već vrijeme lokalno kao i luxon metoda .fromRFC2822()
+    //Kada pak dobijemo ISO string gdje nije naveden offeset onda treba dobro pogledati dokumentaiciju na serveru da znamo koje smo vrijeme
+    //dobili i napravi ISO string za offesetom prije nego što ga ubacimo u new Date() ili luxon .fromISO() da izbjegnemo bilo kakve probleme
+    //pa da budemo sigurno da točno znamo koje vrijeme unosimo i da znamo da ako to vrijeme nema lokalni offeset za nevdeni period da će biti konvertirano
+    //u lokalno. Ako dobijemo neki string sa servera koji nije ni ISO fromat, nije RFC2822(email) niti je http header onda možemo pogledati dokumtaciju
+    //na serveru da vidimo koji je timezone i formatirati taj string u ISO stringa sa ispravnim offesetom i ubaciti ga u Date konstruktor.
+    //--------------------------------------------------------------------------------------------------------------------------------
+  </script>
+</html>

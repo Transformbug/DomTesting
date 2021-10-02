@@ -1708,6 +1708,7 @@
     });
 
     arrFiles.forEach((curFile) => {
+      console.log("lastModifed na File objektu:", curFile.lastModified);
       const div = document.createElement("div");
       listOfAllElements.push(div);
       div.textContent = curFile.name;

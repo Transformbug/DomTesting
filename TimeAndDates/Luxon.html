@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    luxon,vidi konzolu
+  </body>
+  <!-- PAZI: kada uvoziš "min" onda mora biti u posebnom script tagu -->
+  <script src="./luxonMin.js"></script>
+  <script>
+    //Solidni vodići za luxon, skužiš što rade neke metode jer im API reference nije baš najbolji:
+    //https://moment.github.io/luxon/#/tour
+    //Api reference:
+    //https://moment.github.io/luxon/api-docs/index.html
+
+    //Oni u dokumnacija zovu ovaj objekt dt, može i ovako DateTime.
+    const DateTime = luxon.DateTime;
+    //Taj gornji DateTime objekt je najvažniji objekt u loxunu i na njemu ćemo zvati niz static metoda.
+    // console.log("DateTime objekt je ovo:", DateTime);
+    console.log(
+      `Svaka metoda ispod koja ispred sebe ima samo točku je zapravo DateTime.nekaMetoda() sa time je luxon ekivalnent date objekta koje 
+      te metode returanju konveritra u string odmah nakon da se lakše vidi u konzoli za nekoliko tih metoda, za neka sam ostavio taj objekt`
+    );
+
+    //Prva static metoda na Datetime koju ću opisati je DateTime.fromISO()
+    //Služi da za stvarnje luxon ekvivlnet date objekut tj. služi za kreiranje instanice DateTime-a iz nekog ISO string
+    //sa time da prihvaća puno više razččith ISO-like foramta nego new Date() konsturktor. Primjer kakve sve prihvaće se može vidjeti na linku dolje:
+    //https://moment.github.io/luxon/#/parsing?id=iso-8601
+
+    //Sada ću na nekoliko primjera i sa malo riječi opisatit ponašanje .formISO luxon metode, dok ću dolje još više ispod napisati cijelu kobasicu objašnjenja.
+
+    //.fromISO() string će uvijek vrijeme bez postavljenog offeseta smatrati lokalnim čak i kada samo naveli vremesnki dio
+    //stringa što je u suporotnosi da new Date() ponašanjem kada postoji vremenski dio bez offseta pa neće raditi nikad konverzije.
+    console.log(".fromISO bez navednog offesta, bez vremena postavljenog:", DateTime.fromISO("2020-08-15").toString());
+
+    console.log(
+      ".fromISO bez navednog offesta ALI kada je vrijeme postvljeno:",
+      DateTime.fromISO("2016-05-25T09:08:34.123").toString()
+    );
+
+    //.fromISO() string će uvijek po defaultu vrijeme koje je UTC ili vrijeme koji ima offeset koji nije lokalni za period unosa konvertirati u lokalno za period unosa
+    console.log(".fromISO() navedeni UTC offeset", DateTime.fromISO("2021-01-15T08:00:00Z").toString());
+
+    console.log(
+      ".fromISO() naveden offset koji nije lokalni:",
+      DateTime.fromISO("2020-02-25T10:15:00-05:00").toString()
+    );
+
+    //VAŽNO-MEGA-VAŽNO: ovo je najkorisnija mogućnost luxona, da ako treba kovertirati neki offeset u željeni offeset da se to obavi ovako jednostavno.
+    //možemo promjeniti ponašanja fromISO() da konvertira ISO stringa sa offesetom(ili UTC) u offest tj. timezone po našoj (vrijednost za "zone" bilo koji IANA timezone string):
+    console.log(
+      ".fromISO() tursko zimsko vrijeme u newYork zimsko",
+      DateTime.fromISO("2020-11-05T17:30:00+02:00", { zone: "America/New_York" }).toString()
+    );
+
+    //Ako ne želimo da se događa konverzija kada navedmo neki offeset tj. treba samo staviti {setZone:true}
+    console.log(
+      ".fromISO() neka ostane Mumbai vrijeme,nema koverzije:",
+      DateTime.fromISO("2021-12-02T17:45:00.000+05:30", { setZone: true }).toString()
+    );
+
+    //DateTime.fromISO() prima string argumnet i drugi options objekt.
+    //VAŽNO: kada ubacimo djelomični ISO string gdje nismo naveli offset niti UTC(stavili Z) pretpostaviti će se da smo ubacili lokalni datum i vrijeme i neće se raditi
+    //nikakva konverzija i koja vrijednost offest će ovisi samo o dobu godine.Čak kada ubacimo djelimično ISO string bez offeset koji nema navedeno vrijeme neće raditi konverziju
+    //toga default 00:00:00.000 vremena na lokalno za razliku od Date objekta. Znači .fromISO("2020-07-15T13:30:45") će rezultirati objektom gdje će offset
+    //biti +02:00(ljetni hrvatski offset) i neće biti nikakva konverzije vremena i kada primjenomo metode .toString() ili .toISO() na tome objektu koji .fromISO() returna
+    //vidjeti ćemo string "2020-01-15T13:30:45.000+01:00". Kada ubacimo .fromISO("2020-01-15T13:30:45")(winter/standard time) onda ćemo vidjeti da će offset
+    //biti +01:00(zimski hrvatski offset) i dobiti ćemo kada primjenimo .toISO() 2020-01-15T13:30:45.000+01:00
+    //VAŽNO: ako pišemo taj djelomični ISO string gdje nismo naveli offeset onda možemo ubacitit drugi option argument gdje možemo promjenitit totalno
+    //timezone toga objekta.Recimo .fromISO("2020-01-15T10:30:45",{ zone: "America/New_York" }). To znači da kada pozovome .toISO() na tom objektu koju je
+    //return .fromISO() ćemo dobiti "2020-01-15T10:30:45.000-05:00"(može biit i -04:00 u ljetnom vremenu) sa time da to vrijeme koje smo ubacili se neće konvertirati.
+    //Stoga zaključujemo ako ne navedemo offset(ili UTC) onda ta .fromISO() neće raditit nikakve konverzije datuma i vremana dok će vrijednost offesta biti zimski
+    //ili ljetni offset vremenske zone u kojoj se korisnk ovisno koji je datum upisan u .fromISO() te ako želimo promjenitit taj offeset tj. cijeli timzone na tome objektu
+    // možemo dodati option objekt te i u tom slučaju neće se raditi nikakve konverzija vremena, samo će biti drugačiji offeset tj. biti će zimski ili ljetni
+    //offset timezone koju smo naveli.
+
+    //VAŽNO: ako unutar fromISO() imamo string gdje je naveden offeset(ili UTC) onda će se luxon logika ponašati drugačije.
+    //Napraviti će se konverzija cijelog datum i vremena na  lokalno ljetno/zimsko vrijeme ovisno je li upisani datum zimski/ljetni.
+    // toga će .fromISO("2017-07-15T09:10:23-04:00")(ljeto new york) rezultirati na mom hrvatskom timezone kompujteru sa 2017-07-15T15:10:23.000+02:00(ljeto hrvatsko)
+    //Dok će fromISO("2017-01-15T09:10:23-05:00")(zima new york) rezultirati sa 2017-01-15T15:10:23.000+01:00(zima hrvatska)
+    //VAŽNO: kada ovom slučaju gdje imamo navedeni offset(ili UTC) unutar ISO stringa dodamo option objekt gdje mijenjamo zone poput { zone: "America/New_York" }
+    //onda će također raditi konverzija toga datuma i vremena, ali sa ljetnim/zimskim offesetim koje vrijedi za timezone u options objektu.
+    //Pa tako će se recimo .fromISO("2017-01-15T15:30:45+01:00",{zone:"America/New_York"}) konvertirati u 2017-01-15T09:30:45.000-05:00
+    //Parakitči ISO string je bio hrvatski zimski time zone u gornjem primjer i onda {zone: "America/New_York"} option objekt konvertira to u New York zimsko
+    //vrijeme i offset.
+    //Znači kada imamo ISO string gdje je naveden offeset(ili UTC) i ubacimo taj option objekt gdje odredimo timezone dogodit se konverzija vremena što je
+    //suprotno od slučaju kada nismo naveli offeset(ili UTC) gdje se neće dogoditi konverzija vremena kada ubacimo taj objekt.
+
+    //VAŽNO: ako želimo da kada ubacimo ISO string koji ima offset(ili UTC) unutar .fromISO() da se ne radi nikakva konverzija datuma i vremena
+    //onda treba navesti option objekt { setZone: true }. Znači .fromISO("2020-07-15T10:30:45.000-04:00",{setZone:true}) će rezultirati
+    //sa objekt gdje ako pogledamo sa .toString() ili sa .toISO() ćemo vidjetit "2020-07-15T10:30:45.000-04:00" tj. ne raditi se nikakva konverzija
+    //niti se mijenja timezone.
+    //Stoga zakljujemo kada imamo navedeni offeset(ili UTC) unutar ISO stringa koji se ubacije unutar .fromISO() onda će se dogoditi automatska konverzija
+    //vremena u lokalno ljetno/zimsko vrijeme ovisno jel upisani datum ljetni/zimaskia, ako ubacimo options objekt sa drugima timezonom dogodiite će se
+    // konverzija u ljetno/zimsko vrijeme ovisno jel datum ljetni/zimski te timezone.
+    //Jedino način da kada ne želimo imati nikakvu konverziju kada immao navedeni offeset(ili UTC) je da ubacimo {setZone:true} kao drugi argument.
+    //Primjeti toga su bilo ovdje:
+    //https://moment.github.io/luxon/#/zones
+
+    //DateTime.fromHTTP() static metoda kreira luxon ekvivalne date objekut iz nekog string koji možemo dobiti u http headeru.
+    //Ova metoda će uvijek inerpretira vrijeme koje dobije kao UTC i konvertirati će ga na lokalno čak i kada ne dobije oznaku
+    //da je UTC. Default date objekt će pa neće konvertirait ovaj doli string jer smtrata da je to lokano vrijeme kada imamo
+    //string koji nije ISO i nije naveden timezone tj. offset.
+    console.log(".fromHTTP bez navednog offseta:", DateTime.fromHTTP("Sun Nov  6 08:49:37 1994"));
+
+    //DateTime.fromRFC288() static metoda kreaira luxon ekvivalne date objektu iz nekog stinrg kojeg obično možemo dobiti u mailu.
+    //Kažu da je za ovaj standard timezone offeset uvijek se mora navesti, konveritirati će svako vrijeme koje dobije
+    //u lokalnoj osim da offest nije lokalno vrijeme.
+    console.log(".fromRFC2822() uvijek ima offset ili UTC:", DateTime.fromRFC2822("25 Nov 2016 13:23 Z"));
+
+    //DateTime.fromFormat() static metoda služi da ubacimo bilo koji string u prvom arumgnet i onda na drugom argument "ukažemo" što želimo da
+    //koji dio string u prvom argument predstvlja u luxon ekvivalnetu date objekta(jel predstvlja mjescec ili dan u mejescu) i svako slovu u
+    //drugom arugmnet ima svoje značenje koje se može vidjeti na linku dolje:
+    //https://moment.github.io/luxon/#/parsing?id=table-of-tokens
+    console.log(".fromFormat():", DateTime.fromFormat("May 25 1982", "LLLL dd yyyy"));
+
+    //DateTime.fromMillis() static metoda kreira luxon ekvivalnet date objekta iz nekog unix timestampa.
+    //VAŽNO: ako kreiraš neki unix timestam sa točno određenim datumu i vremenom sa recimo Date.UTC() vidjeti ćeš da će to vrijeme
+    //biti konvertirano u lokalno u ovoj DateTime.fromMillis() pa se ponašo kao new Date() kada ubaciš unix timestamp.
+    console.log(".fromMillis():", DateTime.fromMillis(576761400000));
+
+    //DateTime.local() static metoda kreira luxon ekvivalnet date objekta tako da unesemo više broj argumenta gdje vrijedi sljedeći syntax:
+    //DateTime.local(year,month,day,hours,minutes,seconda,milliseconds) note: mjesec NIJE index, također ne prima "broj string", samo number.
+    //VAŽNO: svako vrijeme koje navedmo će se smatarti da je lokalno te se neće raditi nikakve konverzije.
+    console.log(".local():", DateTime.local(2012, 2, 12, 16, 30).toString());
+
+    //DateTime.utc() static metoda kreira luxon ekvivalnet date objekta tako da unese više broj argumnet gdje vrijedi sljedeći syntax:
+    //DateTime.utc(year,month,day,hours,minutes,seconda,milliseconds) note: mjesec NIJE index, također ne prima "broj string", samo number.
+    //VAŽNO: razlika između ove i DateTime.local() metode je u tome što će vrijeme koje navedmo biti UTC, te je razlika ove metode
+    //Date.UTC() u tome što neće returantu unix timestamp kao Date.UTC()
+    //VAŽNO: također neće biti konverzije samih unosa u UTC, ostatit će 16 sati nego samo će biti drugi offeset zabiljene i naveden jer
+    //luxon date objekt može imati neko vrijeme koje nije lokalno.
+    console.log(".utc():", DateTime.utc(2012, 2, 12, 16, 30).toString());
+
+    //Datetime.now() static metoda kreira luxon ekvivalnet date objekta za onaj trenuak kada bude pozvan i ne može primiti nikakve argumente
+    console.log(".now():", DateTime.now());
+
+    //Vidi za ostale metode DateTime
+    //https://moment.github.io/luxon/api-docs/index.html#datetime
+    //Na DateTime osim zvanja tih metoda koje returanj u luxon ekvivalnet date objekta možemo pristupitit DateTime.DATE_SHORT
+    //i onda string koji dobijemo možemo iskoritit da ubacimo u .localString() metodu gdje string u unapredije definiramo formatu.
+
+    //*************************Metode i properties na luxon ekvivalnte date objekta******************************************
+
+    const luxDateEkvi = DateTime.local(1990, 9, 24, 20, 45);
+
+    //Pošto luxon ekvivalet date objekta nema onaj "string like" izgleda u konzoli kao obični date objektonda .toString() metoda bude korisna da vidimo
+    //odmah sve podatke u stringu. Vraća istu stvar kao .toISO() luxon metoda, vidi što sam za nju pisao tj. kako se razlikuje od native js .toISOstring()
+    console.log("luxonDateEkiv.toString()", luxDateEkvi.toString());
+    //Možemo pristupiti na luxon date ekvialnoust sa .zoneName da odmah vidimo u kojoj timezone je naš objekt.
+    console.log("luxDateEkiv.zoneName:", luxDateEkvi.zoneName);
+    //Ako želimo dobiti unix timestamp za vrijeme navedeno u luxon ekvivalntu date objekta.
+    console.log("luxDateEkvi.toMillis():", luxDateEkvi.toMillis());
+    //Luxon ekvivalne onih svih živih getMetoda na date objekut, samo upiše string prperty kojeg želiš
+    console.log("luxDAteEkvi.get():", luxDateEkvi.get("month"));
+    //Za razlike od .setMetoda() na običnom date objekut ova set metoda neće modificrati originalni objekt nego će kreirato novi sa promejnim propertires.
+    //Ubacuje se objekt.
+    console.log("luxDateEkvi.set():", luxDateEkvi.set({ hour: 13, minute: 33 }));
+    //Prakitči luxon ekvivalnet svih živih onih utc metoda na običnom date objektu, baš zgodno odjedom konvertira sve vrijednosti u UTC.
+    //Note: postoji i toLocal() metoda za trasfromirati objekto koji toUTC() vrati u lokalno vrijeme tj. kreirati loklano instancu.
+    console.log("luxDateEkvi.toUTC()", luxDateEkvi.toUTC());
+
+    //VAŽNO: ovaj donji .toISO() od luxona će vratiti ISO formatiranu verziju gdje će se jasno vidjeit o kojom offsetu se radi ALI neće automski konvertirati lokalni offeset
+    //u UTC kao što radi toISOsting metoda običnog DATE objekta. Ako želiš dobiti konvertiranu i vremenski ISO string onda se može:
+    //1. luxDateEkvi.toUTC().toISO()
+    //2. luxDateEkvi.toJSDate().toISOstring()
+    console.log("luxDateEkvi.toISO(),vidi opis VAŽNO", luxDateEkvi.toISO());
+
+    //VAŽNO:Luxon fn. .toLocaleString() se razlikuje od obične .toLocalString() jer neće po default prikzati vrijeme ako ne stavimo argumente već samo datum.
+    //Ako stavimo argumente onda, ako ne navedemo nešto eskplictno to neće biti prikazano pa ako stavimo samo vremenske postavke neće staviti datum.
+    //Svaki property koji možemo postaviti na options objekt i vrijednost koju možemo tamo staviti možemo ubaciti u .toLocaleString().
+    //Sa očitom syntax razlikom da ako želimo možemo odrediti locale i na način da postavimo locale property i vrijednost u isti objekt sa options key/vales.
+    console.log(
+      "luxDateEkvi.toLocaleString,prva verzija",
+      luxDateEkvi.toLocaleString({
+        locale: "en-US",
+        hour: "2-digit",
+        minute: "2-digit",
+        weekday: "long",
+        month: "long",
+        day: "2-digit",
+      })
+    );
+
+    console.log(
+      "luxDateEkvi.toLocaleString,druga verzija",
+      luxDateEkvi.toLocaleString({ locale: "en-US", weekday: "long", month: "long", day: "2-digit" })
+    );
+
+    ///VAŽNO:Naravno, locale možemo odrediti i sa .setLocale() metodom i onda kasnije pozvaiti .toLocaleString()
+    //Možemo kao argument u .toLocaleString staviti string poput "DATETIME_FULL" i može se pristupiti tome stringu sa DateTime.DATIME_FULL
+    //i onda ćemo dobiti taj format koji su luxon autori unapredije definirali.On ti zovu "presets". Vidi koje još opcije postoje ovdje:
+    //https://moment.github.io/luxon/#/formatting?id=presets
+    console.log(
+      "luxDateEkvi.toLocaleString,treca verzija",
+      luxDateEkvi.setLocale("es").toLocaleString(DateTime.DATETIME_FULL)
+    );
+
+    //*******************************Luxon kalkualcije,how to******************************************************
+
+    //Minimlana dob kalkulacija luxon verzija. Dodamo 18 godina unesome datumu i onda konvertiramo trenutni datetime i taj sa dodanim godina u ms
+    //da ih možemo usporediti.
+    console.log(DateTime.local(1988, 4, 11).plus({ years: 18 }).toMillis() <= DateTime.now().toMillis());
+
+    //PAZI: ne mijepaj kruške i jabuke, kada uspoređuje luxon .diff() metodua sa dateDiff funkcije iz dateObjHowTo onda
+    //usporedi DateTime.local().diff() sa verzijom gdje konstuurai obični date objekt sa više argumenta i usporededi
+    //DateTime.utc().diff() sa verzijom kada koristimo obični Date objekt sa unix timestampo koji returan Date.UTC()
+
+    //VAŽNO: za obješenje koja bude razlika kada imamo utc input untatar DateTime ili local input unutar Dateime i kada koristio .diff()
+    //vidi dateDiff fn. u obješanje Date objekt raznih kalkulacija
+    //VAŽNO:Vraća minus ispred broja jer je prvi datuma manji od drugog, samo obrni raspored ako hoće da bude pozitivna razlika.
+    // console.log(DateTime.local(2000, 1, 1, 21).diff(DateTime.local(2000, 7, 25, 21), "days").days);
+    // console.log(DateTime.local(2000, 1, 1, 21).diff(DateTime.local(2000, 7, 25, 21), "minutes").minutes);
+    // console.log(DateTime.local(2000, 1, 1, 21).diff(DateTime.local(2000, 7, 25, 21), "seconds").seconds);
+    // console.log(DateTime.local(2000, 1, 1, 21).diff(DateTime.local(2000, 7, 25, 21), "milliseconds").milliseconds);
+
+    //Zimsko na ljetno prijelaz luxon:
+    // console.log("obični local sati:", DateTime.local(2000, 1, 1).diff(DateTime.local(2000, 7, 25), "hours").hours);
+    // console.log("utc sati:", DateTime.utc(2000, 1, 1).diff(DateTime.utc(2000, 7, 25), "hours").hours);
+
+    //Ljetno na zimsko prijelaz luxon:
+    // console.log("obični local sati:", DateTime.local(2000, 7, 25).diff(DateTime.local(2000, 12, 25), "hours").hours);
+    // console.log("utc sati:", DateTime.utc(2000, 7, 25).diff(DateTime.utc(2000, 12, 25), "hours").hours);
+
+    //U istom periodu iako udaljeni mjeseca i dogodio prijelaz zima-ljetno i nazad ljetno-zima
+    // console.log("obični local sati:", DateTime.local(2000, 1, 1).diff(DateTime.local(2000, 12, 25), "hours").hours);
+    // console.log("utc sati:", DateTime.utc(2000, 1, 1).diff(DateTime.utc(2000, 12, 25), "hours").hours);
+
+    //Provjeri je li neka godina leap year.
+    console.log(DateTime.local(2020).isInLeapYear);
+  </script>
+</html>

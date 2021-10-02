@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    dateObjHowTo, uključi console.log jedan po jedan,tj. primjer po primjer
+  </body>
+  <script>
+    //Računanje sa unix timestampom.
+
+    //note: ako želimo dobiti unix timestamp koji predstavlja vrijeme i datum navden u date objektu pozvati dateObj.getTime(), može i dateObj.valueOf()
+
+    //VAŽNO-PAZI: kada vidiš kalkualcija gdje se postvvlja ms per year tj. točno jedna godina izražna u ms:
+    // const msPerYearKindaAvergingOut = 1000 * 60 * 60 * 24 * 365.25;
+    //Onda trebaš znati da će ta kalukacija biti jedno točna za godine koje su djeljive sa četri.
+    //Znači const nekiDatum=new Date(msPerYearKindaAvergingOut * 4) pa onda nekiDatum.toISOstring() će returnati 1974-01-01T00:00:00.000Z
+    //baš kao što bi trebalo.
+    //Od te četri godine 1972 je leap year, gdje je godina zapravo trajala 366 dana, ostale tri godine je godina zapravo trajla 365 dana
+    //pa te godina kada je bio leap year nisu dodao puni dan nego samo 0.25, ali si ostale tri dodao 0.25 i zato kalkuacije bude točna
+    //nakon četri godine. Kada pomnožiš msPerYearKindaAvergingOut sa nekim brojem koji nije dijelljiv sa četri pazi i primjiti da i ako
+    //pogodiš isti datum da je sat kriv i da vrijeme nije točno u ponoć.
+    //VAŽNO-PAZI: naravno to znači da loše kalkulaije koje se oslanjuju na ovo:
+    // const msPerYearRegularYear = 1000 * 60 * 60 * 24 * 365;
+    //Jer će automatski biti krive kada promatrano razdooblje ima neki leap year.
+
+    //VAŽNO:Zaključak svega toga je da se treba držati stvarnosti tj. da trajnje neke godine može biti u stvarnosti 365 ili 366 dana(kaledarske,ne solarne
+    //radi i koje dodajme jedan dan na leap year) i kada postvljamo broj ms per year tj. želimo izraziti godinu u ms onda trebamo znati
+    //o kojoj godini se radi tj. koliko ima stvarno kaldedarskih dana.
+    //Znači ako želimo ručno izračunati neki datum iz nekog unix timestampa moramo uzesti u obzir da je godina relativan pojam.
+    //Srećom, ručno računanje datuma iz unix timestamp stvarno nije potrebno, pa zato imamo Date objekt.
+
+    //--------------------------------------------------------------------------------------------------------------------------------
+    //Operacije sa Date objektom:
+
+    const opDate1 = new Date(2021, 0, 5, 21);
+    const opDate2 = new Date(2020, 0, 5, 21);
+    const jedanDanMS = 1000 * 60 * 60 * 24;
+
+    //Oduzimanje Date objekta:
+    //Kada oduzemo date objekt od nekog drugog date objekta onda se automtaski zove nad njima funkcuha .getTime() pretvore  se u ms
+    //i dobijemo ms razlike. Međutim kao što možemo vidjeti odmah u clogu ispod nama aposlutno nikakvo smisla ubacite taj ms u date
+    //konsturktor da dobijemo neki datum jer ako ta razlika predstvlja kao u našem slučja 366(leap je 2020) dana onda će to samo značiti da ćemo dobiti
+    //datum koji je 366 dana udaljen od 1970 tj. unix epohe.
+    // console.log(new Date(opDate1 - opDate2));
+    // Tu razliku između dva date objekta obično korisimo da dobijemo razliku izraženo u danim,satim itd. pa imamo(vidi doli dateDiff za više):
+    // console.log(Math.floor((opDate1 - opDate2) / jedanDanMS));
+
+    //Zbrajanje Date objekta:
+    //VAŽNO: nikada ovo nemoj raditi, neće se automaski pretvoriti u ms i kada ručuano sa .getTime() i pretovriš možeš vidjeit zašto je beskorisno.
+    // console.log(opDate1 + opDate2);
+    // console.log(new Date(opDate1.getTime() + opDate2.getTime()));
+
+    //Uspoređivanje Date objekta:
+    const zaJednako1 = new Date(2020, 0, 1, 12);
+    const zaJednako2 = new Date(2020, 0, 1, 12);
+    //Događa se automatska konverzija u ms timestamp kada se koristie comapirosn operatori, OSIM u slučaju kada imamo jednakost.
+    // console.log(opDate1 > opDate2);
+    // console.log(opDate1 >= opDate2);
+    // console.log(opDate1 < opDate2);
+    // console.log(opDate1 <= opDate2);
+    //VAŽNO:Kao što vidimo ako gledamo jesu li dva date objekta jednako gledTI će se kao uvijek jesu li by reference isti.
+    // console.log(zaJednako1 === zaJednako2);
+    //VAŽNO: treba zvati .getTime() na njima da dobijemo timesamp oba dva.
+    // console.log(zaJednako1.getTime() === zaJednako2.getTime());
+
+    //------------------------------------------------------------------------------------------------------------------------------------------------
+
+    //PAŽNJA-VAŽNO: Dodavanje i oduzimanje određnog broja dana,mjeseci,sati,minuta  od postojećg datuma.
+    //.setNešto() metode nekog  date objekta modiciraju date objekt nad kojima se zove i onda obično ako trebaš konstruirati novi date objekt koji ima
+    //određeni broj dana više/manje kopiraš "bazni" objekt i onda mu dodaješ sa .setNešto() metodama to što želiš sa time da zove getNešto() metode
+    //da dobiješ trenutno stanje i onda dodaš/oduzmeš tome trenutom stanju.
+
+    //Popis setNešto() metoda Date objekta:
+    // https://javascript.info/date#setting-date-components
+
+    const nemojMeModficirati = new Date(1990, 11, 20, 12);
+    const kopija = new Date(nemojMeModficirati.getTime());
+    // console.log("kopija prije modifikacije:", kopija);
+    //Iznenadio sam se da ovo funkcionira, ja sam u 12 mjesecu 1990 godine dodao mjesec i automatski je prebacilo na prvi mjesec 1991.
+    //Nije bio problem sa monthIndex gdje od 11 postaje 0 iduće godine, automatski skuži što hoćeš.
+    const kopijaModficirana = kopija.setMonth(kopija.getMonth() + 1);
+    //  console.log("nemojMeModficirati:", nemojMeModficirati);
+    //   console.log("kopija nakon modfikacije", kopijaModficirana);
+
+    //------------------------------------------------------------------------------------------------------------------------------------------------
+
+    //Izračunaj godine:
+    //Ovo je najprirodnija meni metoda, kako inače gledam koliko netko ima godina. Vidim datum rođenja, vidim koja je sad godina. I onda je samo
+    //pitanje jel prošao mjesec i dan da ta jednostavna razlika godinaSada- godinaRođenja bude broj godina te ako nije onda je broj godina ta razlika minus jedan.
+    //Note: inače nikad ne bih ubacio ovako djelmično ISO string bez offeseta, niti bih ubacio string nakon korisničkog inputa, ubacio bih više argmenta
+    //tj. brojava, ali to nije bitno za ovaj primjer koji neće ići u produkciju.
+    const getAge = (year, monthIndex, day) => {
+      const today = new Date();
+      const birthDate = new Date(year, monthIndex, day);
+
+      const yearsDifference = today.getFullYear() - birthDate.getFullYear();
+
+      if (
+        today.getMonth() < birthDate.getMonth() ||
+        (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate())
+      ) {
+        return yearsDifference - 1;
+      }
+
+      return yearsDifference;
+    };
+
+    // console.log("getAge result:", getAge(1988, 3, 11));
+
+    //----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    //Minimalna dob kalkulacija:
+
+    function meetsMinimumAge(birthDate, minAge = 18) {
+      var addedYearsDate = new Date(birthDate.getFullYear() + minAge, birthDate.getMonth(), birthDate.getDate());
+      // console.log("addedYearsDate", Date);
+      return addedYearsDate <= new Date();
+    }
+
+    //Podsjetnik da je monthIndex drugi arg. pa je ovo četvrti mjesec.
+    const birthDate = new Date(1988, 3, 11);
+
+    meetsMinimumAge(birthDate);
+
+    //---------------------------------------------------------------------------------------------------------------------------------
+
+    //Razlika između dva datuma u danima,satima,minutma i sekundama i milisekundama:
+
+    //VAŽNO: ne miješaj kruške sa jubukama. Kada uspoređuješ ovu metodu sa luxon diff() metodom onda pazi da jel DateTime.local() ili
+    //DateTime.utc() tj. je li unesno vrijeme predstvlja lokalno ili utc vrijeme. Luxon utc će usporediti sa date objektima kojima je unesone utc vrijeme
+    //dok ćes DateTime.local() usporediti sa date objektima ovdje čiji unos vremena sa smatra loklanim i nije bilo konverzije vereman u browserima na lokalno.
+    //Kada to napraviš vidjetit ćeš da je ova funckija ispravna i pouzdana(može biti samo razlika što će luxon staviti - ispred nekea razlika ovisno
+    //o rasporedu tamo,tko je od koga oduzimao, ali to je lako kontrolirati i obrnuti)
+
+    const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+    const _MS_PER_HOUR = 1000 * 60 * 60;
+    const _MS_PER_MINUTE = 1000 * 60;
+    const _MS_PER_SECOND = 1000;
+
+    function dateDiff(startDate, endDate, description) {
+      const daysDiff = Math.floor((endDate - startDate) / _MS_PER_DAY);
+      const hoursDiff = Math.floor((endDate - startDate) / _MS_PER_HOUR);
+      const minutesDiff = Math.floor((endDate - startDate) / _MS_PER_MINUTE);
+      const secondsDiff = Math.floor((endDate - startDate) / _MS_PER_SECOND);
+      const milliSecondsDiff = endDate - startDate;
+
+      // console.log("Description:", description);
+      // console.log("daysDiff:", daysDiff);
+      // console.log("hoursDiff:", hoursDiff);
+      // console.log("minutesDiff:", minutesDiff);
+      // console.log("secondsDiff:", secondsDiff);
+      // console.log("milliSecondsDiff:", milliSecondsDiff);
+      // console.log("----------------------------------------");
+    }
+
+    //VAŽNO: pročitaj sve ovo dolje pažljivo:
+    //Ovo je isto verzija prijelaza sa zimskog na ljetno i ovdje ću duže objasnitit i neke stavri koje vrijede i daljne primjere.
+
+    //Mnogo je bilo rasprave na stackoverlfowu treba li se funckija poput dateDiff tj. paramteri startDate i endDate trasfromirati
+    //u UTC vrijeme ili ne trebaju. UTC vrijeme nema zimskom/ljetno računanje vremena i svaki dan je 24 sata.
+    //Svako lokalnom vrijeme ima inače 24 sata dnevno, ali na dan kada se prelazi na ljetno računja vremena onda dan
+    //traje 23 sata(dva sata ujutro instatno postanu tri sata ujutro) dok na dan kada se prelazi na zimsko/stanardno računjanje vremena ima 25 sati
+    //(tri sata ujutro instatno postanu dva sata ujutro). NOTE: postoje neke države gdje nije zimsko/ljetno vrijeme nije dodavalji ili oduzmanje točno jednog sata.
+    //Podsjenik, da će svaki date konsturkor će trasformirati svako vrijeme za koje misli da nije lokalno(browseri,node obrnutno), dolje stavljam doli primjer vremena
+    //koje neće trasformirat(21 sat će ostati) i primjer gdje je starDate1 unutar zimskom/standardnoa period tj. zadnji dan toga perioda dok je endDate2 prvi dan
+    //ljetnog računanje vremena(to je za 2021 godinu prijelaz).Kada pogledamo return dateDiff sa ova dva datuma vidjeli bi da je između ova dva datuma 23 sata razlike.
+    //PAZI:Ova je ekvivalnet u luxonu da smo pozvali DateTime.local() i konsturali DateTime objekt i kada se uspoređuju rezultati
+    //ove funckije trebaju se uspređivati jabuke sa jabukama i treba se uspreditit da luxon.DateTime.local() sa ovim ne luxon.DateTime.utc()
+    const startDate1 = new Date(2021, 2, 27, 21);
+    const endDate1 = new Date(2021, 2, 28, 21);
+    dateDiff(startDate1, endDate1, "21 sati lokalno, oba dva dana, zimsko na ljetno računanje prijelaz");
+
+    //Stavio sam dolje 20 sati UTC jer želim da se startDate1 i startDate2 budu u isto vrijeme iako to nije bilo bitno, mogao sam staviti
+    //i dolje 21 sat UTC pa bi lokalno bilo 22 za startDate2. Zato endDate2 nisam postavio da odogvara lokalnom vremnadu endDate1, to nije bio cilj ovoga testa.
+    //Cilj je bio vidjeti koja budu razlika u satima kada imamo dva date objekta čije vrijeme se intepretira tj. postavljeno je kao utc i događaju se u isti UTC sat
+    // vs dva objekta čije vrijeme se intpretiralo kao lokalno kada je postvljeno.
+    //Kada pak ubacimo u new Date() konstruktor neko vrijeme koje će se interprtirati da je UTC pa ga treba trasforimrati o lokalno(brwoersi, Node obrnutno)
+    //za startDate2 i endDate2 vidjeti ćemo da dateDiff vraća 24 sata razlike na ovom primjeru.
+    //Ovaj Date.UTC() prepostvlja da je datum i vrijeme koje u njega ubacuješ UTC i returna timestamp vrijeme koje new Date() konstukor interpirtira
+    //uvijek kao UTC pa će zato napraviti trasfromacij/konverzija pa će ovaj 20 UTC sat postati 21 sata po lokalnom zimskom vremenu, dok će 20 sat UTC za dan kasnije
+    //postati 22 sata po lokalnom ljetnom(gore 21 ostane 21 za starDate1 i endDate1).
+    //Kada trasfriramo oba dva objekta sa toISOstring() da dobijemo UTC vrijeme ćemo vidjeti da je razlika među njima 24 sata
+    //baš kao što nam funckija dateDiff kaže.
+    //PAZI:Ova je ekvivalnet u luxonuu da smo pozvali DateTime.utc() i konsturali DateTime objekt i kada se uspoređuju rezultati
+    //ove funckije trebaju se uspređivati jabuke sa jabukama i treba se uspreditit da luxon.DateTime.utc() sa ovim ne luxonDateTime.local()
+    const startDate2 = new Date(Date.UTC(2021, 2, 27, 20));
+    const endDate2 = new Date(Date.UTC(2021, 2, 28, 20));
+    dateDiff(startDate2, endDate2, "20 sati UTC, oba dva dana, zimsko na ljetno računanje prijelaz 2021");
+
+    //Onda jel nam bitno da u new Date ubacimo vrijeme koje će taj konstruktor intpretirati kao lokalno ili da ubacimo
+    //vrijeme koje će inepratirati da je UTC pa će napraviti konverziju na treunti lokalni offeset u slučaju da recimo želimo
+    //odlogirati korisnika 24 sata da se se login predstvlja startDate1 recimo gore. Nije, zato jer u oba dva slučaja
+    //ako u setTimeout() postavimo 24 sata izražneo u MS ćemo vidjeti da će se logout dogoditi u sat koji je drugačiji nego
+    //login u LOKALNOM vremenu što je jedino bitno korisnku. Na našem primjeru endDate2 će biti 22 sata lokalno dok će startDate2 biti
+    //21 sat lokalno. Znači nije bilo bitno staviti postaviti utc vrijeme u ovom slučaju
+
+    //Međutim ako želiš uvijek da se dogodi logout u istom satu kada se dogodio login, znači može login nakon 23 ili 25 sati na dane prelaska ljeto/zima
+    //računanje onda samo konstruraš date objekt poput ovog endDate1 kojeg sam gore stavio od incijalnog startDate koji ima startDate1.getDate() + 1 i sve
+    //ostale iste vrijednosti(getDate returna dan u mjesecu) i pozoveš endDate1.getTime() i ubaciš to u setTimeout().
+    //Onda će login 27.3.2021 biti u 21 sat po loklanom vremenu i 21 sat po lokalnom vremenu dan poslije kada smo prešli na ljetno računnaje vremena.
+    //U tom slučaju UTC će biti 20 sati za log in i 19 sati za log out(jer su prošla 23 sata u stavranoi, kada se kaže da UTC dan ima uvijek 24 sata
+    //onda se misli da ako konstruiraš dva date objekta gdje ubacuješ UTC vrijeme(vrijeme koje date konsturkor misli da treba konvertira na lokalno) onda
+    //će uvijek imati 24 sata razlike ako ih tako postaviš kao ja na startDate2 i endDate2)
+
+    //Zaključno, nije nužno unijeti u ageDiff funckije dva date objekta koji su nastali u konstuktore gdje je uneseno vrijeme koje se smatralo UTC
+    //u praktičnom smislu, samo treba znati da ako startDate paramter bude u jednom periodu računanja vremena(zimsko ili ljetno), a endDate bude
+    //u drugom perioud računanja vremena(zimsko ili ljeto) onda će se dogoditi da će output ageDiff biti sat manji ili sat veći kada smo unijeli loklano vrijeme
+    // od outputa da smo unijeli UTC vrijeme ovisno jel prijelaz bio zima na ljeto ili ljetno na zima.
+
+    //Verzija zima na ljetno prijelaz sa većim razmakom među danima, naravno bude razlika između utc vremena i lokalnoj jer
+    //onog dana gdje je utc dan 24 sata dok je lokalno vrijeme 23 sata i utc vrijeme bude jedan sat duže.
+    const startDateLong1 = new Date(2021, 0, 25, 21);
+    const endDateLong1 = new Date(2021, 6, 25, 21);
+    dateDiff(
+      startDateLong1,
+      endDateLong1,
+      "21 sati lokalno, oba dva dana, zimsko na ljetno računanje prijelaz 2021-samo veći razmak među danima verzija"
+    );
+    const startDateLong2 = new Date(Date.UTC(2021, 0, 25, 20));
+    const endDateLong2 = new Date(Date.UTC(2021, 6, 25, 20));
+    dateDiff(
+      startDateLong1,
+      endDateLong1,
+      "20 sati UTC, oba dva dana, zimsko na ljetno računanje prijelaz 2021-samo veći razmak među danima verzija"
+    );
+
+    //Verzija ljetno na zima prijelaz, 25 sati bude razlika među loklanim vremenaom dok 24 sata bude među UTC.
+    const početniDatum1 = new Date(2021, 9, 30, 21);
+    const krajnjiDatum1 = new Date(2021, 9, 31, 21);
+    dateDiff(početniDatum1, krajnjiDatum1, "21 sati lokalno, oba dva dana, ljetno na zimsko računanje prijelaz 2021");
+    const početniDatum2 = new Date(Date.UTC(2021, 9, 30, 20));
+    const krajnjiDatum2 = new Date(Date.UTC(2021, 9, 31, 20));
+    dateDiff(početniDatum2, krajnjiDatum2, "20 sati UTC, oba dva dana, ljetno na zimsko računanje prijelaz 2021");
+
+    //Verzija ljetno na zima prijalaz kada stavimo veći razmak među danima. Narvavno, utc vrijeme tj. razlika će biti
+    //drugačij  neko lokana razlika jer kada je bio prijalaz loklani dan je trajao 25 stati dok je utc dan trajao 24 sata
+    //će će naravno ukupno utc vrijeme biti manje jedan sat.
+    const početniDLong1 = new Date(2021, 6, 25, 21);
+    const krajnjiDLong1 = new Date(2021, 11, 25, 21);
+    dateDiff(
+      početniDLong1,
+      krajnjiDLong1,
+      "21 sati lokalno, oba dva dana, ljetno na zimsko računanje prijelaz 2021-samo veći razmak među danima verzija"
+    );
+    const početniDLong2 = new Date(Date.UTC(2021, 6, 25, 20));
+    const krajnjiDLong2 = new Date(Date.UTC(2021, 11, 25, 20));
+    dateDiff(
+      početniDLong2,
+      krajnjiDLong2,
+      "20 sati UTC, oba dva dana, ljetno na zimsko računanje prijelaz 2021-samo veći razmak među danima verzija"
+    );
+
+    //Verzija obična gdje su startDate i endDate u istom period zima/zima ili ljeto/ljeto dan do dana. Naravno, oba dvije verzija imaju 24 sata razlike.
+    const startD1 = new Date(2021, 0, 5, 21);
+    const endD1 = new Date(2021, 0, 6, 21);
+    dateDiff(startD1, endD1, "21 sati lokalno, oba dva dana, isti peroid i nema prijelaza");
+    const startD2 = new Date(Date.UTC(2021, 0, 5, 20));
+    const endD2 = new Date(Date.UTC(2021, 0, 6, 20));
+    dateDiff(startD2, endD2, "20 sati UTC, oba dva dana,isti period nema prijelaza");
+
+    //Verzija gdje su startDate i endDate u istom peridoda, ali udaljeni nekoliko mjeseci gdje se dogodio prijelaz zima na ljeto i opet ljeto na zima.
+    //Primjeti da nema razlike između lokalnoj vereena i utc jer lokalno se ponšiti tj. onaj prijalza sa zime na ljeto od 23 sata se nadoknadi
+    //u prijelazi sa ljeto na zimu gdje bude 25 sati dok naravno utc uvijek bude 24 sata svaki dan pa na kraju dođe sve na isto.
+    const početniD1 = new Date(2021, 0, 25, 21);
+    const krajnjiD1 = new Date(2021, 11, 25, 21);
+    dateDiff(
+      početniD1,
+      krajnjiD1,
+      "21 sati lokalno, oba dva dana, isti peroid, prijelaz zima/ljeto i prijelza nazad ljeto/zima"
+    );
+    const početniD2 = new Date(Date.UTC(2021, 0, 25, 20));
+    const krajnjiD2 = new Date(Date.UTC(2021, 11, 25, 20));
+    dateDiff(
+      početniD2,
+      krajnjiD2,
+      "20 sati UTC, oba dva dana, isti peroid, prijelaz zima/ljeto i prijelza nazad ljeto/zima"
+    );
+
+    //https://stackoverflow.com/questions/3224834/get-difference-between-2-dates-in-javascript?noredirect=1&lq=1
+    //-----------------------------------------------------------------------------------------
+
+    //Razlika u mjesecima izmeđut dva datuma. Odmah treba reći da je pitanje što se misli pod "razlikom u mjesecima". Jel nas
+    //znimaju dani, jel razlika tri mjesexa i 5 dana između dva datuma tri mjeseca ili četri mjesca kako se besmisleno svađaju na stackoverflowu.
+    //Nemaju svi mjeseci isti broj dana, pa je besmisleno se fokusirati na dane.
+    //Ako nas ne zanimaju takve ne baš praktične stavri onda možemo misliti na praktičije stavri poput da potpuno zanemarimo dane pa imamo:
+    function monthDiff(dateFrom, dateTo) {
+      return dateTo.getMonth() - dateFrom.getMonth() + 12 * (dateTo.getFullYear() - dateFrom.getFullYear());
+    }
+
+    // console.log("monthDiff:", monthDiff(new Date(2000, 0), new Date(2000, 4)));
+    // console.log("monthDiff:", monthDiff(new Date(2000, 11), new Date(2002, 2)));
+
+    //Kada se godine dateFrom i dateTo iste onda će 12 * 0 rezultirati sa nula naravo i onda će biti samo razlika dateFrom i dateTo.
+    //Možimo sa 12 da razlika u godinima pretovirma u razliku u mjesecma.
+    //Jasno je da se u dateFrom treba ubaciti manji mjesec u kalendarskoj godini.
+
+    //------------------------------------------------------------------------------------------------------------
+    //PAZI: ako ti padne na pamet kako izračinit "mjesece i dane" treba dobro razmisliti što se misli pod tim i ima li to puno smisla.
+    //Ako se misli da izraziš razliku izmešu dva datuma u danima pa onda mjesecam to su praktički ove fn. gori dateDiff(dio račna zua dan)
+    //i ako se misli na razliku mjescima bez obzira na dane onda je to montDiff. Ako se misli ne nešto drugo opet samo pitanje je besmisleno
+    //i nije praktično.
+    //--------------------------------------------------------------------------------------------------------------------
+    //
+
+    //Provjeri je li neka godina leap year:
+
+    //Ponavljam, drugi argument je monthIndex pa se misli na drugi mjesec sa 1.
+    const leapYearBoolean = new Date(2000, 1, 29).getDate() === 29;
+    // console.log("leapYearBoolan:", leapYearBoolean);
+
+    //--------------------------------------------------------------------------------------------------------
+    //Saznaj koliko neki mjesec ima dana:
+
+    //VAŽNO: primjeti što se ovdje dogodilo. Ubacili smo broj nula kao vrijednost za broj dana što nije validna vrijednost
+    //pa se automatski dogodi da ti postavi zadnji dan u mjesecu umjsto toga, bude autocorrect. Pa onda samo pozoveš
+    //getDate() koja vraća koji je dan u mjesecu pa zapravo dobiješ koliko neki mjesec ima dana.
+    //VAŽNO-PAZI: primjeti nešto jaku čudno kada ubaciš invalid dan kao dan u mjesecu. Odjendnom drugi month argumnet više nije
+    //monthIndex nego bude stvarno treći mjesec.
+
+    const dateObjKadaStavimoInvalidBrojDanaUMjesec = new Date(2021, 3, 0);
+    // console.log(dateObjKadaStavimoInvalidBrojDanaUMjesec);
+    const kolikoImaDanaUMjesecu = new Date(2012, 3, 0).getDate();
+    // console.log(kolikoImaDanaUMjesecu);
+
+    //-------------------------------------------------------------------------------------------------------------------------------------
+
+    //Saznaj koji je najnoviji, a koji najstarji datum od skupine raznih datuma tj. date objekta :
+
+    const arrZaNajstarijiINajnovijiDatum = [
+      new Date(2015, 4, 13),
+      new Date(2015, 0, 1),
+      new Date(2018, 2, 12),
+      new Date(2016, 0, 10),
+      new Date(2019, 5, 25),
+      new Date(2019, 0, 9),
+    ];
+
+    //Ovdje će se dogoditi da će se za svaki pozvati interno .getTime() i return Math.min/max() će biti min/max
+    //timestamp tj. najstarji i najovji datum i onda od toga timestame kreiramo novi date objekt.
+    const najstariji = new Date(Math.min(...arrZaNajstarijiINajnovijiDatum));
+    const najnoviji = new Date(Math.max(...arrZaNajstarijiINajnovijiDatum));
+
+    //Alt syntax: sOvdje ne zovemo izravno Math.min nego korismo .apply() da ubacimo cijeli array odjednom
+    // const najstariji = new Date(Math.min.apply(null, arrZaNajstarijiINajnovijiDatum));
+    // const najnoviji = new Date(Math.max.apply(null, arrZaNajstarijiINajnovijiDatum));
+
+    // console.log(najstariji);
+    // console.log(najnoviji);
+  </script>
+</html>

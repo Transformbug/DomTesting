@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .divZaScrollVisinu {
+        width: 200px;
+        height: 4000px;
+        border: aqua 1px solid;
+      }
+
+      .glavniKrugBotun {
+        position: fixed;
+        right: 35px;
+        bottom: 35px;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        background-color: blue;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="divZaScrollVisinu"></div>
+    <div class="glavniKrugBotun"></div>
+  </body>
+  <script>
+    //random touhogst smouth scroll:
+    //varijablino pomak koliko pixela ovisno koliko je udaljen. Fiksno vrijeme dok kada treba doći u početnu ili određenu poziciju.
+    //Recimo da je udaljeno 200px od trenutna pozcije do iduće pozcije, fiksnmo vrijeme 1000ms. Onda nam treba 200/100 tj. 0.2px per ms. Korištnje request animation frame možda.
+    //200/1000=0.2(u razlocima izraženo 2/10). Ako želimo da taj pomak od 0.2 px bude fiksan i vrijeme koje je potrebno do cilja varijablno onda uvijek možemo saznti
+    //tj. nepoznat x tj. nepoznati dijeljitelj(1000 u konkretnom slučaju znamo) tako da x=(200/1)/(2/10) tj. dobijemo 1000ms.
+    //Znači kada promjenomo udaljenost recimo sad udaljenost bude 600px onda će vrijeme tj. x biti:
+    //x=(600/1)/(2/10) tj. biti će 3000ms. Pazi kada budue duži i komplicraniji decimlani brojevi konventrija u razlomak pomoću frations to decimal kalkulatora online
+    //Zapravo ovako je jednostvnije vidit kako se lako uvijke može saznat x bilo da je dijeljivlj ili dijeljenik: 200/10=20
+    //PAZI: međutim problem je što ni request animation frame mi neće IZRAVNO pomoći jer se on ne zove svaku ms već se zove svakih 16.66666666666667 tj. 60 puta u sekundi.
+    //VAŽNO: to znači da taj udaljeno koju želimo prijeći svaku ms moramo pomnožitit sa 16.66666666666667 i onda ćemo dobiti udaljenost koja će incramenta svaki put
+    //kada se aktivira callback request animation frama.
+
+    let scrollYGlavni = null;
+    let trenutniScroll = scrollYGlavni;
+    let aktivanRequstAni = false;
+    let otkažiAnimaciju = null;
+
+    window.addEventListener("scroll", function () {
+      const botun = document.querySelector(".glavniKrugBotun");
+
+      if (window.scrollY >= 200 && !aktivanRequstAni) {
+        console.log(aktivanRequstAni);
+        console.log("alo unutra");
+
+        botun.addEventListener("click", function (e) {
+          scrollYGlavni = window.scrollY;
+          otkažiAnimaciju = window.requestAnimationFrame(animacijskiCallback);
+        });
+        botun.style.display = "block";
+      }
+    });
+
+    function animacijskiCallback(timestamp) {
+      console.count();
+      aktivanRequstAni = true;
+      console.log("animacijskiCallback");
+      console.log(window.scrollY);
+      const perc = (scrollYGlavni / window.scrollY) * 100;
+      const pxPerMs = scrollYGlavni / 10000;
+      //   const pxPerAniCallback = 16.66666666666667 * pxPerMs;
+      //   const pxPerAniCallback = 3;
+
+      pxPerAniCallback = 0;
+
+      if (perc >= 70) {
+        pxPerAniCallback = 6;
+      } else if (perc >= 40) {
+        pxPerAniCallback = 4;
+      } else {
+        pxPerAniCallback = 2;
+      }
+
+      console.log("pxPerAniCallback,", pxPerAniCallback);
+      console.log("perc", perc);
+
+      window.scrollBy({
+        top: -pxPerAniCallback,
+        left: 0,
+      });
+
+      if (window.scrollY !== 0) {
+        otkažiAnimaciju = window.requestAnimationFrame(animacijskiCallback);
+      } else {
+        console.log("ovo je else");
+        aktivanRequstAni = false;
+        window.cancelAnimationFrame(otkažiAnimaciju);
+      }
+    }
+
+    // const span = document.createElement("span");
+    // span.style.position = "fixed";
+    // span.style.right = "25px";
+    // span.style.bottom = "25px";
+    // span.style.width = "35px";
+    // span.style.height = "35px";
+    // span.style.borderRadius = "50%";
+    // span.backgroundColor = "blue";
+  </script>
+</html>
